@@ -16,7 +16,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 // Scene 2 fades in:
 // =========================================================================
 export const SCENE1_FADE_START = 0.8; // When Scene 1 begins to fade out
-export const SCENE1_FADE_END = 0.90; // When Scene 1 has completely disappeared
+export const SCENE1_FADE_END = 0.9; // When Scene 1 has completely disappeared
 
 export const SCENE2_FADE_START = 0.95; // When Scene 2 / HTML screen starts fading in
 export const SCENE2_FADE_END = 1.25; // When Scene 2 / HTML screen becomes fully visible
@@ -24,12 +24,14 @@ export const SCENE2_FADE_END = 1.25; // When Scene 2 / HTML screen becomes fully
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-
 export default function Hero() {
   const pinWrapperRef = useRef<HTMLDivElement>(null);
   const heroSectionRef = useRef<HTMLElement>(null);
   const scene1Ref = useRef<HTMLDivElement>(null);
   const scene2Ref = useRef<HTMLDivElement>(null);
+  const vignetteRef = useRef<HTMLDivElement>(null);
+  const grainRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLDivElement>(null);
 
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(
     null
@@ -74,7 +76,47 @@ export default function Hero() {
         0
       );
 
-      // 2. Scene 1 fade-out when camera is close to the MacBook screen
+      // 2. Exhibition Label: fades out quickly as user begins scrolling (0.0 -> 0.25)
+      if (labelRef.current) {
+        tl.to(
+          labelRef.current,
+          {
+            opacity: 0,
+            y: -10,
+            ease: "power1.out",
+            duration: 0.25,
+          },
+          0
+        );
+      }
+
+      // 3. Cinematic Vignette: gradually dissolves as camera moves forward (0.05 -> 0.45)
+      if (vignetteRef.current) {
+        tl.to(
+          vignetteRef.current,
+          {
+            opacity: 0,
+            ease: "power1.inOut",
+            duration: 0.4,
+          },
+          0.05
+        );
+      }
+
+      // 4. Subtle Film Grain: dissolves alongside vignette before close-up (0.05 -> 0.45)
+      if (grainRef.current) {
+        tl.to(
+          grainRef.current,
+          {
+            opacity: 0,
+            ease: "power1.inOut",
+            duration: 0.4,
+          },
+          0.05
+        );
+      }
+
+      // 5. Scene 1 fade-out when camera is close to the MacBook screen
       tl.to(
         scene1Ref.current,
         {
@@ -85,7 +127,7 @@ export default function Hero() {
         SCENE1_FADE_START
       );
 
-      // 3. Scene 2 / HTML screen fades in once camera physically enters the display
+      // 6. Scene 2 / HTML screen fades in once camera physically enters the display
       tl.fromTo(
         scene2Ref.current,
         {
@@ -108,7 +150,7 @@ export default function Hero() {
     };
   }, []);
 
-  // Mouse tracking for subtle ambient sheen on the display
+  // Mouse tracking for subtle ambient sheen on the display in Scene 2
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!heroSectionRef.current) return;
@@ -148,8 +190,8 @@ export default function Hero() {
         className="relative flex h-screen h-[100dvh] w-full items-center justify-center overflow-hidden bg-black select-none text-zinc-100"
       >
         {/* =========================================================================
-            SCENE 1: The Developer Desk (/public/hero section.jpeg)
-            Layer: z-10 (under Scene 2, over pure solid black #000 background)
+            LAYER 1: Scene 1 JPEG (/public/hero section.jpeg)
+            Z-Index: z-10
             Starts 100% visible at scale 1.
             ScrollTrigger zooms in toward MacBook display (transformOrigin: 50% 39%).
         ========================================================================== */}
@@ -175,11 +217,75 @@ export default function Hero() {
         </div>
 
         {/* =========================================================================
-            SCENE 2: The Extreme Close-Up MacBook Display (/public/hero-next-frame.jpg)
-            Layer: z-20 (on top of Scene 1)
-            Starts 100% HIDDEN (opacity: 0, scale: 0.92) to eliminate any refresh glitch.
-            Fades in ONLY AFTER camera is sufficiently close (at SCENE2_FADE_START).
-            Contains single source of typography baked inside hero-next-frame.jpg.
+            LAYER 2: Cinematic Vignette (Scene 1 only)
+            Z-Index: z-11 (above Scene 1 JPEG, below Grain, Label & Scene 2)
+            Pure CSS radial darkening toward edges; center/MacBook completely clear.
+        ========================================================================== */}
+        <div
+          ref={vignetteRef}
+          className="pointer-events-none absolute inset-0 z-11 will-change-opacity"
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 70% at 50% 45%, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.4) 75%, rgba(0, 0, 0, 0.76) 100%)",
+          }}
+        />
+
+        {/* =========================================================================
+            LAYER 3: Subtle Film Grain (Scene 1 only)
+            Z-Index: z-12 (above Vignette, below Label & Scene 2)
+            Static micro-texture; dissolves before close-up.
+        ========================================================================== */}
+        <div
+          ref={grainRef}
+          className="pointer-events-none absolute inset-0 z-12 will-change-opacity"
+        >
+          <svg
+            className="h-full w-full opacity-[0.035] mix-blend-screen"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <filter id="scene1-film-grain">
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.8"
+                numOctaves="3"
+                stitchTiles="stitch"
+              />
+              <feColorMatrix
+                type="matrix"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"
+              />
+            </filter>
+            <rect
+              width="100%"
+              height="100%"
+              filter="url(#scene1-film-grain)"
+            />
+          </svg>
+        </div>
+
+        {/* =========================================================================
+            LAYER 4: Exhibition Label (Scene 1 only)
+            Z-Index: z-13 (above Grain, below Scene 2)
+            Minimal, monochrome, positioned at bottom-left corner away from MacBook.
+        ========================================================================== */}
+        <div
+          ref={labelRef}
+          className="pointer-events-none absolute bottom-8 left-8 sm:bottom-12 sm:left-12 z-13 flex flex-col gap-1 select-none will-change-transform will-change-opacity"
+        >
+          <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-zinc-500">
+            SCENE 01
+          </span>
+          <span className="font-mono text-[11px] sm:text-[12px] uppercase tracking-[0.22em] text-zinc-300">
+            WORKSPACE
+          </span>
+        </div>
+
+        {/* =========================================================================
+            LAYER 5: Scene 2 MacBook Display (/public/hero-next-frame.jpg)
+            Z-Index: z-20 (on top of all Scene 1 layers)
+            Unaffected by Scene 1 vignette, grain, or label.
+            Starts 100% HIDDEN (opacity: 0, scale: 0.92).
+            Fades in at SCENE2_FADE_START.
         ========================================================================== */}
         <div
           ref={scene2Ref}
