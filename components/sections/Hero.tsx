@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import DigitalWorld from "@/components/digital-world/DigitalWorld";
 
 // =========================================================================
 // HERO SCROLL TIMING CONFIGURATION
@@ -32,6 +33,7 @@ export default function Hero() {
   const vignetteRef = useRef<HTMLDivElement>(null);
   const grainRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
+  const blackCoverRef = useRef<HTMLDivElement>(null);
 
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(
     null
@@ -49,6 +51,41 @@ export default function Hero() {
         return;
       }
 
+      if (process.env.NODE_ENV === "development") {
+        console.log("[Hero GSAP] Context mounted. Checking DigitalWorld elements in DOM:", {
+          frames: pinWrapperRef.current.querySelectorAll(".dw-interface-frame").length,
+          illustration: pinWrapperRef.current.querySelectorAll(".dw-illustration").length,
+          contentItems: pinWrapperRef.current.querySelectorAll(".dw-content-item").length,
+        });
+      }
+
+      // Cinematic Initial Load Reveal for Scene 01
+      // Fades the solid #000000 black veil from opacity 1 to 0 over 1.0s with power2.out,
+      // revealing Scene 01 smoothly without interfering with ScrollTrigger initialization.
+      const prefersReducedMotion =
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const isScrolled =
+        typeof window !== "undefined" && window.scrollY > 20;
+
+      if (blackCoverRef.current) {
+        if (prefersReducedMotion || isScrolled) {
+          gsap.set(blackCoverRef.current, { opacity: 0, display: "none" });
+        } else {
+          gsap.to(blackCoverRef.current, {
+            opacity: 0,
+            duration: 1.0,
+            ease: "power2.out",
+            onComplete: () => {
+              if (blackCoverRef.current) {
+                blackCoverRef.current.style.display = "none";
+              }
+            },
+          });
+        }
+      }
+
       // Master Scroll-driven Zoom Timeline
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -59,6 +96,16 @@ export default function Hero() {
           scrub: 1, // Smooth scrub with 1s damping
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            if (process.env.NODE_ENV === "development") {
+              if (self.progress >= 0.75 && self.progress <= 1.0) {
+                console.log(
+                  "[Hero GSAP] MacBook screen active, scroll progress:",
+                  self.progress.toFixed(3)
+                );
+              }
+            }
+          },
         },
       });
 
@@ -143,6 +190,68 @@ export default function Hero() {
         },
         SCENE2_FADE_START
       );
+
+      // 7. Digital World Entrance inside Scene 2:
+      // Choreographed sequence starting right as Scene 2 fades in (0.96 -> 1.25)
+      // Step 1: Digital interface stabilizes (perimeter frame & coordinate boundaries)
+      tl.fromTo(
+        ".dw-interface-frame",
+        { opacity: 0 },
+        { opacity: 1, ease: "power1.out", duration: 0.16 },
+        0.96
+      );
+
+      // Step 2 & 3: Flat illustration appears and settles into position
+      tl.fromTo(
+        ".dw-illustration",
+        {
+          opacity: 0,
+          y: 22,
+          scale: 0.95,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          ease: "power2.out",
+          duration: 0.2,
+        },
+        1.02
+      );
+
+      // Step 3b: Chaos energy particles bloom within illustration
+      tl.fromTo(
+        ".dw-illustration-chaos",
+        {
+          opacity: 0,
+          scale: 0.8,
+          transformOrigin: "50% 50%",
+        },
+        {
+          opacity: 1,
+          scale: 1,
+          ease: "back.out(1.4)",
+          duration: 0.16,
+        },
+        1.06
+      );
+
+      // Step 4: Main digital content becomes readable (staggered cascade)
+      tl.fromTo(
+        ".dw-content-item",
+        {
+          opacity: 0,
+          y: 14,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          ease: "power2.out",
+          duration: 0.18,
+          stagger: 0.02,
+        },
+        1.05
+      );
     }, pinWrapperRef);
 
     return () => {
@@ -182,7 +291,7 @@ export default function Hero() {
   return (
     <div ref={pinWrapperRef} className="relative w-full bg-black">
       {/* Hidden semantic heading for screen readers & SEO without causing visual overlap */}
-      <h1 className="sr-only">MUHAR — Creating systems and random chaos.</h1>
+      <h1 className="sr-only">MUHAR: Creating systems and random chaos.</h1>
 
       <section
         ref={heroSectionRef}
@@ -281,6 +390,19 @@ export default function Hero() {
         </div>
 
         {/* =========================================================================
+            CINEMATIC INITIAL REVEAL LAYER (Scene 1 initial load)
+            Z-Index: z-15 (above Scene 1 JPEG, vignette, grain & label; below Scene 2)
+            Solid #000000 black veil ensuring deterministic initial state without JPEG flash.
+            Fades out smoothly on mount (opacity 1 -> 0, power2.out) to reveal Scene 01.
+        ========================================================================== */}
+        <div
+          ref={blackCoverRef}
+          className="pointer-events-none absolute inset-0 z-15 bg-black will-change-opacity"
+          style={{ opacity: 1 }}
+          aria-hidden="true"
+        />
+
+        {/* =========================================================================
             LAYER 5: Scene 2 MacBook Display (/public/hero-next-frame.jpg)
             Z-Index: z-20 (on top of all Scene 1 layers)
             Unaffected by Scene 1 vignette, grain, or label.
@@ -313,11 +435,11 @@ export default function Hero() {
                 boxShadow: "inset 0 0 80px 10px rgba(0, 0, 0, 0.8)",
               }}
             >
-              {/* Reference Image /hero-next-frame.jpg (Single source of typography) */}
+              {/* Clean MacBook Screen Surface Texture */}
               <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 <Image
-                  src="/hero-next-frame.jpg"
-                  alt="MacBook screen close-up"
+                  src="/macbook-screen-texture.jpg"
+                  alt="MacBook screen surface texture"
                   fill
                   priority
                   sizes="100vw"
@@ -325,37 +447,40 @@ export default function Hero() {
                 />
               </div>
 
+              {/* Digital World Interface Layer */}
+              <DigitalWorld className="absolute inset-0 z-10" />
+
               {/* Subtle Organic Glass Reflection from Reference Scene */}
               <div
-                className="pointer-events-none absolute inset-0"
+                className="pointer-events-none absolute inset-0 z-20"
                 style={{
                   background:
-                    "linear-gradient(135deg, rgba(72, 69, 86, 0.22) 0%, rgba(38, 36, 47, 0.08) 40%, rgba(18, 18, 23, 0.0) 80%, rgba(12, 12, 16, 0.3) 100%)",
+                    "linear-gradient(135deg, rgba(72, 69, 86, 0.16) 0%, rgba(38, 36, 47, 0.05) 40%, rgba(18, 18, 23, 0.0) 80%, rgba(12, 12, 16, 0.2) 100%)",
                 }}
               />
 
               {/* Exhibition Center Key Lighting */}
               <div
-                className="pointer-events-none absolute inset-0"
+                className="pointer-events-none absolute inset-0 z-20"
                 style={{
                   background:
-                    "radial-gradient(ellipse 65% 55% at 50% 46%, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.01) 45%, transparent 75%)",
+                    "radial-gradient(ellipse 65% 55% at 50% 46%, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.008) 45%, transparent 75%)",
                 }}
               />
 
               {/* Interactive Screen Sheen Following Cursor */}
               {mousePos && (
                 <div
-                  className="pointer-events-none absolute inset-0 transition-opacity duration-300 ease-out"
+                  className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-300 ease-out"
                   style={{
-                    background: `radial-gradient(550px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255, 255, 255, 0.04) 0%, transparent 70%)`,
+                    background: `radial-gradient(550px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255, 255, 255, 0.035) 0%, transparent 70%)`,
                   }}
                 />
               )}
 
               {/* Micro-Noise Grain Filter */}
               <svg
-                className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.032] mix-blend-screen"
+                className="pointer-events-none absolute inset-0 z-20 h-full w-full opacity-[0.028] mix-blend-screen"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <filter id="screen-display-noise-hero">
