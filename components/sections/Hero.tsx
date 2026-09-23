@@ -5,6 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Intro from "@/components/sections/Intro";
+import WorkspaceDecorations from "./hero/WorkspaceDecorations";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -18,6 +19,7 @@ export default function Hero() {
   const grainRef = useRef<HTMLDivElement>(null);
   const blackCoverRef = useRef<HTMLDivElement>(null);
   const solidBlackOverlayRef = useRef<HTMLDivElement>(null);
+  const workspaceDecorationsRef = useRef<SVGSVGElement>(null);
 
   useIsomorphicLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -53,19 +55,16 @@ export default function Hero() {
       if (solidBlackOverlayRef.current) gsap.set(solidBlackOverlayRef.current, { opacity: 0, display: "none" });
       if (scene2Ref.current) {
         gsap.set(scene2Ref.current, { opacity: 1, visibility: "visible", pointerEvents: "auto" });
+        const allIntro = scene2Ref.current.querySelectorAll(
+          ".intro-interface-frame, .intro-chapter, .intro-wordmark, .intro-statement, .intro-concept, .intro-subheadline, .intro-illustration, .intro-conduit-emitter"
+        );
+        gsap.set(allIntro, { opacity: 1, y: 0, scale: 1 });
       }
-      gsap.set(".intro-interface-frame", { opacity: 1 });
-      gsap.set(".intro-chapter", { opacity: 1, y: 0 });
-      gsap.set(".intro-wordmark", { opacity: 1, y: 0 });
-      gsap.set(".intro-statement", { opacity: 1, y: 0 });
-      gsap.set(".intro-concept", { opacity: 1, scale: 1 });
-      gsap.set(".intro-subheadline", { opacity: 1, y: 0 });
-      gsap.set(".intro-illustration", { opacity: 1, y: 0, scale: 1 });
-      gsap.set(".intro-conduit-emitter", { opacity: 1, y: 0 });
       return;
     }
 
-    const mm = gsap.matchMedia(pinWrapperRef);
+    // Initialize MatchMedia without invalid scope object
+    const mm = gsap.matchMedia();
 
     // =========================================================================
     // RESPONSIVE MASTER TIMELINES (Desktop & Mobile)
@@ -78,21 +77,43 @@ export default function Hero() {
 
     // 1. DESKTOP TIMELINE (min-width: 1024px)
     mm.add("(min-width: 1024px)", () => {
-      if (
-        !pinWrapperRef.current ||
-        !scene1Ref.current ||
-        !scene2Ref.current ||
-        !solidBlackOverlayRef.current
-      ) {
+      const pinEl = pinWrapperRef.current;
+      const s1El = scene1Ref.current;
+      const s2El = scene2Ref.current;
+      const blackEl = solidBlackOverlayRef.current;
+
+      if (!pinEl || !s1El || !s2El || !blackEl) {
         return;
       }
 
+      // Query actual DOM elements directly from Scene 02 to prevent any selector scoping failures
+      const frameEls = Array.from(s2El.querySelectorAll(".intro-interface-frame"));
+      const chapterEls = Array.from(s2El.querySelectorAll(".intro-chapter"));
+      const wordmarkEls = Array.from(s2El.querySelectorAll(".intro-wordmark"));
+      const statementEls = Array.from(s2El.querySelectorAll(".intro-statement"));
+      const conceptEls = Array.from(s2El.querySelectorAll(".intro-concept"));
+      const subheadlineEls = Array.from(s2El.querySelectorAll(".intro-subheadline"));
+      const illustrationEls = Array.from(s2El.querySelectorAll(".intro-illustration"));
+
+      // Pre-initialize intro elements to opacity 0 so fromTo from-states are guaranteed
+      const introEls = [
+        ...frameEls,
+        ...chapterEls,
+        ...wordmarkEls,
+        ...statementEls,
+        ...conceptEls,
+        ...subheadlineEls,
+        ...illustrationEls,
+      ];
+      if (introEls.length > 0) gsap.set(introEls, { opacity: 0 });
+
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: pinWrapperRef.current,
+          trigger: pinEl,
           start: "top top",
           end: "+=320%",
           pin: true,
+          pinSpacing: "margin",
           scrub: 1,
           anticipatePin: 1,
           invalidateOnRefresh: true,
@@ -106,13 +127,16 @@ export default function Hero() {
       if (grainRef.current) {
         tl.to(grainRef.current, { opacity: 0, ease: "power1.inOut", duration: 0.25 }, 0);
       }
+      if (workspaceDecorationsRef.current) {
+        tl.to(workspaceDecorationsRef.current, { opacity: 0, ease: "power1.out", duration: 0.20 }, 0);
+      }
 
       // PHASE 1: ZOOM (0.00 -> 0.65)
       tl.to(
-        scene1Ref.current,
+        s1El,
         {
           scale: 6.4,
-          transformOrigin: "50% 39%",
+          transformOrigin: "50% 35%",
           ease: "none",
           duration: 0.65,
         },
@@ -121,7 +145,7 @@ export default function Hero() {
 
       // PHASE 2: BLACK ENTERS (0.58 -> 0.70)
       tl.to(
-        solidBlackOverlayRef.current,
+        blackEl,
         {
           opacity: 1,
           ease: "power2.inOut",
@@ -130,19 +154,9 @@ export default function Hero() {
         0.58
       );
 
-      // Occlude Scene 01 completely by 0.70
-      tl.set(
-        scene1Ref.current,
-        {
-          visibility: "hidden",
-          display: "none",
-        },
-        0.70
-      );
-
       // Prepare Scene 02 behind the black veil during the hold
       tl.set(
-        scene2Ref.current,
+        s2El,
         {
           visibility: "visible",
           opacity: 1,
@@ -158,7 +172,7 @@ export default function Hero() {
       // PHASE 4: INTRODUCTION REVEAL (0.82 -> 1.00)
       // Solid black veil lifts away
       tl.to(
-        solidBlackOverlayRef.current,
+        blackEl,
         {
           opacity: 0,
           ease: "power2.out",
@@ -169,7 +183,7 @@ export default function Hero() {
 
       // Interface perimeter frame
       tl.fromTo(
-        ".intro-interface-frame",
+        frameEls,
         { opacity: 0 },
         { opacity: 1, ease: "power1.out", duration: 0.05 },
         0.83
@@ -177,7 +191,7 @@ export default function Hero() {
 
       // 1. 02 / INTRODUCTION
       tl.fromTo(
-        ".intro-chapter",
+        chapterEls,
         { opacity: 0, y: 12 },
         { opacity: 1, y: 0, ease: "power3.out", duration: 0.05 },
         0.84
@@ -185,7 +199,7 @@ export default function Hero() {
 
       // 2. MUHAR
       tl.fromTo(
-        ".intro-wordmark",
+        wordmarkEls,
         { opacity: 0, y: 16 },
         { opacity: 1, y: 0, ease: "power3.out", duration: 0.05 },
         0.87
@@ -193,7 +207,7 @@ export default function Hero() {
 
       // 3. Introduction Statement
       tl.fromTo(
-        ".intro-statement",
+        statementEls,
         { opacity: 0, y: 16 },
         { opacity: 1, y: 0, ease: "power3.out", duration: 0.05 },
         0.90
@@ -201,7 +215,7 @@ export default function Hero() {
 
       // 4. Software x Business x People
       tl.fromTo(
-        ".intro-concept",
+        conceptEls,
         { opacity: 0, scale: 0.88 },
         { opacity: 1, scale: 1, ease: "back.out(1.4)", duration: 0.04 },
         0.92
@@ -209,7 +223,7 @@ export default function Hero() {
 
       // 5. Subheadline
       tl.fromTo(
-        ".intro-subheadline",
+        subheadlineEls,
         { opacity: 0, y: 10 },
         { opacity: 1, y: 0, ease: "power2.out", duration: 0.04 },
         0.93
@@ -217,41 +231,52 @@ export default function Hero() {
 
       // 6. Flat Illustration
       tl.fromTo(
-        ".intro-illustration",
+        illustrationEls,
         { opacity: 0, y: 18, scale: 0.95 },
         { opacity: 1, y: 0, scale: 1, ease: "power2.out", duration: 0.05 },
         0.94
-      );
-
-      // 7. Conduit Emitter
-      tl.fromTo(
-        ".intro-conduit-emitter",
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, ease: "power2.out", duration: 0.03 },
-        0.97
       );
     });
 
     // 2. MOBILE & TABLET TIMELINE (max-width: 1023px)
     mm.add("(max-width: 1023px)", () => {
-      if (
-        !pinWrapperRef.current ||
-        !scene1Ref.current ||
-        !scene2Ref.current ||
-        !solidBlackOverlayRef.current
-      ) {
+      const pinEl = pinWrapperRef.current;
+      const s1El = scene1Ref.current;
+      const s2El = scene2Ref.current;
+      const blackEl = solidBlackOverlayRef.current;
+
+      if (!pinEl || !s1El || !s2El || !blackEl) {
         return;
       }
 
-      const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-      const mobileZoomOrigin = isPortrait ? "50% 38.5%" : "50% 39%";
+      // Query actual DOM elements directly from Scene 02 to prevent any selector scoping failures
+      const frameEls = Array.from(s2El.querySelectorAll(".intro-interface-frame"));
+      const chapterEls = Array.from(s2El.querySelectorAll(".intro-chapter"));
+      const wordmarkEls = Array.from(s2El.querySelectorAll(".intro-wordmark"));
+      const statementEls = Array.from(s2El.querySelectorAll(".intro-statement"));
+      const conceptEls = Array.from(s2El.querySelectorAll(".intro-concept"));
+      const subheadlineEls = Array.from(s2El.querySelectorAll(".intro-subheadline"));
+      const illustrationEls = Array.from(s2El.querySelectorAll(".intro-illustration"));
+
+      // Pre-initialize intro elements to opacity 0 so fromTo from-states are guaranteed
+      const introEls = [
+        ...frameEls,
+        ...chapterEls,
+        ...wordmarkEls,
+        ...statementEls,
+        ...conceptEls,
+        ...subheadlineEls,
+        ...illustrationEls,
+      ];
+      if (introEls.length > 0) gsap.set(introEls, { opacity: 0 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: pinWrapperRef.current,
+          trigger: pinEl,
           start: "top top",
           end: "+=280%",
           pin: true,
+          pinSpacing: "margin",
           scrub: 1,
           anticipatePin: 1,
           invalidateOnRefresh: true,
@@ -265,13 +290,16 @@ export default function Hero() {
       if (grainRef.current) {
         tl.to(grainRef.current, { opacity: 0, ease: "power1.inOut", duration: 0.22 }, 0);
       }
+      if (workspaceDecorationsRef.current) {
+        tl.to(workspaceDecorationsRef.current, { opacity: 0, ease: "power1.out", duration: 0.18 }, 0);
+      }
 
-      // PHASE 1: ZOOM into MacBook display on mobile (0.00 -> 0.65)
+      // PHASE 1: ZOOM into workspace on mobile (0.00 -> 0.65)
       tl.to(
-        scene1Ref.current,
+        s1El,
         {
           scale: 6.4,
-          transformOrigin: mobileZoomOrigin,
+          transformOrigin: "50% 50%",
           ease: "none",
           duration: 0.65,
         },
@@ -280,7 +308,7 @@ export default function Hero() {
 
       // PHASE 2: BLACK ENTERS (0.58 -> 0.70)
       tl.to(
-        solidBlackOverlayRef.current,
+        blackEl,
         {
           opacity: 1,
           ease: "power2.inOut",
@@ -289,19 +317,9 @@ export default function Hero() {
         0.58
       );
 
-      // Occlude Scene 01 completely by 0.70
-      tl.set(
-        scene1Ref.current,
-        {
-          visibility: "hidden",
-          display: "none",
-        },
-        0.70
-      );
-
       // Prepare Scene 02 behind veil
       tl.set(
-        scene2Ref.current,
+        s2El,
         {
           visibility: "visible",
           opacity: 1,
@@ -315,7 +333,7 @@ export default function Hero() {
 
       // PHASE 4: INTRODUCTION REVEAL ON MOBILE (0.82 -> 1.00)
       tl.to(
-        solidBlackOverlayRef.current,
+        blackEl,
         {
           opacity: 0,
           ease: "power2.out",
@@ -325,7 +343,7 @@ export default function Hero() {
       );
 
       tl.fromTo(
-        ".intro-interface-frame",
+        frameEls,
         { opacity: 0 },
         { opacity: 1, ease: "power1.out", duration: 0.04 },
         0.83
@@ -333,7 +351,7 @@ export default function Hero() {
 
       // 1. 02 / INTRODUCTION
       tl.fromTo(
-        ".intro-chapter",
+        chapterEls,
         { opacity: 0, y: 12 },
         { opacity: 1, y: 0, ease: "power3.out", duration: 0.05 },
         0.84
@@ -341,7 +359,7 @@ export default function Hero() {
 
       // 2. MUHAR
       tl.fromTo(
-        ".intro-wordmark",
+        wordmarkEls,
         { opacity: 0, y: 14 },
         { opacity: 1, y: 0, ease: "power3.out", duration: 0.05 },
         0.87
@@ -349,7 +367,7 @@ export default function Hero() {
 
       // 3. Statement
       tl.fromTo(
-        ".intro-statement",
+        statementEls,
         { opacity: 0, y: 14 },
         { opacity: 1, y: 0, ease: "power3.out", duration: 0.05 },
         0.90
@@ -357,7 +375,7 @@ export default function Hero() {
 
       // 4. Concept
       tl.fromTo(
-        ".intro-concept",
+        conceptEls,
         { opacity: 0, scale: 0.88 },
         { opacity: 1, scale: 1, ease: "back.out(1.4)", duration: 0.04 },
         0.92
@@ -365,7 +383,7 @@ export default function Hero() {
 
       // Subheadline
       tl.fromTo(
-        ".intro-subheadline",
+        subheadlineEls,
         { opacity: 0, y: 10 },
         { opacity: 1, y: 0, ease: "power2.out", duration: 0.04 },
         0.93
@@ -373,18 +391,10 @@ export default function Hero() {
 
       // 5. Illustration below typography
       tl.fromTo(
-        ".intro-illustration",
+        illustrationEls,
         { opacity: 0, y: 16, scale: 0.94 },
         { opacity: 1, y: 0, scale: 1, ease: "power2.out", duration: 0.05 },
         0.94
-      );
-
-      // 6. Conduit emitter
-      tl.fromTo(
-        ".intro-conduit-emitter",
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, ease: "power2.out", duration: 0.03 },
-        0.97
       );
     });
 
@@ -410,62 +420,69 @@ export default function Hero() {
         ========================================================================== */}
         <div
           ref={scene1Ref}
-          className="pointer-events-none absolute inset-0 z-10 flex h-full w-full items-center justify-center overflow-hidden will-change-transform"
+          className="pointer-events-none absolute inset-0 z-10 flex h-full w-full items-center justify-center overflow-hidden will-change-transform transition-none"
           style={{
             opacity: 1,
             transform: "scale(1)",
-            transformOrigin: "50% 39%",
+            transformOrigin: "50% 50%",
+            transition: "none",
           }}
         >
           <div className="relative h-full w-full min-w-full">
             <Image
-              src="/hero section.jpeg"
+              src="/hero-section.jpeg"
               alt="Editorial developer workspace with MacBook"
               fill
               priority
               sizes="100vw"
               className="h-full w-full object-cover object-center"
             />
+            <WorkspaceDecorations
+              ref={workspaceDecorationsRef}
+              className="pointer-events-none absolute inset-0 h-full w-full will-change-opacity transition-none"
+            />
           </div>
 
           {/* Cinematic Vignette */}
           <div
             ref={vignetteRef}
-            className="pointer-events-none absolute inset-0 z-11 will-change-opacity"
+            className="pointer-events-none absolute inset-0 z-11 will-change-opacity transition-none"
             style={{
               background:
                 "radial-gradient(ellipse 80% 70% at 50% 45%, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.4) 75%, rgba(0, 0, 0, 0.76) 100%)",
+              transition: "none",
             }}
           />
+        </div>
 
-          {/* Subtle Film Grain */}
-          <div
-            ref={grainRef}
-            className="pointer-events-none absolute inset-0 z-12 will-change-opacity"
+        {/* Subtle Film Grain (Positioned over Scene 01, decoupled from scaled Scene1 layer) */}
+        <div
+          ref={grainRef}
+          className="pointer-events-none absolute inset-0 z-12 will-change-opacity transition-none"
+          style={{ transition: "none" }}
+        >
+          <svg
+            className="h-full w-full opacity-[0.035] mix-blend-screen"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <svg
-              className="h-full w-full opacity-[0.035] mix-blend-screen"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <filter id="scene1-film-grain">
-                <feTurbulence
-                  type="fractalNoise"
-                  baseFrequency="0.8"
-                  numOctaves="3"
-                  stitchTiles="stitch"
-                />
-                <feColorMatrix
-                  type="matrix"
-                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"
-                />
-              </filter>
-              <rect
-                width="100%"
-                height="100%"
-                filter="url(#scene1-film-grain)"
+            <filter id="scene1-film-grain">
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.8"
+                numOctaves="3"
+                stitchTiles="stitch"
               />
-            </svg>
-          </div>
+              <feColorMatrix
+                type="matrix"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"
+              />
+            </filter>
+            <rect
+              width="100%"
+              height="100%"
+              filter="url(#scene1-film-grain)"
+            />
+          </svg>
         </div>
 
         {/* =========================================================================
@@ -475,8 +492,8 @@ export default function Hero() {
         ========================================================================== */}
         <div
           ref={blackCoverRef}
-          className="pointer-events-none absolute inset-0 z-20 bg-black will-change-opacity"
-          style={{ opacity: 1 }}
+          className="pointer-events-none absolute inset-0 z-20 bg-black will-change-opacity transition-none"
+          style={{ opacity: 1, transition: "none" }}
           aria-hidden="true"
         />
 
@@ -487,19 +504,20 @@ export default function Hero() {
         ========================================================================== */}
         <div
           ref={solidBlackOverlayRef}
-          className="pointer-events-none absolute inset-0 z-35 bg-[#000000] opacity-0 will-change-opacity"
+          className="pointer-events-none absolute inset-0 z-35 bg-[#000000] opacity-0 will-change-opacity transition-none"
+          style={{ transition: "none" }}
           aria-hidden="true"
         />
 
         {/* =========================================================================
             SCENE 02: PORTFOLIO INTRO CANVAS
-            Z-Index: z-30 (Above Scene 01, under Black Overlay during hold)
-            Full-viewport canvas with zero letterbox and no nested laptop chassis.
+            Z-Index: z-25 (Underneath the Black Overlay during hold, revealed when black lifts)
+            Zero letterboxing, fills 100% of viewport on both desktop and mobile.
         ========================================================================== */}
         <div
           ref={scene2Ref}
-          className="absolute inset-0 z-30 flex h-full w-full items-center justify-center overflow-hidden opacity-0 pointer-events-none"
-          style={{ opacity: 0, visibility: "hidden" }}
+          className="absolute inset-0 z-25 flex h-full w-full items-center justify-center overflow-hidden pointer-events-none transition-none"
+          style={{ opacity: 0, visibility: "hidden", transition: "none" }}
         >
           <Intro className="h-full w-full" />
         </div>
