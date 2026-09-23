@@ -6,7 +6,7 @@ export default function Works() {
     >
       <div className="mx-auto w-full max-w-3xl">
         <p className="mb-4 text-xs font-medium uppercase tracking-widest text-zinc-500">
-          Works — Archive
+          Works / Archive
         </p>
         <h2 className="text-3xl font-medium tracking-tight text-zinc-100 sm:text-4xl">
           Works

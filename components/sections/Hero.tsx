@@ -1,26 +1,10 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import DigitalWorld from "@/components/digital-world/DigitalWorld";
-
-// =========================================================================
-// HERO SCROLL TIMING CONFIGURATION
-// -------------------------------------------------------------------------
-// 0.0 = transition starts (user starts scrolling from top of page)
-// 0.5 = halfway through zoom (camera is getting close to the MacBook screen)
-// 1.0 = transition ends (Scene 2 is fully visible, pin is about to release)
-//
-// Adjust these constants to tune the exact moment Scene 1 fades out and
-// Scene 2 fades in:
-// =========================================================================
-export const SCENE1_FADE_START = 0.8; // When Scene 1 begins to fade out
-export const SCENE1_FADE_END = 0.9; // When Scene 1 has completely disappeared
-
-export const SCENE2_FADE_START = 0.95; // When Scene 2 / HTML screen starts fading in
-export const SCENE2_FADE_END = 1.25; // When Scene 2 / HTML screen becomes fully visible
+import Intro from "@/components/sections/Intro";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -32,265 +16,386 @@ export default function Hero() {
   const scene2Ref = useRef<HTMLDivElement>(null);
   const vignetteRef = useRef<HTMLDivElement>(null);
   const grainRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<HTMLDivElement>(null);
   const blackCoverRef = useRef<HTMLDivElement>(null);
-
-  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(
-    null
-  );
+  const solidBlackOverlayRef = useRef<HTMLDivElement>(null);
 
   useIsomorphicLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    const ctx = gsap.context(() => {
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const isScrolled =
+      typeof window !== "undefined" && window.scrollY > 20;
+
+    // Initial load cinematic reveal (fades black veil to reveal opening visual)
+    if (blackCoverRef.current) {
+      if (prefersReducedMotion || isScrolled) {
+        gsap.set(blackCoverRef.current, { opacity: 0, display: "none" });
+      } else {
+        gsap.to(blackCoverRef.current, {
+          opacity: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          onComplete: () => {
+            if (blackCoverRef.current) {
+              blackCoverRef.current.style.display = "none";
+            }
+          },
+        });
+      }
+    }
+
+    // Reduced motion: bypass camera zoom and display the readable Intro canvas immediately
+    if (prefersReducedMotion) {
+      if (scene1Ref.current) gsap.set(scene1Ref.current, { opacity: 0, display: "none" });
+      if (solidBlackOverlayRef.current) gsap.set(solidBlackOverlayRef.current, { opacity: 0, display: "none" });
+      if (scene2Ref.current) {
+        gsap.set(scene2Ref.current, { opacity: 1, visibility: "visible", pointerEvents: "auto" });
+      }
+      gsap.set(".intro-interface-frame", { opacity: 1 });
+      gsap.set(".intro-chapter", { opacity: 1, y: 0 });
+      gsap.set(".intro-wordmark", { opacity: 1, y: 0 });
+      gsap.set(".intro-statement", { opacity: 1, y: 0 });
+      gsap.set(".intro-concept", { opacity: 1, scale: 1 });
+      gsap.set(".intro-subheadline", { opacity: 1, y: 0 });
+      gsap.set(".intro-illustration", { opacity: 1, y: 0, scale: 1 });
+      gsap.set(".intro-conduit-emitter", { opacity: 1, y: 0 });
+      return;
+    }
+
+    const mm = gsap.matchMedia(pinWrapperRef);
+
+    // =========================================================================
+    // RESPONSIVE MASTER TIMELINES (Desktop & Mobile)
+    // Structured across the exact 4 required scroll phases:
+    // PHASE 1: ZOOM (0.00 -> 0.65): Workspace zooms aggressively into MacBook screen
+    // PHASE 2: BLACK ENTERS (0.58 -> 0.70): Solid black fades 0 -> 1; Scene 1 hidden
+    // PHASE 3: BLACK HOLD (0.70 -> 0.82): Full solid black stillness (noticeable hold)
+    // PHASE 4: INTRODUCTION REVEAL (0.82 -> 1.00): Progressive staggered text reveal
+    // =========================================================================
+
+    // 1. DESKTOP TIMELINE (min-width: 1024px)
+    mm.add("(min-width: 1024px)", () => {
       if (
         !pinWrapperRef.current ||
         !scene1Ref.current ||
-        !scene2Ref.current
+        !scene2Ref.current ||
+        !solidBlackOverlayRef.current
       ) {
         return;
       }
 
-      if (process.env.NODE_ENV === "development") {
-        console.log("[Hero GSAP] Context mounted. Checking DigitalWorld elements in DOM:", {
-          frames: pinWrapperRef.current.querySelectorAll(".dw-interface-frame").length,
-          illustration: pinWrapperRef.current.querySelectorAll(".dw-illustration").length,
-          contentItems: pinWrapperRef.current.querySelectorAll(".dw-content-item").length,
-        });
-      }
-
-      // Cinematic Initial Load Reveal for Scene 01
-      // Fades the solid #000000 black veil from opacity 1 to 0 over 1.0s with power2.out,
-      // revealing Scene 01 smoothly without interfering with ScrollTrigger initialization.
-      const prefersReducedMotion =
-        typeof window !== "undefined" &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      const isScrolled =
-        typeof window !== "undefined" && window.scrollY > 20;
-
-      if (blackCoverRef.current) {
-        if (prefersReducedMotion || isScrolled) {
-          gsap.set(blackCoverRef.current, { opacity: 0, display: "none" });
-        } else {
-          gsap.to(blackCoverRef.current, {
-            opacity: 0,
-            duration: 1.0,
-            ease: "power2.out",
-            onComplete: () => {
-              if (blackCoverRef.current) {
-                blackCoverRef.current.style.display = "none";
-              }
-            },
-          });
-        }
-      }
-
-      // Master Scroll-driven Zoom Timeline
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: pinWrapperRef.current,
           start: "top top",
-          end: "+=200%",
+          end: "+=320%",
           pin: true,
-          scrub: 1, // Smooth scrub with 1s damping
+          scrub: 1,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            if (process.env.NODE_ENV === "development") {
-              if (self.progress >= 0.75 && self.progress <= 1.0) {
-                console.log(
-                  "[Hero GSAP] MacBook screen active, scroll progress:",
-                  self.progress.toFixed(3)
-                );
-              }
-            }
-          },
         },
       });
 
-      // 1. Scene 1 continuous camera zoom into the MacBook screen across the whole transition
-      // Starting from wide developer desk (scale 1) and zooming directly toward
-      // the laptop screen centered at (50% 39%) up to scale 5.2.
+      // Vignette & Film grain dissolve early during camera approach
+      if (vignetteRef.current) {
+        tl.to(vignetteRef.current, { opacity: 0, ease: "power1.inOut", duration: 0.25 }, 0);
+      }
+      if (grainRef.current) {
+        tl.to(grainRef.current, { opacity: 0, ease: "power1.inOut", duration: 0.25 }, 0);
+      }
+
+      // PHASE 1: ZOOM (0.00 -> 0.65)
       tl.to(
         scene1Ref.current,
         {
-          scale: 5.2,
+          scale: 6.4,
           transformOrigin: "50% 39%",
           ease: "none",
-          duration: 1.0,
+          duration: 0.65,
         },
         0
       );
 
-      // 2. Exhibition Label: fades out quickly as user begins scrolling (0.0 -> 0.25)
-      if (labelRef.current) {
-        tl.to(
-          labelRef.current,
-          {
-            opacity: 0,
-            y: -10,
-            ease: "power1.out",
-            duration: 0.25,
-          },
-          0
-        );
+      // PHASE 2: BLACK ENTERS (0.58 -> 0.70)
+      tl.to(
+        solidBlackOverlayRef.current,
+        {
+          opacity: 1,
+          ease: "power2.inOut",
+          duration: 0.12,
+        },
+        0.58
+      );
+
+      // Occlude Scene 01 completely by 0.70
+      tl.set(
+        scene1Ref.current,
+        {
+          visibility: "hidden",
+          display: "none",
+        },
+        0.70
+      );
+
+      // Prepare Scene 02 behind the black veil during the hold
+      tl.set(
+        scene2Ref.current,
+        {
+          visibility: "visible",
+          opacity: 1,
+          pointerEvents: "auto",
+        },
+        0.76
+      );
+
+      // PHASE 3: BLACK HOLD (0.70 -> 0.82)
+      // Dedicated scroll pause in 100% solid black stillness
+      tl.to({}, { duration: 0.12 }, 0.70);
+
+      // PHASE 4: INTRODUCTION REVEAL (0.82 -> 1.00)
+      // Solid black veil lifts away
+      tl.to(
+        solidBlackOverlayRef.current,
+        {
+          opacity: 0,
+          ease: "power2.out",
+          duration: 0.04,
+        },
+        0.82
+      );
+
+      // Interface perimeter frame
+      tl.fromTo(
+        ".intro-interface-frame",
+        { opacity: 0 },
+        { opacity: 1, ease: "power1.out", duration: 0.05 },
+        0.83
+      );
+
+      // 1. 02 / INTRODUCTION
+      tl.fromTo(
+        ".intro-chapter",
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, ease: "power3.out", duration: 0.05 },
+        0.84
+      );
+
+      // 2. MUHAR
+      tl.fromTo(
+        ".intro-wordmark",
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, ease: "power3.out", duration: 0.05 },
+        0.87
+      );
+
+      // 3. Introduction Statement
+      tl.fromTo(
+        ".intro-statement",
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, ease: "power3.out", duration: 0.05 },
+        0.90
+      );
+
+      // 4. Software x Business x People
+      tl.fromTo(
+        ".intro-concept",
+        { opacity: 0, scale: 0.88 },
+        { opacity: 1, scale: 1, ease: "back.out(1.4)", duration: 0.04 },
+        0.92
+      );
+
+      // 5. Subheadline
+      tl.fromTo(
+        ".intro-subheadline",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, ease: "power2.out", duration: 0.04 },
+        0.93
+      );
+
+      // 6. Flat Illustration
+      tl.fromTo(
+        ".intro-illustration",
+        { opacity: 0, y: 18, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, ease: "power2.out", duration: 0.05 },
+        0.94
+      );
+
+      // 7. Conduit Emitter
+      tl.fromTo(
+        ".intro-conduit-emitter",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, ease: "power2.out", duration: 0.03 },
+        0.97
+      );
+    });
+
+    // 2. MOBILE & TABLET TIMELINE (max-width: 1023px)
+    mm.add("(max-width: 1023px)", () => {
+      if (
+        !pinWrapperRef.current ||
+        !scene1Ref.current ||
+        !scene2Ref.current ||
+        !solidBlackOverlayRef.current
+      ) {
+        return;
       }
 
-      // 3. Cinematic Vignette: gradually dissolves as camera moves forward (0.05 -> 0.45)
+      const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+      const mobileZoomOrigin = isPortrait ? "50% 38.5%" : "50% 39%";
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: pinWrapperRef.current,
+          start: "top top",
+          end: "+=280%",
+          pin: true,
+          scrub: 1,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      // Vignette & Film grain dissolve
       if (vignetteRef.current) {
-        tl.to(
-          vignetteRef.current,
-          {
-            opacity: 0,
-            ease: "power1.inOut",
-            duration: 0.4,
-          },
-          0.05
-        );
+        tl.to(vignetteRef.current, { opacity: 0, ease: "power1.inOut", duration: 0.22 }, 0);
       }
-
-      // 4. Subtle Film Grain: dissolves alongside vignette before close-up (0.05 -> 0.45)
       if (grainRef.current) {
-        tl.to(
-          grainRef.current,
-          {
-            opacity: 0,
-            ease: "power1.inOut",
-            duration: 0.4,
-          },
-          0.05
-        );
+        tl.to(grainRef.current, { opacity: 0, ease: "power1.inOut", duration: 0.22 }, 0);
       }
 
-      // 5. Scene 1 fade-out when camera is close to the MacBook screen
+      // PHASE 1: ZOOM into MacBook display on mobile (0.00 -> 0.65)
       tl.to(
         scene1Ref.current,
         {
-          opacity: 0,
-          ease: "power1.inOut",
-          duration: SCENE1_FADE_END - SCENE1_FADE_START,
+          scale: 6.4,
+          transformOrigin: mobileZoomOrigin,
+          ease: "none",
+          duration: 0.65,
         },
-        SCENE1_FADE_START
+        0
       );
 
-      // 6. Scene 2 / HTML screen fades in once camera physically enters the display
-      tl.fromTo(
+      // PHASE 2: BLACK ENTERS (0.58 -> 0.70)
+      tl.to(
+        solidBlackOverlayRef.current,
+        {
+          opacity: 1,
+          ease: "power2.inOut",
+          duration: 0.12,
+        },
+        0.58
+      );
+
+      // Occlude Scene 01 completely by 0.70
+      tl.set(
+        scene1Ref.current,
+        {
+          visibility: "hidden",
+          display: "none",
+        },
+        0.70
+      );
+
+      // Prepare Scene 02 behind veil
+      tl.set(
         scene2Ref.current,
         {
-          opacity: 0,
-          scale: 0.92,
-          transformOrigin: "50% 50%",
-        },
-        {
+          visibility: "visible",
           opacity: 1,
-          scale: 1.0,
-          ease: "power1.out",
-          duration: SCENE2_FADE_END - SCENE2_FADE_START,
+          pointerEvents: "auto",
         },
-        SCENE2_FADE_START
+        0.76
       );
 
-      // 7. Digital World Entrance inside Scene 2:
-      // Choreographed sequence starting right as Scene 2 fades in (0.96 -> 1.25)
-      // Step 1: Digital interface stabilizes (perimeter frame & coordinate boundaries)
+      // PHASE 3: BLACK HOLD (0.70 -> 0.82)
+      tl.to({}, { duration: 0.12 }, 0.70);
+
+      // PHASE 4: INTRODUCTION REVEAL ON MOBILE (0.82 -> 1.00)
+      tl.to(
+        solidBlackOverlayRef.current,
+        {
+          opacity: 0,
+          ease: "power2.out",
+          duration: 0.04,
+        },
+        0.82
+      );
+
       tl.fromTo(
-        ".dw-interface-frame",
+        ".intro-interface-frame",
         { opacity: 0 },
-        { opacity: 1, ease: "power1.out", duration: 0.16 },
-        0.96
+        { opacity: 1, ease: "power1.out", duration: 0.04 },
+        0.83
       );
 
-      // Step 2 & 3: Flat illustration appears and settles into position
+      // 1. 02 / INTRODUCTION
       tl.fromTo(
-        ".dw-illustration",
-        {
-          opacity: 0,
-          y: 22,
-          scale: 0.95,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          ease: "power2.out",
-          duration: 0.2,
-        },
-        1.02
+        ".intro-chapter",
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, ease: "power3.out", duration: 0.05 },
+        0.84
       );
 
-      // Step 3b: Chaos energy particles bloom within illustration
+      // 2. MUHAR
       tl.fromTo(
-        ".dw-illustration-chaos",
-        {
-          opacity: 0,
-          scale: 0.8,
-          transformOrigin: "50% 50%",
-        },
-        {
-          opacity: 1,
-          scale: 1,
-          ease: "back.out(1.4)",
-          duration: 0.16,
-        },
-        1.06
+        ".intro-wordmark",
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, ease: "power3.out", duration: 0.05 },
+        0.87
       );
 
-      // Step 4: Main digital content becomes readable (staggered cascade)
+      // 3. Statement
       tl.fromTo(
-        ".dw-content-item",
-        {
-          opacity: 0,
-          y: 14,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          ease: "power2.out",
-          duration: 0.18,
-          stagger: 0.02,
-        },
-        1.05
+        ".intro-statement",
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, ease: "power3.out", duration: 0.05 },
+        0.90
       );
-    }, pinWrapperRef);
+
+      // 4. Concept
+      tl.fromTo(
+        ".intro-concept",
+        { opacity: 0, scale: 0.88 },
+        { opacity: 1, scale: 1, ease: "back.out(1.4)", duration: 0.04 },
+        0.92
+      );
+
+      // Subheadline
+      tl.fromTo(
+        ".intro-subheadline",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, ease: "power2.out", duration: 0.04 },
+        0.93
+      );
+
+      // 5. Illustration below typography
+      tl.fromTo(
+        ".intro-illustration",
+        { opacity: 0, y: 16, scale: 0.94 },
+        { opacity: 1, y: 0, scale: 1, ease: "power2.out", duration: 0.05 },
+        0.94
+      );
+
+      // 6. Conduit emitter
+      tl.fromTo(
+        ".intro-conduit-emitter",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, ease: "power2.out", duration: 0.03 },
+        0.97
+      );
+    });
 
     return () => {
-      ctx.revert();
-    };
-  }, []);
-
-  // Mouse tracking for subtle ambient sheen on the display in Scene 2
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!heroSectionRef.current) return;
-      const rect = heroSectionRef.current.getBoundingClientRect();
-      setMousePos({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      });
-    };
-
-    const handleMouseLeave = () => {
-      setMousePos(null);
-    };
-
-    const sectionEl = heroSectionRef.current;
-    if (sectionEl) {
-      sectionEl.addEventListener("mousemove", handleMouseMove);
-      sectionEl.addEventListener("mouseleave", handleMouseLeave);
-    }
-
-    return () => {
-      if (sectionEl) {
-        sectionEl.removeEventListener("mousemove", handleMouseMove);
-        sectionEl.removeEventListener("mouseleave", handleMouseLeave);
-      }
+      mm.revert();
     };
   }, []);
 
   return (
     <div ref={pinWrapperRef} className="relative w-full bg-black">
-      {/* Hidden semantic heading for screen readers & SEO without causing visual overlap */}
+      {/* Hidden semantic heading for screen readers & SEO */}
       <h1 className="sr-only">MUHAR: Creating systems and random chaos.</h1>
 
       <section
@@ -299,10 +404,9 @@ export default function Hero() {
         className="relative flex h-screen h-[100dvh] w-full items-center justify-center overflow-hidden bg-black select-none text-zinc-100"
       >
         {/* =========================================================================
-            LAYER 1: Scene 1 JPEG (/public/hero section.jpeg)
+            SCENE 01: PURE VISUAL OPENING SHOT (Desk + MacBook + Lighting)
             Z-Index: z-10
-            Starts 100% visible at scale 1.
-            ScrollTrigger zooms in toward MacBook display (transformOrigin: 50% 39%).
+            No HTML text overlays, no labels, no coordinate tags.
         ========================================================================== */}
         <div
           ref={scene1Ref}
@@ -316,193 +420,88 @@ export default function Hero() {
           <div className="relative h-full w-full min-w-full">
             <Image
               src="/hero section.jpeg"
-              alt="Developer desk with MacBook"
+              alt="Editorial developer workspace with MacBook"
               fill
               priority
               sizes="100vw"
               className="h-full w-full object-cover object-center"
             />
           </div>
-        </div>
 
-        {/* =========================================================================
-            LAYER 2: Cinematic Vignette (Scene 1 only)
-            Z-Index: z-11 (above Scene 1 JPEG, below Grain, Label & Scene 2)
-            Pure CSS radial darkening toward edges; center/MacBook completely clear.
-        ========================================================================== */}
-        <div
-          ref={vignetteRef}
-          className="pointer-events-none absolute inset-0 z-11 will-change-opacity"
-          style={{
-            background:
-              "radial-gradient(ellipse 80% 70% at 50% 45%, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.4) 75%, rgba(0, 0, 0, 0.76) 100%)",
-          }}
-        />
+          {/* Cinematic Vignette */}
+          <div
+            ref={vignetteRef}
+            className="pointer-events-none absolute inset-0 z-11 will-change-opacity"
+            style={{
+              background:
+                "radial-gradient(ellipse 80% 70% at 50% 45%, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.4) 75%, rgba(0, 0, 0, 0.76) 100%)",
+            }}
+          />
 
-        {/* =========================================================================
-            LAYER 3: Subtle Film Grain (Scene 1 only)
-            Z-Index: z-12 (above Vignette, below Label & Scene 2)
-            Static micro-texture; dissolves before close-up.
-        ========================================================================== */}
-        <div
-          ref={grainRef}
-          className="pointer-events-none absolute inset-0 z-12 will-change-opacity"
-        >
-          <svg
-            className="h-full w-full opacity-[0.035] mix-blend-screen"
-            xmlns="http://www.w3.org/2000/svg"
+          {/* Subtle Film Grain */}
+          <div
+            ref={grainRef}
+            className="pointer-events-none absolute inset-0 z-12 will-change-opacity"
           >
-            <filter id="scene1-film-grain">
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.8"
-                numOctaves="3"
-                stitchTiles="stitch"
+            <svg
+              className="h-full w-full opacity-[0.035] mix-blend-screen"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <filter id="scene1-film-grain">
+                <feTurbulence
+                  type="fractalNoise"
+                  baseFrequency="0.8"
+                  numOctaves="3"
+                  stitchTiles="stitch"
+                />
+                <feColorMatrix
+                  type="matrix"
+                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"
+                />
+              </filter>
+              <rect
+                width="100%"
+                height="100%"
+                filter="url(#scene1-film-grain)"
               />
-              <feColorMatrix
-                type="matrix"
-                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"
-              />
-            </filter>
-            <rect
-              width="100%"
-              height="100%"
-              filter="url(#scene1-film-grain)"
-            />
-          </svg>
+            </svg>
+          </div>
         </div>
 
         {/* =========================================================================
-            LAYER 4: Exhibition Label (Scene 1 only)
-            Z-Index: z-13 (above Grain, below Scene 2)
-            Minimal, monochrome, positioned at bottom-left corner away from MacBook.
-        ========================================================================== */}
-        <div
-          ref={labelRef}
-          className="pointer-events-none absolute bottom-8 left-8 sm:bottom-12 sm:left-12 z-13 flex flex-col gap-1 select-none will-change-transform will-change-opacity"
-        >
-          <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-zinc-500">
-            SCENE 01
-          </span>
-          <span className="font-mono text-[11px] sm:text-[12px] uppercase tracking-[0.22em] text-zinc-300">
-            WORKSPACE
-          </span>
-        </div>
-
-        {/* =========================================================================
-            CINEMATIC INITIAL REVEAL LAYER (Scene 1 initial load)
-            Z-Index: z-15 (above Scene 1 JPEG, vignette, grain & label; below Scene 2)
-            Solid #000000 black veil ensuring deterministic initial state without JPEG flash.
-            Fades out smoothly on mount (opacity 1 -> 0, power2.out) to reveal Scene 01.
+            INITIAL MOUNT REVEAL VEIL (Scene 01 initial page load)
+            Z-Index: z-20
+            Fades out on mount to reveal the opening cinematic shot smoothly.
         ========================================================================== */}
         <div
           ref={blackCoverRef}
-          className="pointer-events-none absolute inset-0 z-15 bg-black will-change-opacity"
+          className="pointer-events-none absolute inset-0 z-20 bg-black will-change-opacity"
           style={{ opacity: 1 }}
           aria-hidden="true"
         />
 
         {/* =========================================================================
-            LAYER 5: Scene 2 MacBook Display (/public/hero-next-frame.jpg)
-            Z-Index: z-20 (on top of all Scene 1 layers)
-            Unaffected by Scene 1 vignette, grain, or label.
-            Starts 100% HIDDEN (opacity: 0, scale: 0.92).
-            Fades in at SCENE2_FADE_START.
+            HARD FULL SOLID BLACK TRANSITION OVERLAY (#000000)
+            Z-Index: z-35 (Above ALL Scene 01 layers and Scene 02; covers 100% viewport)
+            No transparency, no gradient, no vignette. Holds for deliberate scrub pause.
+        ========================================================================== */}
+        <div
+          ref={solidBlackOverlayRef}
+          className="pointer-events-none absolute inset-0 z-35 bg-[#000000] opacity-0 will-change-opacity"
+          aria-hidden="true"
+        />
+
+        {/* =========================================================================
+            SCENE 02: PORTFOLIO INTRO CANVAS
+            Z-Index: z-30 (Above Scene 01, under Black Overlay during hold)
+            Full-viewport canvas with zero letterbox and no nested laptop chassis.
         ========================================================================== */}
         <div
           ref={scene2Ref}
-          className="pointer-events-none absolute inset-0 z-20 flex h-full w-full items-center justify-center overflow-hidden p-2.5 sm:p-4 md:p-6 lg:p-8 will-change-transform will-change-opacity opacity-0"
-          style={{
-            opacity: 0,
-            transform: "scale(0.92)",
-            transformOrigin: "50% 50%",
-          }}
+          className="absolute inset-0 z-30 flex h-full w-full items-center justify-center overflow-hidden opacity-0 pointer-events-none"
+          style={{ opacity: 0, visibility: "hidden" }}
         >
-          {/* Close-Up MacBook Chassis Framing */}
-          <div
-            className="relative flex aspect-[16/10] md:aspect-[16/9] w-full max-w-[1720px] flex-col rounded-[16px] sm:rounded-[24px] md:rounded-[34px] bg-[#1e1d27] p-[8px] sm:p-[12px] md:p-[16px] lg:p-[20px] shadow-[0_20px_100px_rgba(0,0,0,0.95)] ring-1 ring-[#3d3b4d]/50"
-            style={{
-              maxHeight: "94vh",
-            }}
-          >
-            {/* Top Bezel Camera Dot */}
-            <div className="absolute top-[3px] sm:top-[4px] md:top-[6px] lg:top-[8px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#0c0c10] ring-1 ring-white/10" />
-
-            {/* Inner Display Surface */}
-            <div
-              className="relative flex h-full w-full flex-1 flex-col items-center justify-center overflow-hidden rounded-[10px] sm:rounded-[16px] md:rounded-[22px] bg-[#121217]"
-              style={{
-                boxShadow: "inset 0 0 80px 10px rgba(0, 0, 0, 0.8)",
-              }}
-            >
-              {/* Clean MacBook Screen Surface Texture */}
-              <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                <Image
-                  src="/macbook-screen-texture.jpg"
-                  alt="MacBook screen surface texture"
-                  fill
-                  priority
-                  sizes="100vw"
-                  className="h-full w-full object-cover object-center"
-                />
-              </div>
-
-              {/* Digital World Interface Layer */}
-              <DigitalWorld className="absolute inset-0 z-10" />
-
-              {/* Subtle Organic Glass Reflection from Reference Scene */}
-              <div
-                className="pointer-events-none absolute inset-0 z-20"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(72, 69, 86, 0.16) 0%, rgba(38, 36, 47, 0.05) 40%, rgba(18, 18, 23, 0.0) 80%, rgba(12, 12, 16, 0.2) 100%)",
-                }}
-              />
-
-              {/* Exhibition Center Key Lighting */}
-              <div
-                className="pointer-events-none absolute inset-0 z-20"
-                style={{
-                  background:
-                    "radial-gradient(ellipse 65% 55% at 50% 46%, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.008) 45%, transparent 75%)",
-                }}
-              />
-
-              {/* Interactive Screen Sheen Following Cursor */}
-              {mousePos && (
-                <div
-                  className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-300 ease-out"
-                  style={{
-                    background: `radial-gradient(550px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255, 255, 255, 0.035) 0%, transparent 70%)`,
-                  }}
-                />
-              )}
-
-              {/* Micro-Noise Grain Filter */}
-              <svg
-                className="pointer-events-none absolute inset-0 z-20 h-full w-full opacity-[0.028] mix-blend-screen"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <filter id="screen-display-noise-hero">
-                  <feTurbulence
-                    type="fractalNoise"
-                    baseFrequency="0.75"
-                    numOctaves="3"
-                    stitchTiles="stitch"
-                  />
-                  <feColorMatrix
-                    type="matrix"
-                    values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"
-                  />
-                </filter>
-                <rect
-                  width="100%"
-                  height="100%"
-                  filter="url(#screen-display-noise-hero)"
-                />
-              </svg>
-            </div>
-          </div>
+          <Intro className="h-full w-full" />
         </div>
       </section>
     </div>
