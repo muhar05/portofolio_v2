@@ -64,7 +64,9 @@ function IntroComponent({ className = "" }: IntroProps) {
         {/* Top Chapter Indicator */}
         <div className="flex items-center gap-1.5 sm:gap-2 tracking-[0.18em] sm:tracking-[0.2em] font-mono text-[9.5px] sm:text-[10.5px]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#f97316]" />
-          <span className="text-[#f97316] font-semibold">02 / INTRODUCTION</span>
+          <span className="text-[#f97316] font-semibold">
+            02 / INTRODUCTION
+          </span>
         </div>
       </header>
 
@@ -92,12 +94,13 @@ function IntroComponent({ className = "" }: IntroProps) {
 
             {/* 2. MUHAR Wordmark */}
             <h1 className="intro-wordmark font-sans text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-none will-change-transform will-change-opacity">
-              MUHAR
+              MUHAR FERDIANSYAH
             </h1>
 
             {/* 3. Introduction Statement */}
             <p className="intro-statement mt-3 font-sans text-2xl lg:text-3xl font-bold tracking-tight text-zinc-100 leading-[1.16] will-change-transform will-change-opacity">
-              &quot;I build systems that make complex things easier to understand.&quot;
+              &quot;I build systems that make complex things easier to
+              understand.&quot;
             </p>
 
             {/* 4. Supporting Concept Badge */}
@@ -110,7 +113,8 @@ function IntroComponent({ className = "" }: IntroProps) {
             {/* 5. Supporting Context */}
             <div className="intro-subheadline mt-3 will-change-transform will-change-opacity">
               <p className="max-w-xl font-sans text-base leading-relaxed text-zinc-300">
-                A developer interested in the space between software, business workflows, and the people using them.
+                A developer interested in the space between software, business
+                workflows, and the people using them.
               </p>
             </div>
           </div>
@@ -123,7 +127,9 @@ function IntroComponent({ className = "" }: IntroProps) {
                 <FlatIllustration />
                 <div className="mt-1 flex items-center justify-between px-1 text-[9px] font-mono text-zinc-500 border-t border-zinc-900/60 pt-1">
                   <span>FIG.01 // SYSTEM CONTEXT</span>
-                  <span className="text-zinc-600">SOFTWARE &times; BUSINESS &times; PEOPLE</span>
+                  <span className="text-zinc-600">
+                    SOFTWARE &times; BUSINESS &times; PEOPLE
+                  </span>
                 </div>
               </div>
             </div>
@@ -149,7 +155,8 @@ function IntroComponent({ className = "" }: IntroProps) {
 
           {/* 3. Introduction Statement */}
           <p className="intro-statement mt-2 font-sans text-base sm:text-xl font-bold tracking-tight text-zinc-100 leading-snug px-2 will-change-transform will-change-opacity">
-            &quot;I build systems that make complex things easier to understand.&quot;
+            &quot;I build systems that make complex things easier to
+            understand.&quot;
           </p>
 
           {/* 4. Supporting Concept Badge */}
@@ -162,7 +169,8 @@ function IntroComponent({ className = "" }: IntroProps) {
           {/* 5. Supporting Context */}
           <div className="intro-subheadline mt-2 will-change-transform will-change-opacity">
             <p className="font-sans text-xs sm:text-sm leading-relaxed text-zinc-300 px-3 max-w-sm">
-              A developer interested in the space between software, business workflows, and the people using them.
+              A developer interested in the space between software, business
+              workflows, and the people using them.
             </p>
           </div>
 
@@ -174,7 +182,9 @@ function IntroComponent({ className = "" }: IntroProps) {
               </div>
               <div className="mt-1 flex items-center justify-between px-1 text-[8px] font-mono text-zinc-500 border-t border-zinc-900/60 pt-0.5">
                 <span>FIG.01 // CONTEXT</span>
-                <span className="text-zinc-600">SOFTWARE &times; BUSINESS &times; PEOPLE</span>
+                <span className="text-zinc-600">
+                  SOFTWARE &times; BUSINESS &times; PEOPLE
+                </span>
               </div>
             </div>
           </div>

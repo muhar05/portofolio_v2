@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MUHAR",
+  title: "MUHAR FULL STACK ENGINEER",
   description: "Creating systems and random chaos.",
 };
 

@@ -2,10 +2,10 @@
   "introduction": {
     "chapter": "02 / INTRODUCTION",
     "name": "MUHAR",
-    "headline": "I turn messy ideas into working systems.",
+    "headline": "I make existing software work better.",
     "concept": "SOFTWARE × BUSINESS × PEOPLE",
-    "description": "I like understanding how things work: the code behind a product, and the people and processes around it.",
-    "closing": "Curious by nature, builder by practice. I keep experimenting."
+    "description": "I look beyond the code to understand the real problem before reaching for tools. Most software does not need to be rewritten from scratch; it needs simpler architecture, targeted optimization, and room to grow. I work with existing systems to make them run reliably, scale cleanly, and stay useful to the people and business processes around them.",
+    "closing": "Curious about how things work. Focused on making them work better."
   },
   "thinking": {
     "chapter": "03 / HOW I THINK",
