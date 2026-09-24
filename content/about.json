@@ -9,20 +9,22 @@
   },
   "thinking": {
     "chapter": "03 / HOW I THINK",
-    "headline": "Curiosity comes first.",
-    "description": "A problem is more interesting before anyone has solved it.",
+    "headline": "I don't start with the stack. I start with the problem.",
     "principles": [
       {
-        "title": "Understand",
-        "description": "Get clear on the problem, the people in it, and how things work today before deciding what to build."
+        "number": "01",
+        "title": "UNDERSTAND",
+        "description": "Find what is actually getting in the way. I look at how the software behaves today, the real constraints around it, and how people actually use it before reaching for tools."
       },
       {
-        "title": "Experiment",
-        "description": "I'd rather find out something is wrong early than build carefully in the wrong direction."
+        "number": "02",
+        "title": "SIMPLIFY",
+        "description": "Remove unnecessary complexity before adding more. I untangle architecture and strip away excess layers. Simple problems should never be solved with complicated systems."
       },
       {
-        "title": "Build",
-        "description": "Turn what I've learned into something people can use and I can keep changing."
+        "number": "03",
+        "title": "EVOLVE",
+        "description": "Improve what exists without rebuilding blindly. I optimize bottlenecks and refine the architecture step by step, keeping the system stable and ready to grow as needs change."
       }
     ]
   }

@@ -1,19 +1,128 @@
 {
   "works": {
-    "chapter": "04 / WHAT I BUILD",
-    "headline": "A small catalog of things I've built.",
-    "description": "Selected systems and digital projects."
+    "chapter": "04 / WHAT I WORK ON",
+    "headline": "Software that has outgrown its original shape.",
+    "description": "I step in when production software has become difficult to maintain, slow to run, or disconnected from the people who rely on it.",
+    "items": [
+      {
+        "number": "01",
+        "title": "EXISTING SYSTEMS",
+        "description": "Codebases that people depend on every day, but where technical debt has made every update feel risky."
+      },
+      {
+        "number": "02",
+        "title": "COMPLEX WORKFLOWS",
+        "description": "Operational tools and multi-step processes where the code no longer matches how people actually work."
+      },
+      {
+        "number": "03",
+        "title": "TANGLED ARCHITECTURE",
+        "description": "Systems weighted down by unnecessary layers and abstractions, where straightforward features have become painful to build."
+      },
+      {
+        "number": "04",
+        "title": "PERFORMANCE BOTTLENECKS",
+        "description": "Unoptimized queries, slow response times, and resource leaks that quietly drag down stability under everyday load."
+      },
+      {
+        "number": "05",
+        "title": "ROOM TO GROW",
+        "description": "Software hitting limits as data and usage climb, needing steady evolution rather than an emergency rewrite."
+      }
+    ]
   },
   "projects": [
     {
       "id": "order-operations-system",
       "title": "ORDER OPERATIONS SYSTEM",
-      "category": "",
-      "year": "",
-      "description": "",
+      "category": "SYSTEM",
+      "year": "2026",
       "role": "",
-      "stack": [],
-      "featured": true
+      "featured": true,
+      "headline": "One order, multiple fulfillment paths.",
+      "description": "An order-centric operations platform connecting sales, purchasing, warehouse, inventory, and finance around a single operational lifecycle.",
+      "overview": {
+        "problem": "In multi-department operations, a single customer order rarely follows a simple linear path. Some items are already on warehouse shelves, while others must be requested from external suppliers with different lead times. When sales, purchasing, warehouse, inventory, and finance rely on fragmented communication, orders lose tracking. Stock gets double-promised, goods arrive at the dock without clear assignment, and deliveries leave before credit terms are verified. The system needed to model these divergent paths explicitly while keeping inventory and financial approvals strictly synchronized.",
+        "approach": "Instead of treating an order as a static document, the system treats each order as an active state machine with per-item branching. Each line item evaluates independently: available inventory is reserved on the spot, while unavailable items trigger an upstream procurement chain from Purchase Request to Purchase Order. Handoffs between departments are enforced through explicit state transitions, requiring operational verification from the warehouse before finance can issue dispatch authorization. Software boundaries were shaped around real physical workflows rather than abstract data models.",
+        "architecture": "The platform is built on PostgreSQL and Prisma with relational constraints enforcing state integrity across all operational tables. Business logic and status changes are wrapped in database transactions to prevent race conditions during concurrent stock reservations. A role-based access control layer with nine distinct roles restricts actions to authorized personnel across Sales, Purchasing, Warehouse, Finance, and Administration. Input validation is centralized with Zod schemas on both client and server, while file attachments such as physical goods receipts and delivery notes are stored in MinIO object storage.",
+        "workflow": "The lifecycle begins when a Sales Order is confirmed. The system inspects every line item: in-stock goods move to Stock Reservation, while backordered items generate a Purchase Request for the procurement team. Once suppliers deliver, confirming the Goods Receipt immediately updates available inventory. The fulfillment team then files a Delivery Request. To eliminate unverified dispatches, the order passes through a sequential dual gate: the Warehouse confirms physical goods are packed, and Finance approves customer payment or credit standing. Only after both approvals are logged does the system generate the official Delivery Order for dispatch."
+      },
+      "workflowStages": [
+        {
+          "step": "01",
+          "name": "SALES ORDER",
+          "department": "Sales",
+          "detail": "Customer order confirmed. Line items are evaluated individually rather than as a monolithic order."
+        },
+        {
+          "step": "02",
+          "name": "FULFILLMENT ROUTING",
+          "department": "Purchasing & Warehouse",
+          "detail": "In-stock items trigger immediate stock reservation. Out-of-stock items branch into a Purchase Request and vendor Purchase Order."
+        },
+        {
+          "step": "03",
+          "name": "RECEIVING & INVENTORY",
+          "department": "Warehouse",
+          "detail": "Purchased items enter the warehouse via Goods Receipt, immediately incrementing available inventory without administrative delay."
+        },
+        {
+          "step": "04",
+          "name": "DUAL-GATE APPROVAL",
+          "department": "Warehouse & Finance",
+          "detail": "Delivery Request requires sequential sign-off: Warehouse confirms physical stock readiness, then Finance clears credit and payment terms."
+        },
+        {
+          "step": "05",
+          "name": "DISPATCH & COMPLETION",
+          "department": "Delivery",
+          "detail": "Formal Delivery Order generated, physical goods released, inventory balances adjusted, and order marked complete."
+        }
+      ],
+      "decisions": [
+        {
+          "number": "01",
+          "title": "PER-ITEM FULFILLMENT SPLIT",
+          "decision": "Evaluates each line item within a Sales Order independently, routing in-stock items to reservation and backordered items to procurement.",
+          "rationale": "Customer orders frequently contain both immediately available goods and items requiring vendor procurement. Forcing an entire order into a single fulfillment track creates unnecessary customer delays."
+        },
+        {
+          "number": "02",
+          "title": "DIRECT GOODS RECEIPT TO INVENTORY",
+          "decision": "Increments inventory availability directly upon physical warehouse Goods Receipt confirmation.",
+          "rationale": "Separates physical receiving from vendor invoicing schedules, ensuring warehouse inventory reflects actual floor availability without administrative delay."
+        },
+        {
+          "number": "03",
+          "title": "DUAL-ROLE DISPATCH APPROVAL",
+          "decision": "Requires sequential authorizations from Warehouse (physical inspection) and Finance (credit and payment standing) before generating a Delivery Order.",
+          "rationale": "Prevents goods from leaving the loading dock before both physical readiness is verified and customer credit terms are validated."
+        },
+        {
+          "number": "04",
+          "title": "TRANSACTIONAL ROLE BOUNDARIES",
+          "decision": "Enforces all cross-department handoffs through database transactions and role-based permissions spanning nine operational roles.",
+          "rationale": "Prevents race conditions during simultaneous stock reservations and maintains an auditable chain of custody across departmental transitions."
+        }
+      ],
+      "highlights": [
+        "Per-item state machine supporting independent reservation and procurement paths per order line.",
+        "Direct Goods Receipt to inventory ingestion keeping stock availability synchronized with physical receiving.",
+        "Role-gated dual approval requiring both Warehouse and Finance authorization prior to dispatch.",
+        "Transactional state handling and role-based access control spanning nine operational roles."
+      ],
+      "stack": [
+        "TypeScript",
+        "Next.js",
+        "PostgreSQL",
+        "Prisma",
+        "NextAuth",
+        "Zod",
+        "TanStack Query",
+        "MinIO",
+        "Tailwind CSS"
+      ],
+      "result": "The system establishes a single, deterministic operational backbone across five departments. Sales teams track fulfillment status per line item, warehouse staff verify inventory against physical goods receipts rather than manual logs, and deliveries require verified sign-offs from both operations and finance before dispatch. By replacing fragmented manual coordination with an explicit state machine, the platform enforces accountability and consistency across the entire order lifecycle."
     }
   ]
 }
