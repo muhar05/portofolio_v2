@@ -1,0 +1,29 @@
+{
+  "introduction": {
+    "chapter": "02 / INTRODUCTION",
+    "name": "MUHAR",
+    "headline": "I turn messy ideas into working systems.",
+    "concept": "SOFTWARE × BUSINESS × PEOPLE",
+    "description": "I like understanding how things work: the code behind a product, and the people and processes around it.",
+    "closing": "Curious by nature, builder by practice. I keep experimenting."
+  },
+  "thinking": {
+    "chapter": "03 / HOW I THINK",
+    "headline": "Curiosity comes first.",
+    "description": "A problem is more interesting before anyone has solved it.",
+    "principles": [
+      {
+        "title": "Understand",
+        "description": "Get clear on the problem, the people in it, and how things work today before deciding what to build."
+      },
+      {
+        "title": "Experiment",
+        "description": "I'd rather find out something is wrong early than build carefully in the wrong direction."
+      },
+      {
+        "title": "Build",
+        "description": "Turn what I've learned into something people can use and I can keep changing."
+      }
+    ]
+  }
+}

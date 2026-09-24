@@ -1,0 +1,19 @@
+{
+  "works": {
+    "chapter": "04 / WHAT I BUILD",
+    "headline": "A small catalog of things I've built.",
+    "description": "Selected systems and digital projects."
+  },
+  "projects": [
+    {
+      "id": "order-operations-system",
+      "title": "ORDER OPERATIONS SYSTEM",
+      "category": "",
+      "year": "",
+      "description": "",
+      "role": "",
+      "stack": [],
+      "featured": true
+    }
+  ]
+}
