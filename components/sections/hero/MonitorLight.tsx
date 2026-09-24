@@ -74,14 +74,52 @@ const MonitorLight = forwardRef<SVGSVGElement, MonitorLightProps>(
           </clipPath>
 
           {/* =========================================================================
-              PHYSICAL DESK SPILL BOUNDARY:
+              PHYSICAL DESK SPILL GEOMETRIC CONTAINMENT BOUNDARY:
               Starts along the bottom bezel seam of the monitor (2071,414 -> 2752,647),
               extending downward/forward across the desk.
-              Excludes the wall behind the monitor and stops well before the MacBook.
           ========================================================================== */}
           <clipPath id="monitor-desk-clip">
             <polygon points="2071,414 2752,647 2752,1536 1500,1536 1500,414" />
           </clipPath>
+
+          {/* Gaussian blur filter ONLY for desk spill layer (stdDeviation: 16) */}
+          <filter id="desk-spill-diffusion" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="16" />
+          </filter>
+
+          {/* Feather filter for mask edge (stdDeviation: 12) */}
+          <filter id="desk-mask-feather" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="12" />
+          </filter>
+
+          {/* Directional desk mask gradient: white near monitor/stand, fading to black toward perimeter */}
+          <radialGradient
+            id="monitor-desk-mask-grad"
+            cx="2420"
+            cy="530"
+            rx="600"
+            ry="350"
+            fx="2480"
+            fy="500"
+            gradientTransform="rotate(18, 2420, 530)"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+            <stop offset="40%" stopColor="#ffffff" stopOpacity="0.9" />
+            <stop offset="65%" stopColor="#ffffff" stopOpacity="0.45" />
+            <stop offset="85%" stopColor="#ffffff" stopOpacity="0.1" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+          </radialGradient>
+
+          {/* Feathered SVG mask using containment polygon and directional gradient */}
+          <mask id="monitor-desk-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="2752" height="1536">
+            <rect x="0" y="0" width="2752" height="1536" fill="#000000" />
+            <polygon
+              points="2071,414 2752,647 2752,1500 1500,1500 1500,414"
+              fill="url(#monitor-desk-mask-grad)"
+              filter="url(#desk-mask-feather)"
+            />
+          </mask>
 
           {/* =========================================================================
               SCREEN LUMINANCE:
@@ -124,8 +162,8 @@ const MonitorLight = forwardRef<SVGSVGElement, MonitorLightProps>(
             id="monitor-desk-spill-primary"
             cx="2400"
             cy="560"
-            rx="520"
-            ry="300"
+            rx="500"
+            ry="290"
             fx="2460"
             fy="520"
             gradientTransform="rotate(16, 2400, 560)"
@@ -159,24 +197,25 @@ const MonitorLight = forwardRef<SVGSVGElement, MonitorLightProps>(
             <stop offset="100%" stopColor="#fb923c" stopOpacity="0" />
           </radialGradient>
 
-          {/* Immediate bezel-edge soft spill strip under monitor */}
+          {/* Perpendicular proximity sheen under bezel (fades cleanly from bezel down to 0) */}
           <linearGradient
             id="monitor-desk-immediate-sheen"
-            x1="2071"
-            y1="414"
-            x2="2752"
-            y2="647"
+            x1="2412"
+            y1="525"
+            x2="2385"
+            y2="600"
             gradientUnits="userSpaceOnUse"
           >
-            <stop offset="0%" stopColor="#f8fafc" stopOpacity="0.18" />
-            <stop offset="50%" stopColor="#bae6fd" stopOpacity="0.32" />
-            <stop offset="100%" stopColor="#f8fafc" stopOpacity="0.20" />
+            <stop offset="0%" stopColor="#bae6fd" stopOpacity="0.30" />
+            <stop offset="35%" stopColor="#bae6fd" stopOpacity="0.18" />
+            <stop offset="75%" stopColor="#bae6fd" stopOpacity="0.04" />
+            <stop offset="100%" stopColor="#bae6fd" stopOpacity="0" />
           </linearGradient>
         </defs>
 
-        {/* Breathing Group: naturally fluctuates monitor intensity (1.0 -> 0.88 -> 1.0) */}
+        {/* Breathing Group: naturally fluctuates monitor intensity (DIM 0.68 <-> BRIGHT 1.0) */}
         <g id="monitor-light-breathing" opacity="1.0">
-          {/* LAYER 1: Active Monitor Screen Glow */}
+          {/* LAYER 1: Active Monitor Screen Glow (crisp display luminescence) */}
           <g
             id="monitor-screen-light"
             clipPath="url(#monitor-display-clip)"
@@ -198,18 +237,19 @@ const MonitorLight = forwardRef<SVGSVGElement, MonitorLightProps>(
             />
           </g>
 
-          {/* LAYER 2: Light Spill onto Desk, Stand, Cables, and Papers */}
+          {/* LAYER 2: Light Spill onto Desk, Stand, Cables, and Papers (diffused with feathered mask & Gaussian blur) */}
           <g
             id="monitor-light-spill"
-            clipPath="url(#monitor-desk-clip)"
+            mask="url(#monitor-desk-mask)"
+            filter="url(#desk-spill-diffusion)"
             style={{ mixBlendMode: "screen" }}
           >
             {/* Primary directional display cast */}
             <ellipse
               cx="2400"
               cy="560"
-              rx="520"
-              ry="300"
+              rx="500"
+              ry="290"
               fill="url(#monitor-desk-spill-primary)"
             />
             {/* Warm wood reflection */}
@@ -220,11 +260,10 @@ const MonitorLight = forwardRef<SVGSVGElement, MonitorLightProps>(
               ry="220"
               fill="url(#monitor-desk-spill-warm)"
             />
-            {/* Soft proximity sheen directly below bottom bezel */}
+            {/* Diffused proximity sheen directly below bottom bezel */}
             <polygon
-              points="2071,414 2752,647 2752,675 2071,442"
+              points="2071,414 2752,647 2752,690 2071,457"
               fill="url(#monitor-desk-immediate-sheen)"
-              opacity="0.35"
             />
           </g>
         </g>

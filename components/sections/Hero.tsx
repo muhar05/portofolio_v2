@@ -22,6 +22,7 @@ export default function Hero() {
   const solidBlackOverlayRef = useRef<HTMLDivElement>(null);
   const boardLedRef = useRef<SVGSVGElement>(null);
   const monitorLightRef = useRef<SVGSVGElement>(null);
+  const scene1LabelRef = useRef<HTMLDivElement>(null);
 
   useIsomorphicLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -54,6 +55,7 @@ export default function Hero() {
     // Reduced motion: bypass camera zoom and display the readable Intro canvas immediately
     if (prefersReducedMotion) {
       if (scene1Ref.current) gsap.set(scene1Ref.current, { opacity: 0, display: "none" });
+      if (scene1LabelRef.current) gsap.set(scene1LabelRef.current, { opacity: 0, display: "none" });
       if (solidBlackOverlayRef.current) gsap.set(solidBlackOverlayRef.current, { opacity: 0, display: "none" });
       if (scene2Ref.current) {
         gsap.set(scene2Ref.current, { opacity: 1, visibility: "visible", pointerEvents: "auto" });
@@ -134,6 +136,13 @@ export default function Hero() {
       }
       if (monitorLightRef.current) {
         tl.to(monitorLightRef.current, { opacity: 0, ease: "power1.out", duration: 0.20 }, 0);
+      }
+      if (scene1LabelRef.current) {
+        tl.to(
+          scene1LabelRef.current,
+          { opacity: 0, y: -8, ease: "power1.out", duration: 0.18 },
+          0
+        );
       }
 
       // PHASE 1: ZOOM (0.00 -> 0.65)
@@ -301,6 +310,13 @@ export default function Hero() {
       if (monitorLightRef.current) {
         tl.to(monitorLightRef.current, { opacity: 0, ease: "power1.out", duration: 0.18 }, 0);
       }
+      if (scene1LabelRef.current) {
+        tl.to(
+          scene1LabelRef.current,
+          { opacity: 0, y: -8, ease: "power1.out", duration: 0.16 },
+          0
+        );
+      }
 
       // PHASE 1: ZOOM into workspace on mobile (0.00 -> 0.65)
       tl.to(
@@ -444,7 +460,7 @@ export default function Hero() {
               priority
               sizes="100vw"
               className="h-full w-full object-cover object-center"
-              style={{ filter: "brightness(0.93)" }}
+              style={{ filter: "brightness(0.60)" }}
             />
             <BoardStatusLed
               ref={boardLedRef}
@@ -496,6 +512,26 @@ export default function Hero() {
               filter="url(#scene1-film-grain)"
             />
           </svg>
+        </div>
+
+        {/* =========================================================================
+            SCENE 01 EDITORIAL MICRO-LABEL
+            Z-Index: z-15
+            Exhibition annotation: 01 / WORKSPACE, SYSTEMS IN PROGRESS
+        ========================================================================== */}
+        <div
+          ref={scene1LabelRef}
+          className="pointer-events-none absolute top-[100px] left-[24px] sm:left-[60px] md:top-[115px] md:left-[85px] lg:top-[120px] lg:left-[90px] z-15 flex flex-col font-mono select-none will-change-transform will-change-opacity"
+          style={{ opacity: 0.72 }}
+          aria-hidden="true"
+        >
+          <span className="text-[10px] md:text-[11px] font-medium tracking-[0.2em] text-zinc-300 uppercase">
+            01 / WORKSPACE
+          </span>
+          <div className="my-1.5 h-px w-full bg-zinc-400/40" />
+          <span className="text-[9px] md:text-[9.5px] font-normal tracking-[0.18em] text-zinc-400 uppercase">
+            SYSTEMS IN PROGRESS
+          </span>
         </div>
 
         {/* =========================================================================
