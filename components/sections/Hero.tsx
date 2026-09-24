@@ -5,7 +5,8 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Intro from "@/components/sections/Intro";
-import WorkspaceDecorations from "./hero/WorkspaceDecorations";
+import BoardStatusLed from "./hero/BoardStatusLed";
+import MonitorLight from "./hero/MonitorLight";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -19,7 +20,8 @@ export default function Hero() {
   const grainRef = useRef<HTMLDivElement>(null);
   const blackCoverRef = useRef<HTMLDivElement>(null);
   const solidBlackOverlayRef = useRef<HTMLDivElement>(null);
-  const workspaceDecorationsRef = useRef<SVGSVGElement>(null);
+  const boardLedRef = useRef<SVGSVGElement>(null);
+  const monitorLightRef = useRef<SVGSVGElement>(null);
 
   useIsomorphicLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -127,8 +129,11 @@ export default function Hero() {
       if (grainRef.current) {
         tl.to(grainRef.current, { opacity: 0, ease: "power1.inOut", duration: 0.25 }, 0);
       }
-      if (workspaceDecorationsRef.current) {
-        tl.to(workspaceDecorationsRef.current, { opacity: 0, ease: "power1.out", duration: 0.20 }, 0);
+      if (boardLedRef.current) {
+        tl.to(boardLedRef.current, { opacity: 0, ease: "power1.out", duration: 0.20 }, 0);
+      }
+      if (monitorLightRef.current) {
+        tl.to(monitorLightRef.current, { opacity: 0, ease: "power1.out", duration: 0.20 }, 0);
       }
 
       // PHASE 1: ZOOM (0.00 -> 0.65)
@@ -290,8 +295,11 @@ export default function Hero() {
       if (grainRef.current) {
         tl.to(grainRef.current, { opacity: 0, ease: "power1.inOut", duration: 0.22 }, 0);
       }
-      if (workspaceDecorationsRef.current) {
-        tl.to(workspaceDecorationsRef.current, { opacity: 0, ease: "power1.out", duration: 0.18 }, 0);
+      if (boardLedRef.current) {
+        tl.to(boardLedRef.current, { opacity: 0, ease: "power1.out", duration: 0.18 }, 0);
+      }
+      if (monitorLightRef.current) {
+        tl.to(monitorLightRef.current, { opacity: 0, ease: "power1.out", duration: 0.18 }, 0);
       }
 
       // PHASE 1: ZOOM into workspace on mobile (0.00 -> 0.65)
@@ -436,9 +444,14 @@ export default function Hero() {
               priority
               sizes="100vw"
               className="h-full w-full object-cover object-center"
+              style={{ filter: "brightness(0.93)" }}
             />
-            <WorkspaceDecorations
-              ref={workspaceDecorationsRef}
+            <BoardStatusLed
+              ref={boardLedRef}
+              className="pointer-events-none absolute inset-0 h-full w-full will-change-opacity transition-none"
+            />
+            <MonitorLight
+              ref={monitorLightRef}
               className="pointer-events-none absolute inset-0 h-full w-full will-change-opacity transition-none"
             />
           </div>
