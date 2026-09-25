@@ -119,8 +119,8 @@ export default function Hero() {
           pin: true,
           pinSpacing: "margin",
           scrub: 1,
-          anticipatePin: 1,
           invalidateOnRefresh: true,
+          refreshPriority: 1,
         },
       });
 
@@ -292,8 +292,8 @@ export default function Hero() {
           pin: true,
           pinSpacing: "margin",
           scrub: 1,
-          anticipatePin: 1,
           invalidateOnRefresh: true,
+          refreshPriority: 1,
         },
       });
 

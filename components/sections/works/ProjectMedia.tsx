@@ -3,10 +3,11 @@
 import Image from "next/image";
 import type { ProjectMedia as ProjectMediaType } from "@/types/works";
 
-interface ProjectMediaProps {
+export interface ProjectMediaProps {
   media: ProjectMediaType;
   title: string;
   variant?: "cover" | "overview" | "architecture";
+  mode?: "image" | "video";
   className?: string;
   priority?: boolean;
 }
@@ -15,22 +16,32 @@ export default function ProjectMedia({
   media,
   title,
   variant = "cover",
+  mode = "image",
   className = "",
   priority = false,
 }: ProjectMediaProps) {
   const { images, video } = media;
-  const imageSrc = images[variant] || images.cover;
 
-  // If a video source is specified, render the appropriate player
-  if (video?.src) {
+  // VIDEO MODE: Only render if explicitly requested and video.src is non-empty
+  if (mode === "video") {
+    const videoSrc = video?.src?.trim();
+
+    // If video src is empty or missing, hide completely (do not render container)
+    if (!video || !videoSrc) {
+      return null;
+    }
+
     if (video.type === "youtube") {
-      // Helper to format or sanitize YouTube embed URL if needed
-      const embedUrl = video.src.includes("embed")
-        ? video.src
-        : `https://www.youtube.com/embed/${video.src}`;
+      const embedUrl = videoSrc.includes("embed")
+        ? videoSrc
+        : videoSrc.includes("watch?v=")
+        ? videoSrc.replace("watch?v=", "embed/")
+        : `https://www.youtube.com/embed/${videoSrc}`;
 
       return (
-        <div className={`relative aspect-video w-full overflow-hidden rounded border border-zinc-800/80 bg-zinc-950 ${className}`}>
+        <div
+          className={`relative aspect-video w-full overflow-hidden rounded border border-zinc-800/80 bg-zinc-950 ${className}`}
+        >
           <iframe
             src={embedUrl}
             title={`${title} video demonstration`}
@@ -44,9 +55,11 @@ export default function ProjectMedia({
 
     if (video.type === "local") {
       return (
-        <div className={`relative aspect-video w-full overflow-hidden rounded border border-zinc-800/80 bg-zinc-950 ${className}`}>
+        <div
+          className={`relative aspect-video w-full overflow-hidden rounded border border-zinc-800/80 bg-zinc-950 ${className}`}
+        >
           <video
-            src={video.src}
+            src={videoSrc}
             controls
             playsInline
             preload="metadata"
@@ -57,11 +70,17 @@ export default function ProjectMedia({
         </div>
       );
     }
+
+    return null;
   }
 
-  // Default to static image placeholder from project data
+  // IMAGE MODE: Render project image only (no video fallback or container)
+  const imageSrc = images[variant] || images.cover;
+
   return (
-    <div className={`relative aspect-video w-full overflow-hidden rounded border border-zinc-800/80 bg-zinc-950 ${className}`}>
+    <div
+      className={`relative aspect-video w-full overflow-hidden rounded border border-zinc-800/80 bg-zinc-950 ${className}`}
+    >
       <Image
         src={imageSrc}
         alt={`${title} - ${variant} visual`}

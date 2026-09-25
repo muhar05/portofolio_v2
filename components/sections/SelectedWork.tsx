@@ -5,6 +5,8 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import worksData from "@/content/works.json";
+import ProjectMedia from "@/components/sections/works/ProjectMedia";
+import type { ProjectMedia as ProjectMediaType } from "@/types/works";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -143,39 +145,62 @@ export default function SelectedWork() {
 
       <div className="mx-auto w-full max-w-5xl">
         {/* =====================================================================
-            01 / HEADER: HOOK & POSITIONING
+            01 / HEADER: HOOK, POSITIONING & PROJECT COVER ARTIFACT
         ====================================================================== */}
-        <div ref={headerRef} className="max-w-3xl will-change-transform will-change-opacity">
-          <div className="flex items-center gap-2.5 font-mono text-[11px] sm:text-xs uppercase tracking-[0.24em] text-[#f97316] font-semibold">
-            <span
-              className="h-1.5 w-1.5 rounded-full bg-[#f97316]"
-              aria-hidden="true"
-            />
-            <span>05 / SELECTED WORK</span>
-            <span className="h-px w-6 sm:w-8 bg-zinc-800" aria-hidden="true" />
-            <span className="text-[10px] text-zinc-400 uppercase tracking-widest hidden sm:inline-block">
-              FEATURED ARTIFACT
-            </span>
+        <div
+          ref={headerRef}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center will-change-transform will-change-opacity"
+        >
+          <div className="lg:col-span-7">
+            <div className="flex items-center gap-2.5 font-mono text-[11px] sm:text-xs uppercase tracking-[0.24em] text-[#f97316] font-semibold">
+              <span
+                className="h-1.5 w-1.5 rounded-full bg-[#f97316]"
+                aria-hidden="true"
+              />
+              <span>05 / SELECTED WORK</span>
+              <span className="h-px w-6 sm:w-8 bg-zinc-800" aria-hidden="true" />
+              <span className="text-[10px] text-zinc-400 uppercase tracking-widest hidden sm:inline-block">
+                FEATURED ARTIFACT
+              </span>
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs uppercase tracking-[0.18em] text-zinc-400">
+              <span className="text-zinc-200 font-semibold">{project.title}</span>
+              <span className="text-zinc-600" aria-hidden="true">·</span>
+              <span>{project.category}</span>
+              <span className="text-zinc-600" aria-hidden="true">·</span>
+              <span>{project.year}</span>
+            </div>
+
+            <h2
+              id="selected-work-heading"
+              className="mt-5 sm:mt-6 font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-white leading-[1.12]"
+            >
+              {project.headline}
+            </h2>
+
+            <p className="mt-4 sm:mt-6 font-sans text-base sm:text-lg text-zinc-300 leading-relaxed font-normal max-w-2xl">
+              {project.description}
+            </p>
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs uppercase tracking-[0.18em] text-zinc-400">
-            <span className="text-zinc-200 font-semibold">{project.title}</span>
-            <span className="text-zinc-600" aria-hidden="true">·</span>
-            <span>{project.category}</span>
-            <span className="text-zinc-600" aria-hidden="true">·</span>
-            <span>{project.year}</span>
-          </div>
-
-          <h2
-            id="selected-work-heading"
-            className="mt-5 sm:mt-6 font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-white leading-[1.12]"
-          >
-            {project.headline}
-          </h2>
-
-          <p className="mt-4 sm:mt-6 font-sans text-base sm:text-lg text-zinc-300 leading-relaxed font-normal max-w-2xl">
-            {project.description}
-          </p>
+          {project.media && (
+            <div className="lg:col-span-5">
+              <div className="relative">
+                <ProjectMedia
+                  media={project.media as ProjectMediaType}
+                  title={project.title}
+                  variant="cover"
+                  mode="image"
+                  priority
+                />
+                <div className="mt-2.5 flex items-center justify-between text-[9.5px] font-mono text-zinc-500 uppercase tracking-widest">
+                  <span>PROJECT ARTIFACT</span>
+                  <span>PRIMARY VISUAL</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* =====================================================================

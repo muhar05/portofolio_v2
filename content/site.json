@@ -2,9 +2,21 @@
   "name": "MUHAR",
   "statement": "Creating systems and random chaos.",
   "contact": {
-    "chapter": "08 / CONTACT",
-    "headline": "Where can the story continue?",
-    "description": "Available for select projects and collaborations.",
-    "links": []
+    "chapter": "06 / CONTACT",
+    "headline": "Let's build something useful.",
+    "description": "Have a system to build, improve, or untangle? Let's talk.",
+    "whatsapp": {
+      "display": "0485748375349",
+      "href": "https://wa.me/6285748375349"
+    },
+    "github": {
+      "display": "@muhar05",
+      "href": "https://github.com/muhar05"
+    },
+    "linkedin": {
+      "display": "Muhar Ferdiansyah",
+      "href": "https://www.linkedin.com/in/muhar-ferdiansyah-b44161291/"
+    },
+    "cv": "/cv/Muhar-Ferdiansyah-CV.pdf"
   }
 }
