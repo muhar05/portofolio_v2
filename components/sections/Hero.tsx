@@ -460,7 +460,7 @@ export default function Hero() {
               priority
               sizes="100vw"
               className="h-full w-full object-cover object-center"
-              style={{ filter: "brightness(0.93)" }}
+              style={{ filter: "brightness(0.73)" }}
             />
             <BoardStatusLed
               ref={boardLedRef}

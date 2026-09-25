@@ -41,6 +41,17 @@
       "featured": true,
       "headline": "One order, multiple fulfillment paths.",
       "description": "An order-centric operations platform connecting sales, purchasing, warehouse, inventory, and finance around a single operational lifecycle.",
+      "media": {
+        "images": {
+          "cover": "/images/works/order-operations-system/cover-placeholder.jpg",
+          "overview": "/images/works/order-operations-system/overview-placeholder.jpg",
+          "architecture": "/images/works/order-operations-system/architecture-placeholder.jpg"
+        },
+        "video": {
+          "type": "youtube",
+          "src": ""
+        }
+      },
       "overview": {
         "problem": "In multi-department operations, a single customer order rarely follows a simple linear path. Some items are already on warehouse shelves, while others must be requested from external suppliers with different lead times. When sales, purchasing, warehouse, inventory, and finance rely on fragmented communication, orders lose tracking. Stock gets double-promised, goods arrive at the dock without clear assignment, and deliveries leave before credit terms are verified. The system needed to model these divergent paths explicitly while keeping inventory and financial approvals strictly synchronized.",
         "approach": "Instead of treating an order as a static document, the system treats each order as an active state machine with per-item branching. Each line item evaluates independently: available inventory is reserved on the spot, while unavailable items trigger an upstream procurement chain from Purchase Request to Purchase Order. Handoffs between departments are enforced through explicit state transitions, requiring operational verification from the warehouse before finance can issue dispatch authorization. Software boundaries were shaped around real physical workflows rather than abstract data models.",
