@@ -444,7 +444,7 @@ export default function Hero() {
         ========================================================================== */}
         <div
           ref={scene1Ref}
-          className="pointer-events-none absolute inset-0 z-10 flex h-full w-full items-center justify-center overflow-hidden will-change-transform transition-none"
+          className="pointer-events-none absolute inset-0 z-10 flex h-full w-full items-center justify-center overflow-hidden transition-none"
           style={{
             opacity: 1,
             transform: "scale(1)",
