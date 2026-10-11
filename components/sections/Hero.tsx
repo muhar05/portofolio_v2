@@ -21,7 +21,7 @@ export default function Hero() {
   const blackCoverRef = useRef<HTMLDivElement>(null);
   const solidBlackOverlayRef = useRef<HTMLDivElement>(null);
   const boardLedRef = useRef<SVGSVGElement>(null);
-  const monitorLightRef = useRef<SVGSVGElement>(null);
+  const monitorLightRef = useRef<HTMLDivElement>(null);
   const scene1LabelRef = useRef<HTMLDivElement>(null);
 
   useIsomorphicLayoutEffect(() => {
