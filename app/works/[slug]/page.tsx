@@ -39,7 +39,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${project.title} — Case Study`,
+    title: `${project.title}: Case Study`,
     description: project.description,
   };
 }

@@ -157,7 +157,7 @@ export default function SelectedWork() {
                 className="h-1.5 w-1.5 rounded-full bg-[#f97316]"
                 aria-hidden="true"
               />
-              <span>05 / SELECTED WORK</span>
+              <span>04 / SELECTED WORK</span>
               <span className="h-px w-6 sm:w-8 bg-zinc-800" aria-hidden="true" />
               <span className="text-[10px] text-zinc-400 uppercase tracking-widest hidden sm:inline-block">
                 FEATURED ARTIFACT

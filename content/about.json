@@ -1,6 +1,6 @@
 {
   "introduction": {
-    "chapter": "02 / INTRODUCTION",
+    "chapter": "01 / INTRODUCTION",
     "name": "MUHAR",
     "headline": "I make existing software work better.",
     "concept": "SOFTWARE × BUSINESS × PEOPLE",
@@ -8,7 +8,7 @@
     "closing": "Curious about how things work. Focused on making them work better."
   },
   "thinking": {
-    "chapter": "03 / HOW I THINK",
+    "chapter": "02 / HOW I THINK",
     "headline": "I don't start with the stack. I start with the problem.",
     "principles": [
       {
