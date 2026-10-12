@@ -139,7 +139,7 @@ export default function SelectedWork() {
       ref={sectionRef}
       id="selected-work"
       aria-labelledby="selected-work-heading"
-      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-28 sm:py-36 md:py-44 overflow-hidden border-b border-zinc-800/40"
+      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-16 sm:py-20 md:py-24 overflow-hidden border-b border-zinc-800/40"
     >
       <div id="project" className="absolute -top-12" aria-hidden="true" />
 
@@ -157,10 +157,10 @@ export default function SelectedWork() {
                 className="h-1.5 w-1.5 rounded-full bg-[#f97316]"
                 aria-hidden="true"
               />
-              <span>04 / SELECTED WORK</span>
+              <span>03 / FEATURED WORK</span>
               <span className="h-px w-6 sm:w-8 bg-zinc-800" aria-hidden="true" />
               <span className="text-[10px] text-zinc-400 uppercase tracking-widest hidden sm:inline-block">
-                FEATURED ARTIFACT
+                PRODUCTION ARTIFACT
               </span>
             </div>
 
@@ -182,6 +182,19 @@ export default function SelectedWork() {
             <p className="mt-4 sm:mt-6 font-sans text-base sm:text-lg text-zinc-300 leading-relaxed font-normal max-w-2xl">
               {project.description}
             </p>
+
+            {project.stack && project.stack.length > 0 && (
+              <div className="mt-5 flex flex-wrap gap-1.5">
+                {project.stack.slice(0, 6).map((tech) => (
+                  <span
+                    key={tech}
+                    className="rounded border border-zinc-800 bg-zinc-900/60 px-2.5 py-1 font-mono text-[11px] text-zinc-300"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {project.media && (

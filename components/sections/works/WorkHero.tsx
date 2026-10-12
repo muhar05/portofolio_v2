@@ -53,7 +53,7 @@ export default function WorkHero({ project }: WorkHeroProps) {
   return (
     <section
       ref={rootRef}
-      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-16 sm:py-24 md:py-28"
+      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-16 sm:py-20 md:py-24"
     >
       <div className="mx-auto w-full max-w-5xl">
         <nav aria-label="Back to work" className="mb-12 sm:mb-16" data-reveal>

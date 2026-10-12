@@ -16,9 +16,9 @@ export interface ProjectMedia {
 
 export interface ProjectOverview {
   problem: string;
-  approach: string;
+  approach?: string;
   architecture: string;
-  workflow: string;
+  workflow?: string;
 }
 
 export interface WorkflowStage {
@@ -28,11 +28,31 @@ export interface WorkflowStage {
   detail: string;
 }
 
+export interface FlowStep {
+  name: string;
+  department: string;
+  action: string;
+}
+
+export interface InteractiveFlowPath {
+  id: string;
+  title: string;
+  badge: string;
+  description: string;
+  steps: FlowStep[];
+}
+
 export interface ProjectDecision {
   number: string;
   title: string;
   decision: string;
   rationale: string;
+}
+
+export interface ArchitectureLayer {
+  number: string;
+  name: string;
+  items: string[];
 }
 
 export interface Project {
@@ -45,9 +65,13 @@ export interface Project {
   headline: string;
   description: string;
   media?: ProjectMedia;
+  domains?: string[];
+  problemPoints?: string[];
   overview: ProjectOverview;
+  flowPaths?: InteractiveFlowPath[];
   workflowStages: WorkflowStage[];
   decisions: ProjectDecision[];
+  architectureLayers?: ArchitectureLayer[];
   highlights: string[];
   stack: string[];
   result: string;

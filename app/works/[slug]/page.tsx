@@ -3,14 +3,8 @@ import type { Metadata } from "next";
 import worksData from "@/content/works.json";
 import WorkHero from "@/components/sections/works/WorkHero";
 import WorkProblem from "@/components/sections/works/WorkProblem";
-import WorkApproach from "@/components/sections/works/WorkApproach";
-import WorkFulfillment from "@/components/sections/works/WorkFulfillment";
+import WorkFulfillmentFlow from "@/components/sections/works/WorkFulfillmentFlow";
 import WorkArchitecture from "@/components/sections/works/WorkArchitecture";
-import WorkDecisions from "@/components/sections/works/WorkDecisions";
-import WorkWorkflow from "@/components/sections/works/WorkWorkflow";
-import WorkDemo from "@/components/sections/works/WorkDemo";
-import WorkResult from "@/components/sections/works/WorkResult";
-import WorkStack from "@/components/sections/works/WorkStack";
 import WorkClosing from "@/components/sections/works/WorkClosing";
 import type { Project } from "@/types/works";
 
@@ -55,15 +49,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   return (
     <main className="flex-1">
       <WorkHero project={project as Project} />
-      <WorkProblem />
-      <WorkApproach />
-      <WorkFulfillment />
-      <WorkArchitecture />
-      <WorkDecisions />
-      <WorkWorkflow />
-      <WorkDemo project={project as Project} />
-      <WorkResult />
-      <WorkStack />
+      <WorkProblem project={project as Project} />
+      <WorkFulfillmentFlow project={project as Project} />
+      <WorkArchitecture project={project as Project} />
       <WorkClosing />
     </main>
   );

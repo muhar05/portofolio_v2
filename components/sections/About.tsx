@@ -142,7 +142,7 @@ export default function About() {
       ref={sectionRef}
       id="thinking"
       aria-labelledby="thinking-heading"
-      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-28 sm:py-36 md:py-44 overflow-hidden border-b border-zinc-800/40"
+      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-16 sm:py-20 md:py-24 overflow-hidden border-b border-zinc-800/40"
     >
       <div id="about" className="absolute -top-12" aria-hidden="true" />
 
@@ -156,10 +156,10 @@ export default function About() {
               className="h-1.5 w-1.5 rounded-full bg-[#f97316]"
               aria-hidden="true"
             />
-            <span>{thinking.chapter}</span>
+            <span>04 / ENGINEERING PHILOSOPHY</span>
             <span className="h-px w-6 sm:w-8 bg-zinc-800" aria-hidden="true" />
             <span className="text-[10px] text-zinc-400 uppercase tracking-widest hidden sm:inline-block">
-              METHODOLOGY
+              HOW I THINK &amp; WORK
             </span>
           </div>
 
@@ -186,7 +186,7 @@ export default function About() {
                 aria-hidden="true"
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 lg:gap-12 py-12 sm:py-16 md:py-20 items-start">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 lg:gap-12 py-8 sm:py-10 md:py-12 items-start">
                 <div className="principle-anchor md:col-span-5 lg:col-span-5 flex flex-col items-start gap-2 will-change-transform will-change-opacity">
                   <span className="font-mono text-3xl sm:text-4xl md:text-5xl font-light tracking-tight text-zinc-500/80 select-none">
                     {item.number}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import siteData from "@/content/site.json";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "MUHAR FULL STACK ENGINEER",
-  description: "Creating systems and random chaos.",
+  description: siteData.statement,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

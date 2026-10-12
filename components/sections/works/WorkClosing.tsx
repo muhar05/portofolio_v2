@@ -57,7 +57,7 @@ export default function WorkClosing() {
   return (
     <section
       ref={rootRef}
-      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-24 sm:py-32 md:py-40"
+      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-16 sm:py-20 md:py-24"
     >
       <div className="mx-auto w-full max-w-5xl">
         <div className="h-px w-full bg-zinc-700/60" aria-hidden="true" />

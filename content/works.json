@@ -52,12 +52,143 @@
           "src": ""
         }
       },
+      "domains": [
+        "SALES",
+        "PURCHASING",
+        "WAREHOUSE",
+        "INVENTORY",
+        "FINANCE"
+      ],
+      "problemPoints": [
+        "A single customer order contains items available in warehouse inventory alongside items requiring third-party procurement.",
+        "Without transactional state synchrony, stock gets double-promised and shipments leave before credit and physical verification.",
+        "Fragmented departmental handoffs obscure accountability between purchasing lead times and customer delivery promises."
+      ],
       "overview": {
         "problem": "In multi-department operations, a single customer order rarely follows a simple linear path. Some items are already on warehouse shelves, while others must be requested from external suppliers with different lead times. When sales, purchasing, warehouse, inventory, and finance rely on fragmented communication, orders lose tracking. Stock gets double-promised, goods arrive at the dock without clear assignment, and deliveries leave before credit terms are verified. The system needed to model these divergent paths explicitly while keeping inventory and financial approvals strictly synchronized.",
         "approach": "Instead of treating an order as a static document, the system treats each order as an active state machine with per-item branching. Each line item evaluates independently: available inventory is reserved on the spot, while unavailable items trigger an upstream procurement chain from Purchase Request to Purchase Order. Handoffs between departments are enforced through explicit state transitions, requiring operational verification from the warehouse before finance can issue dispatch authorization. Software boundaries were shaped around real physical workflows rather than abstract data models.",
         "architecture": "The platform is built on PostgreSQL and Prisma with relational constraints enforcing state integrity across all operational tables. Business logic and status changes are wrapped in database transactions to prevent race conditions during concurrent stock reservations. A role-based access control layer with nine distinct roles restricts actions to authorized personnel across Sales, Purchasing, Warehouse, Finance, and Administration. Input validation is centralized with Zod schemas on both client and server, while file attachments such as physical goods receipts and delivery notes are stored in MinIO object storage.",
         "workflow": "The lifecycle begins when a Sales Order is confirmed. The system inspects every line item: in-stock goods move to Stock Reservation, while backordered items generate a Purchase Request for the procurement team. Once suppliers deliver, confirming the Goods Receipt immediately updates available inventory. The fulfillment team then files a Delivery Request. To eliminate unverified dispatches, the order passes through a sequential dual gate: the Warehouse confirms physical goods are packed, and Finance approves customer payment or credit standing. Only after both approvals are logged does the system generate the official Delivery Order for dispatch."
       },
+      "flowPaths": [
+        {
+          "id": "in-stock",
+          "title": "Direct Stock Path",
+          "badge": "In-Stock Items",
+          "description": "Immediate inventory reservation bypassing procurement chains entirely.",
+          "steps": [
+            {
+              "name": "Sales Order Confirmed",
+              "department": "Sales",
+              "action": "Line item confirmed & live stock reservation triggered"
+            },
+            {
+              "name": "Atomic Stock Hold",
+              "department": "Warehouse",
+              "action": "Row-level hold in database transaction locks allocated quantity"
+            },
+            {
+              "name": "Dual-Gate Sign-off",
+              "department": "Warehouse & Finance",
+              "action": "Physical readiness check + financial credit terms verified"
+            },
+            {
+              "name": "Delivery Order Released",
+              "department": "Delivery",
+              "action": "Official dispatch notice created and warehouse balance debited"
+            }
+          ]
+        },
+        {
+          "id": "procurement",
+          "title": "Procurement Path",
+          "badge": "Backordered Items",
+          "description": "Automated replenishment chain connecting Purchase Requests to warehouse floor receipts.",
+          "steps": [
+            {
+              "name": "Purchase Request",
+              "department": "Purchasing",
+              "action": "Backordered items branch into an internal procurement requisition"
+            },
+            {
+              "name": "Vendor Purchase Order",
+              "department": "Purchasing",
+              "action": "Formal PO dispatched to supplier with agreed lead times"
+            },
+            {
+              "name": "Goods Receipt",
+              "department": "Warehouse",
+              "action": "Physical receiving at loading dock immediately increments stock"
+            },
+            {
+              "name": "Delivery Convergence",
+              "department": "Warehouse",
+              "action": "Procured items converge with existing stock for packing"
+            }
+          ]
+        },
+        {
+          "id": "dual-gate",
+          "title": "Sequential Dual-Gate",
+          "badge": "Dispatch Gate",
+          "description": "Eliminates premature dispatches through mandatory sequential operational and financial approval.",
+          "steps": [
+            {
+              "name": "Delivery Request",
+              "department": "Warehouse",
+              "action": "Initiated once all items in the sales order are ready on the floor"
+            },
+            {
+              "name": "Gate 1: Warehouse Sign-off",
+              "department": "Warehouse",
+              "action": "Physical inspection verifies package integrity and packing slip"
+            },
+            {
+              "name": "Gate 2: Finance Clearance",
+              "department": "Finance",
+              "action": "Finance officer approves customer payment receipt or credit standing"
+            },
+            {
+              "name": "Authorized Dispatch",
+              "department": "Delivery",
+              "action": "Formal delivery order unlocked; shipment authorized for departure"
+            }
+          ]
+        }
+      ],
+      "architectureLayers": [
+        {
+          "number": "01",
+          "name": "CLIENT LAYER",
+          "items": [
+            "Next.js App Router",
+            "React 19",
+            "TanStack Query",
+            "Zod Schema Validation",
+            "Tailwind CSS"
+          ]
+        },
+        {
+          "number": "02",
+          "name": "BUSINESS & DOMAIN",
+          "items": [
+            "Server Actions",
+            "Transactional State Machine",
+            "Role-Based Access Control (9 Roles)",
+            "Audit Trail Engine"
+          ]
+        },
+        {
+          "number": "03",
+          "name": "DATA & INFRASTRUCTURE",
+          "items": [
+            "PostgreSQL",
+            "Prisma ORM",
+            "MinIO Object Storage",
+            "Database Transactions"
+          ]
+        }
+      ],
       "workflowStages": [
         {
           "step": "01",

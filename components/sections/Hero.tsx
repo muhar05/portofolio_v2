@@ -27,25 +27,25 @@ export default function Hero() {
         y: -6,
         duration: 0.45,
       })
-      .from(
-        ".hero-main-content",
-        {
-          opacity: 0,
-          y: 14,
-          duration: 0.55,
-        },
-        "-=0.2"
-      )
-      .from(
-        ".hero-illustration",
-        {
-          opacity: 0,
-          scale: 0.96,
-          y: 12,
-          duration: 0.55,
-        },
-        "-=0.3"
-      );
+        .from(
+          ".hero-main-content",
+          {
+            opacity: 0,
+            y: 14,
+            duration: 0.55,
+          },
+          "-=0.2",
+        )
+        .from(
+          ".hero-illustration",
+          {
+            opacity: 0,
+            scale: 0.96,
+            y: 12,
+            duration: 0.55,
+          },
+          "-=0.3",
+        );
     }, heroRef);
 
     return () => ctx.revert();
@@ -87,18 +87,36 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Top system bar with system telemetry and chapter marker */}
+      {/* Top system bar with system telemetry and navigation */}
       <header className="hero-system-bar relative z-20 flex items-center justify-between border-b border-zinc-800/40 pb-2 sm:pb-2.5 text-[9.5px] sm:text-[10.5px] font-mono text-zinc-400">
         <div className="flex items-center gap-1.5 sm:gap-2">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
           <span className="tracking-[0.16em] sm:tracking-[0.2em] uppercase text-zinc-300 font-medium">
-            SYS.ID // MUHAR.01
+            MUHAR.01
           </span>
           <span className="hidden sm:inline-block text-zinc-700">|</span>
           <span className="hidden sm:inline-block tracking-wider text-zinc-500">
-            PORTFOLIO CANVAS
+            FULL STACK ENGINEER
           </span>
         </div>
+
+        <nav
+          aria-label="Hero navigation"
+          className="hidden md:flex items-center gap-5 text-[10px] tracking-[0.2em] uppercase"
+        >
+          <a href="#stack" className="text-zinc-400 hover:text-white transition-colors">
+            STACK
+          </a>
+          <a href="#selected-work" className="text-zinc-400 hover:text-white transition-colors">
+            WORK
+          </a>
+          <a href="#thinking" className="text-zinc-400 hover:text-white transition-colors">
+            ABOUT
+          </a>
+          <a href="#contact" className="text-zinc-400 hover:text-white transition-colors">
+            CONTACT
+          </a>
+        </nav>
 
         <div className="flex items-center gap-1.5 sm:gap-2 tracking-[0.18em] sm:tracking-[0.2em] font-mono text-[9.5px] sm:text-[10.5px]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#f97316]" />
@@ -143,6 +161,21 @@ export default function Hero() {
               <p className="font-mono text-xs sm:text-[13px] tracking-wide text-zinc-400 border-l border-zinc-800 pl-3">
                 {intro.closing}
               </p>
+            </div>
+
+            <div className="mt-5 flex flex-wrap items-center gap-3 font-mono text-xs uppercase tracking-wider">
+              <a
+                href="#selected-work"
+                className="rounded bg-[#f97316] px-3.5 py-1.5 text-[11px] font-semibold text-zinc-950 transition-colors hover:bg-[#fb923c]"
+              >
+                VIEW SELECTED WORK ↓
+              </a>
+              <a
+                href="#contact"
+                className="rounded border border-zinc-700/80 px-3.5 py-1.5 text-[11px] font-medium text-zinc-300 transition-colors hover:border-zinc-500 hover:text-white"
+              >
+                CONTACT / CV
+              </a>
             </div>
           </div>
 
@@ -192,6 +225,21 @@ export default function Hero() {
                 {intro.closing}
               </p>
             </div>
+
+            <div className="mt-4 flex items-center justify-center gap-2.5 font-mono text-[10px] uppercase tracking-wider">
+              <a
+                href="#selected-work"
+                className="rounded bg-[#f97316] px-3 py-1.5 font-semibold text-zinc-950"
+              >
+                VIEW WORK ↓
+              </a>
+              <a
+                href="#contact"
+                className="rounded border border-zinc-700/80 px-3 py-1.5 text-zinc-300"
+              >
+                CONTACT
+              </a>
+            </div>
           </div>
 
           <div className="hero-illustration mt-4 sm:mt-5 w-full max-w-[280px] sm:max-w-[320px]">
@@ -216,10 +264,10 @@ export default function Hero() {
         </div>
 
         <a
-          href="#thinking"
+          href="#stack"
           className="hidden sm:inline-block text-zinc-500 hover:text-zinc-300 transition-colors text-[9px] tracking-[0.18em] uppercase cursor-pointer"
         >
-          [ SCROLL TO TRACE ARCHITECTURE ]
+          [ SCROLL TO STACK &amp; WORK ↓ ]
         </a>
 
         <div className="flex items-center gap-1.5 sm:gap-2">

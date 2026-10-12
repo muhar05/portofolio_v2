@@ -172,7 +172,7 @@ export default function ContactContent({ contact, cvAvailable }: ContactContentP
       ref={sectionRef}
       id="contact"
       aria-labelledby="contact-heading"
-      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-28 sm:py-36 md:py-44 overflow-hidden border-b border-zinc-800/40"
+      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-16 sm:py-20 md:py-24 overflow-hidden border-b border-zinc-800/40"
     >
       <div className="mx-auto w-full max-w-5xl">
         <div ref={headerRef} className="max-w-3xl will-change-transform will-change-opacity">
