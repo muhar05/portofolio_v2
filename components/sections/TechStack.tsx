@@ -38,7 +38,7 @@ const STACK_CATEGORIES: StackCategory[] = [
 export default function TechStack() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   useIsomorphicLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -52,7 +52,7 @@ export default function TechStack() {
 
     if (prefersReducedMotion) {
       if (headerRef.current) gsap.set(headerRef.current, { opacity: 1, y: 0 });
-      if (cardsRef.current) gsap.set(cardsRef.current, { opacity: 1, y: 0 });
+      if (listRef.current) gsap.set(listRef.current, { opacity: 1, y: 0 });
       return;
     }
 
@@ -76,10 +76,10 @@ export default function TechStack() {
         );
       }
 
-      if (cardsRef.current) {
-        const cards = cardsRef.current.querySelectorAll(".stack-card");
+      if (listRef.current) {
+        const rows = listRef.current.querySelectorAll(".stack-row");
         gsap.fromTo(
-          cards,
+          rows,
           { opacity: 0, y: 18 },
           {
             opacity: 1,
@@ -88,7 +88,7 @@ export default function TechStack() {
             stagger: 0.1,
             ease: "power2.out",
             scrollTrigger: {
-              trigger: cardsRef.current,
+              trigger: listRef.current,
               start: "top 85%",
               toggleActions: "play none none reverse",
               invalidateOnRefresh: true,
@@ -136,38 +136,40 @@ export default function TechStack() {
           </p>
         </div>
 
-        <div ref={cardsRef} className="mt-12 sm:mt-14 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div ref={listRef} className="mt-12 sm:mt-16">
           {STACK_CATEGORIES.map((item) => (
-            <div
-              key={item.number}
-              className="stack-card rounded-lg border border-zinc-800/70 bg-zinc-950/60 p-5 sm:p-6 flex flex-col justify-between transition-colors hover:border-zinc-700/80"
-            >
-              <div>
-                <div className="flex items-center gap-2 font-mono text-xs text-[#f97316] font-semibold">
-                  <span>{item.number}</span>
-                  <span className="text-zinc-600">|</span>
-                  <h3 className="font-mono text-xs uppercase tracking-wider text-zinc-200">
+            <div key={item.number} className="stack-row">
+              <div className="h-px w-full bg-zinc-800/60" aria-hidden="true" />
+              <div className="grid grid-cols-1 gap-5 py-8 sm:py-10 md:grid-cols-12 md:gap-10 lg:gap-12">
+                <div className="flex items-baseline gap-3 md:col-span-4">
+                  <span className="font-mono text-2xl sm:text-3xl font-light tracking-tight text-zinc-500/80 select-none">
+                    {item.number}
+                  </span>
+                  <h3 className="font-mono text-xs sm:text-sm uppercase tracking-[0.2em] text-white">
                     {item.category}
                   </h3>
                 </div>
 
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {item.skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="rounded border border-zinc-800 bg-zinc-900/60 px-2.5 py-1 font-mono text-[11px] text-zinc-200"
-                    >
-                      {skill}
-                    </span>
-                  ))}
+                <div className="md:col-span-8">
+                  <div className="flex flex-wrap gap-x-6 gap-y-2.5">
+                    {item.skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="flex items-center gap-2 font-sans text-sm text-zinc-200 sm:text-[15px]"
+                      >
+                        <span className="h-1 w-1 rounded-full bg-zinc-600" aria-hidden="true" />
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="mt-3 max-w-xl font-sans text-sm leading-relaxed text-zinc-400">
+                    {item.description}
+                  </p>
                 </div>
-
-                <p className="mt-4 font-sans text-xs sm:text-sm text-zinc-400 leading-relaxed">
-                  {item.description}
-                </p>
               </div>
             </div>
           ))}
+          <div className="h-px w-full bg-zinc-800/40" aria-hidden="true" />
         </div>
       </div>
     </section>

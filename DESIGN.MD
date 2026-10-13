@@ -10,13 +10,13 @@ Portfolio ini bukan sekadar website untuk menampilkan CV atau daftar project.
 
 Konsep utamanya adalah membawa pengunjung masuk ke sebuah **developer workspace** yang merepresentasikan cara berpikir, proses eksplorasi, dan karya Muhar.
 
-Workspace dibuat sedikit messy untuk merepresentasikan:
+Workspace dibuat sedikit messy untuk merepresentasikan cara kerja yang eksploratif, bukan hasil akhir yang berantakan.
 
-> Creating systems and random chaos.
+> Full-stack engineer building reliable systems and making software work better.
 
-"Chaos" bukan berarti desain berantakan tanpa tujuan.
+"Messy" di sini bukan berarti desain tanpa tujuan.
 
-Chaos adalah kumpulan ide, tools, experiments, dan systems yang kemudian dikembangkan menjadi sebuah karya.
+Ide, tools, dan experiments yang berserakan adalah bahan mentah. Yang dibawa keluar dari workspace ini adalah systems yang rapi, andal, dan berguna.
 
 ---
 
@@ -317,7 +317,7 @@ MUHAR
 
 Primary statement:
 
-Creating systems and random chaos.
+Full-stack engineer building reliable systems and making software work better.
 
 Statement ini menjadi conceptual identity portfolio.
 
@@ -557,7 +557,7 @@ Experiments
 Technology
 Projects
 Curiosity
-Random chaos
+Reliability
 
 Illustration harus memiliki hubungan dengan content.
 
@@ -942,7 +942,7 @@ Target emotional flow:
 "Ini ternyata dunia portfolio-nya."
         ↓
 "Dan di dalamnya ada systems, experiments,
-projects, dan random chaos."
+dan projects yang dibuat bekerja lebih baik."
 
 The website should feel like an experience rather than a static portfolio.
 
@@ -970,3 +970,60 @@ A developer put his work inside a website template.
 
 
 Ini sudah jadi **source of truth** untuk konsep yang kita sepakati sekarang. Yang paling penting, posisi flat illustration sudah dikunci: **bukan di meja awal, tapi baru muncul setelah masuk ke MacBook/digital world.**
+
+---
+
+# 38. Frontend Design Rules (Permanent)
+
+Aturan ini mengikat setiap perubahan UI ke depan, baik oleh manusia maupun agent. Sumbernya adalah skill `frontend-design` (`.agents/skills/frontend-design/SKILL.md`) yang digabungkan dengan keputusan desain yang sudah ada di dokumen ini. **Brief di dokumen ini menang** saat berbenturan dengan panduan umum skill.
+
+## 38.1 Palette (fixed)
+
+- Base background: `#08080a` (section) dan `#000000` (body).
+- Text: `zinc-100` (heading), `zinc-300` (body), `zinc-400`/`zinc-500` (meta/label).
+- Accent tunggal: `#f97316` (hover `#fb923c`). Satu accent saja.
+- Status: `emerald-500` hanya untuk indikator "aktif".
+- Dilarang: purple gradient, gradient sebagai dekorasi, glassmorphism, border-radius berlebih, shadow lembut seragam di semua card.
+
+## 38.2 Typography
+
+- Dua keluarga saja: **Geist Sans** untuk headline & body, **Geist Mono** untuk label/telemetry/angka.
+- Skala: eyebrow `10–12px` (mono, uppercase, tracked), H1 `text-4xl`–`text-7xl`, H2 `text-3xl`–`text-5xl`, body `text-base`/`text-lg`.
+- Line length body < 80 karakter.
+
+## 38.3 Layout
+
+- Container `max-w-5xl`, lebar konten konsisten, rata kiri.
+- Pemisah antar blok utama memakai **hairline** (`border-zinc-800/60`), bukan card berisi.
+- Grid 12 kolom asimetris untuk header editorial (judul kiri, konteks kanan).
+
+## 38.4 Motion
+
+- Reveal-on-scroll GSAP dengan pola `data-reveal`; satu momen orkestrasi per section.
+- `prefers-reduced-motion: reduce` wajib menghilangkan translasi/opacity-motion (set state akhir langsung).
+- Hindari hover-animation di setiap card; simpan gerak untuk aksi yang bermakna.
+
+## 38.5 Restraint & anti-slop
+
+- "Spend your boldness in one place": satu elemen memorabel per halaman, sisanya tenang.
+- Hindari **SaaS-card kit**: deretan card rounded identik + shadow seragam. Pakai hairline row.
+- Tidak ada fake stats, tidak ada marketing copy berlebihan, tidak ada dekorasi tanpa fungsi.
+- Numbered marker (`01 / 02 / 03`) hanya untuk konten yang memang sekuensial.
+
+## 38.6 Accessibility floor (non-negotiable)
+
+- Focus keyboard terlihat: `:focus-visible` outline `2px #f97316` (lihat `app/globals.css`).
+- Kontras teks memenuhi AA pada background gelap.
+- Semua kontrol bisa dioperasikan keyboard; gambar ilustratif punya `role="img"` + `aria-label`.
+
+## 38.7 Deliberate deviations (jangan "diperbaiki")
+
+Pilihan berikut melawan default generik secara sengaja dan sudah disepakati; pertahankan:
+
+- Eyebrow uppercase ter-track di atas heading (bagian dari bahasa editorial/technical workspace).
+- Label mono untuk data kecil dan telemetry.
+- Nomor pada sekuens nyata (mis. alur fulfillment, 3 pilar berpikir).
+
+## 38.8 Cara skill aktif
+
+Skill `frontend-design` dimuat OpenCode lewat `skills.paths` di `.opencode/opencode.json` (nilai `".agents/skills"`). Verifikasi: jalankan `opencode` dari root project, lalu panggil tool `skill` dengan nama `frontend-design`; skill harus muncul. Setelah mengubah `opencode.json`, **restart opencode** agar konfigurasi ter-reload.
