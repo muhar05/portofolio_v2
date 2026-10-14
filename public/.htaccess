@@ -1,0 +1,15 @@
+# Apache config for the static Next.js export on Hostinger.
+
+ErrorDocument 404 /404.html
+
+# The generated Open Graph image has no file extension; force the image MIME type.
+<Files "opengraph-image">
+  ForceType image/png
+</Files>
+
+# Immutable caching for hashed build assets.
+<IfModule mod_headers.c>
+  <LocationMatch "^/_next/static/">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </LocationMatch>
+</IfModule>

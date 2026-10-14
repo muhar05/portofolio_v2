@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import worksData from "@/content/works.json";
 
+export const dynamic = "force-static";
+
 const BASE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://muharferdiansyah.my.id";
 

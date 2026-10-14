@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -37,6 +37,8 @@ export default function ContactContent({ contact, cvAvailable }: ContactContentP
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const linksRef = useRef<HTMLDivElement>(null);
   const cvRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const [isCvOpen, setIsCvOpen] = useState(false);
 
   useIsomorphicLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -144,6 +146,24 @@ export default function ContactContent({ contact, cvAvailable }: ContactContentP
     };
   }, []);
 
+  useEffect(() => {
+    if (!isCvOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsCvOpen(false);
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", handleKeyDown);
+    closeButtonRef.current?.focus();
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isCvOpen]);
+
   const headlineWords = contact.headline.split(" ");
 
   const channels: ContactChannel[] = [
@@ -244,15 +264,18 @@ export default function ContactContent({ contact, cvAvailable }: ContactContentP
         </div>
 
         {cvAvailable && (
-          <div ref={cvRef} className="mt-10 sm:mt-12 will-change-transform will-change-opacity">
-            <a
-              href={contact.cv}
-              download
-              aria-label="Download Muhar Ferdiansyah CV as PDF"
+          <div
+            ref={cvRef}
+            className="mt-10 sm:mt-12 flex flex-wrap items-center gap-x-8 gap-y-4 will-change-transform will-change-opacity"
+          >
+            <button
+              type="button"
+              onClick={() => setIsCvOpen(true)}
+              aria-haspopup="dialog"
               className="group inline-flex items-center gap-2.5 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] text-zinc-100 hover:text-white transition-colors"
             >
               <span className="border-b border-zinc-700 group-hover:border-white pb-0.5 transition-colors font-medium">
-                DOWNLOAD CV
+                PREVIEW CV
               </span>
               <span
                 className="text-[#f97316] transition-transform duration-200 group-hover:translate-x-1"
@@ -260,10 +283,82 @@ export default function ContactContent({ contact, cvAvailable }: ContactContentP
               >
                 →
               </span>
+            </button>
+
+            <a
+              href={contact.cv}
+              download
+              aria-label="Download Muhar Ferdiansyah CV as PDF"
+              className="group inline-flex items-center gap-2.5 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors"
+            >
+              <span className="border-b border-transparent group-hover:border-white pb-0.5 transition-colors">
+                DOWNLOAD CV
+              </span>
+              <span
+                className="text-[#f97316] transition-transform duration-200 group-hover:translate-y-0.5"
+                aria-hidden="true"
+              >
+                ↓
+              </span>
             </a>
           </div>
         )}
       </div>
+
+      {isCvOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="CV preview"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6"
+        >
+          <button
+            type="button"
+            aria-label="Close CV preview"
+            onClick={() => setIsCvOpen(false)}
+            className="absolute inset-0 h-full w-full cursor-default bg-black/80 backdrop-blur-sm"
+          />
+
+          <div className="relative z-10 flex h-full max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 shadow-2xl shadow-black/70">
+            <div className="flex items-center justify-between gap-4 border-b border-zinc-800 px-4 py-3 sm:px-5">
+              <div className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-zinc-400">
+                <span
+                  className="h-1.5 w-1.5 rounded-full bg-[#f97316]"
+                  aria-hidden="true"
+                />
+                <span className="text-zinc-200">MUHAR FERDIANSYAH / CV</span>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <a
+                  href={contact.cv}
+                  download
+                  className="hidden font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-300 transition-colors hover:text-white sm:inline"
+                >
+                  DOWNLOAD
+                </a>
+                <button
+                  ref={closeButtonRef}
+                  type="button"
+                  onClick={() => setIsCvOpen(false)}
+                  aria-label="Close"
+                  className="flex h-8 w-8 items-center justify-center rounded border border-zinc-800 text-zinc-400 transition-colors hover:border-zinc-600 hover:text-white"
+                >
+                  <span aria-hidden="true" className="text-sm leading-none">
+                    ✕
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <iframe
+              src={contact.cv}
+              title="Muhar Ferdiansyah CV"
+              className="min-h-0 w-full flex-1 bg-white"
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }
