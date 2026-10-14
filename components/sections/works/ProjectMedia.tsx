@@ -87,7 +87,7 @@ export default function ProjectMedia({
         fill
         priority={priority}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1024px"
-        className="h-full w-full object-cover"
+        className="h-full w-full object-contain"
       />
     </div>
   );

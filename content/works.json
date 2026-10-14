@@ -265,6 +265,678 @@
         "Tailwind CSS"
       ],
       "result": "The system establishes a single, deterministic operational backbone across five departments. Sales teams track fulfillment status per line item, warehouse staff verify inventory against physical goods receipts rather than manual logs, and deliveries require verified sign-offs from both operations and finance before dispatch. By replacing fragmented manual coordination with an explicit state machine, the platform enforces accountability and consistency across the entire order lifecycle."
+    },
+    {
+      "id": "ecobank026-bank-sampah",
+      "title": "ECOBANK026 / WASTE BANK",
+      "category": "SYSTEM",
+      "year": "2026",
+      "role": "Full Stack Engineer",
+      "featured": true,
+      "headline": "A waste-bank ledger with guarded Excel imports and protected stock.",
+      "description": "A Laravel operations system for a community waste bank that unites deposit, withdrawal, and collector-sale records under one ledger of record. It handles dual pricing, bulk Excel import, cumulative stock control, and a multi-role audit trail.",
+      "media": {
+        "images": {
+          "cover": "/images/works/ecobank026-bank-sampah/cover.png",
+          "overview": "/images/works/ecobank026-bank-sampah/overview.png",
+          "architecture": "/images/works/ecobank026-bank-sampah/architecture.png"
+        },
+        "video": {
+          "type": "youtube",
+          "src": ""
+        }
+      },
+      "domains": [
+        "WASTE BANK OPERATIONS",
+        "FINANCIAL LEDGER",
+        "RBAC & AUDIT TRAIL",
+        "BULK EXCEL IMPORT"
+      ],
+      "problemPoints": [
+        "Deposit records were scattered across many date-based Excel sheets, and material labels were inconsistent (Paper, Used Paper, and Crumpled Paper all meant the same item), inviting duplicate categories and reports that contradicted each other.",
+        "Customer savings balances and the waste bank's cash were calculated by hand outside the transaction data, so there was no single source of truth when the two disagreed.",
+        "Aggregate sales to collectors could exceed the stock that actually existed, especially when entries were backdated, and there was no audit trail to trace the amounts or the people behind them."
+      ],
+      "overview": {
+        "problem": "Waste-bank operations ran on dozens of date-separated Excel spreadsheets, so every deposit had to be reconciled by hand and was prone to duplication or mistyping. Field material labels were inconsistent: Paper, Used Paper, and Crumpled Paper referred to the same item, which risked duplicate categories and inconsistent reports. Customer savings balances and the waste bank's cash were tracked separately from the transaction data, leaving no single source of truth when figures diverged. Aggregate sales to collectors could also exceed the stock that actually existed, particularly when entries were backdated. Without a reliable audit trail, investigating a discrepancy or a suspected misappropriation was extremely difficult.",
+        "approach": "The system is a Laravel application built with a service layer, concentrating all financial logic in BankSampahService and material resolution in MaterialMappingService. Every deposit, withdrawal, and sale is treated as a state transition that must pass validation before it reaches the database, rather than a plain CRUD operation. Instead of storing a mutable balance column, customer savings and cash are derived from the ledger as the single source of truth. Dual pricing is kept strictly separate: the customer buy price (member_price) and the collector sell price (collector_price) are stored per transaction as a historical snapshot. This ensures a change to the master price never rewrites financial data that already happened.",
+        "architecture": "At the data layer, deposit, deposit_details, savings_ledgers, and waste_bank_cash_ledgers record every value movement explicitly; all writes are wrapped in DB::transaction, and balances are restored through deterministic recalculation. The business layer enforces validation boundaries: a withdrawal is allowed only after two deposits and never exceeds the balance, while a sale may not exceed cumulative stock up to the transaction date. Concurrency is protected with lockForUpdate on the stock row, while assertCumulativeStockNotNegative scans the whole timeline to prevent negative stock on backdated transactions. The activity log is append-only and immutable, bound with a correlation_id per operation sequence. A Blade UI with Alpine.js and Tailwind presents the result without leaking transactional complexity to operators.",
+        "workflow": "The primary flow starts when an operator selects a customer and a material; the system fills the master price automatically and computes the total before the deposit is saved. For historical data, the operator uploads an Excel file, the system maps customers and materials, shows a validation recap, and commits chronologically only when no row is flagged. A collector sale reads remaining stock, computes the margin, and records only that margin into the waste bank's cash. Every transition writes an audit trail that can be traced by the user and the device involved."
+      },
+      "flowPaths": [
+        {
+          "id": "path-utama",
+          "title": "Direct Processing: Daily Deposits",
+          "badge": "Operational Transaction",
+          "description": "The primary path that runs every day when an operator records a waste deposit directly at the waste bank.",
+          "steps": [
+            {
+              "name": "Select Customer & Material",
+              "department": "Waste Bank Admin",
+              "action": "The deposit form loads active customers and waste categories; the customer buy price (member_price) is filled automatically and can be overridden manually."
+            },
+            {
+              "name": "Validate & Save Atomically",
+              "department": "BankSampahService",
+              "action": "DB::transaction writes the Deposit and each DepositDetail with its subtotal, rejecting any row without a waste_category_id or material_label."
+            },
+            {
+              "name": "Record Credit Ledger",
+              "department": "System (Ledger)",
+              "action": "Writes a savings_ledgers entry of type credit with reference_type/reference_id to the Deposit as the source of truth for the customer balance."
+            },
+            {
+              "name": "Audit Trail After Commit",
+              "department": "ActivityLogService",
+              "action": "A deposit.create activity log is written outside the transaction, carrying customer_name and total_amount so it is still recorded even if an exception occurs after commit."
+            }
+          ]
+        },
+        {
+          "id": "path-sekunder",
+          "title": "Excel Import: Historical Migration",
+          "badge": "Bulk Onboarding",
+          "description": "The branch that loads thousands of legacy transaction rows from spreadsheets without dragging inconsistencies into the master data.",
+          "steps": [
+            {
+              "name": "Upload & Detect Structure",
+              "department": "Waste Bank Admin",
+              "action": "listSheets and guessDateFromSheetName read each date-based sheet, then parseSheet detects the header row and the customer, material, weight, price, and total columns."
+            },
+            {
+              "name": "Resolve Customers & Materials",
+              "department": "MaterialMappingService",
+              "action": "Material labels are resolved in layers: exact canonical, then scoped alias, then a new material; customers are matched by code or normalized name with ambiguity detection."
+            },
+            {
+              "name": "Preview & Cross-Validate",
+              "department": "DepositImportService",
+              "action": "processRows computes price and total, and buildRecap verifies that material, customer, and transaction totals are consistent before commit; flagged rows are blocked."
+            },
+            {
+              "name": "Idempotent Chronological Commit",
+              "department": "BankSampahService",
+              "action": "A single DB::transaction saves deposits per customer, syncs master prices, and stamps a fingerprint (md5 of file+sheet+date) so re-importing the same file is rejected."
+            }
+          ]
+        },
+        {
+          "id": "path-kontrol",
+          "title": "Sales Gate: Stock & Margin Control",
+          "badge": "Quality & Security Gate",
+          "description": "The control applied before a collector sale is processed: it ensures stock never goes negative and the margin is recorded correctly.",
+          "steps": [
+            {
+              "name": "Read Remaining Stock",
+              "department": "Waste Bank Admin",
+              "action": "getDailyRemainingWaste computes cumulative deposit weight minus sales per category up to the transaction date for the selected collector."
+            },
+            {
+              "name": "Lock & Full-Timeline Guard",
+              "department": "BankSampahService",
+              "action": "lockForUpdate on the stock row is followed by assertCumulativeStockNotNegative, which scans the whole timeline and rejects a sale that would make stock negative on any date."
+            },
+            {
+              "name": "Compute Margin & Snapshot",
+              "department": "System (Ledger)",
+              "action": "Subtotal and margin are rounded per detail; sale_details stores member_price and margin as a snapshot, and the waste bank's cash receives only the margin."
+            },
+            {
+              "name": "Consistency Audit",
+              "department": "Audit Gate (RW Admin)",
+              "action": "BankSampahAuditService scans for balance mismatches, duplicate ledger rows, negative balances, and orphan transactions, then produces a health score with an exit code."
+            }
+          ]
+        }
+      ],
+      "workflowStages": [
+        {
+          "step": "01",
+          "name": "MASTER & CUSTOMERS",
+          "department": "Waste Bank Admin",
+          "detail": "Prepares waste categories, material groups and aliases, plus customer buy prices and collector sell prices as transaction references."
+        },
+        {
+          "step": "02",
+          "name": "DAILY TRANSACTIONS",
+          "department": "Waste Bank Admin",
+          "detail": "Records deposits, withdrawals (allowed only after two deposits), and collector sales with balance and stock validation."
+        },
+        {
+          "step": "03",
+          "name": "LEDGER & CASH",
+          "department": "System",
+          "detail": "Every transaction writes a ledger entry; customer savings and the waste bank's cash balance are recomputed deterministically."
+        },
+        {
+          "step": "04",
+          "name": "AUDIT & REPORTS",
+          "department": "RW Admin",
+          "detail": "Append-only audit trail, a consistency health score, and exports for deposits, sales, the savings journal, and cash flow."
+        }
+      ],
+      "decisions": [
+        {
+          "number": "01",
+          "title": "LEDGER AS SINGLE SOURCE OF TRUTH",
+          "decision": "Do not store a directly mutable balance column; customer savings and cash are derived from the append-only savings_ledgers and waste_bank_cash_ledgers.",
+          "rationale": "A mutable balance column opens a path to desynchronization when transactions are edited or deleted, and it makes reconciliation hard. With a ledger, every change is explained as a new entry and the balance can be recomputed at any time. The trade-off is that every write must consistently create both the primary transaction and the ledger entry within one DB::transaction."
+        },
+        {
+          "number": "02",
+          "title": "DUAL PRICING WITH HISTORICAL SNAPSHOTS",
+          "decision": "Store member_price and margin per sale_details row, separate from the WastePrice master, so the master price is never reused to reconstruct past data.",
+          "rationale": "Storing only a reference to the master price lets a retroactive price change rewrite historical financial reports. A snapshot keeps history stable, while WastePriceHistory tracks price changes. The trade-off is duplicated values on detail rows and the need to keep them consistent during explicit overrides."
+        },
+        {
+          "number": "03",
+          "title": "IDEMPOTENT EXCEL IMPORT WITH CROSS-VALIDATION",
+          "decision": "Bulk import never inserts directly: rows are parsed, normalized, mapped, recomputed, cross-checked through a recap, and only then committed atomically with an anti-reimport fingerprint.",
+          "rationale": "Raw spreadsheets are full of inconsistent labels, empty prices, and duplicate sheets. Without a validation stage, a single import could permanently pollute the master data and the financial history. The staged approach allows human review of ambiguous rows, at the cost of a longer, stateful import flow."
+        },
+        {
+          "number": "04",
+          "title": "ATOMIC TRANSACTIONS WITH A FULL-TIMELINE STOCK GUARD",
+          "decision": "A sale locks the stock row with lockForUpdate, aggregates weight per category, and validates remaining stock across the entire timeline through assertCumulativeStockNotNegative before writing.",
+          "rationale": "Two concurrent sales, or a single backdated sale, can push cumulative stock negative without being detected. Scanning the timeline ensures no date point drops below zero, not just the ending balance. The cost is a heavier query and a longer lock on the sold category."
+        }
+      ],
+      "architectureLayers": [
+        {
+          "number": "01",
+          "name": "CLIENT LAYER",
+          "items": [
+            "Blade Templates (server-rendered)",
+            "Alpine.js for interactive state",
+            "Tailwind CSS + custom UI components",
+            "ApexCharts for dashboard and report visualization"
+          ]
+        },
+        {
+          "number": "02",
+          "name": "BUSINESS & DOMAIN",
+          "items": [
+            "Service layer: BankSampahService, DepositImportService, MaterialMappingService",
+            "State transitions and validation: dual pricing, margin, balance, and cumulative stock",
+            "Authorization: Spatie Laravel Permission + admin device binding",
+            "Logging: append-only ActivityLogService with correlation_id"
+          ]
+        },
+        {
+          "number": "03",
+          "name": "DATA & STORAGE",
+          "items": [
+            "MySQL as the production database",
+            "Eloquent ORM with ledger and transaction-detail relations",
+            "Local storage for expense proofs (proof_path)",
+            "DB::transaction + lockForUpdate + balance recalculation"
+          ]
+        }
+      ],
+      "highlights": [
+        "A full-timeline stock guard (assertCumulativeStockNotNegative) rejects any sale that would make stock negative on any date, including backdated transactions.",
+        "Atomic writes with DB::transaction and lockForUpdate prevent race conditions and double-selling between concurrent sales.",
+        "Multi-role authorization (Spatie) is reinforced with admin device binding using revocable httpOnly tokens, so operational traces stay tied to a device.",
+        "An immutable, append-only audit trail with correlation_id and sanitized payloads; balances can be reconciled automatically through an anomaly-based health score."
+      ],
+      "stack": [
+        "Laravel 13",
+        "PHP 8.3",
+        "MySQL",
+        "Blade + Tailwind CSS + Alpine.js",
+        "Spatie Laravel Permission",
+        "Maatwebsite Excel / PhpSpreadsheet"
+      ],
+      "result": "The system turns manual spreadsheet reconciliation into a deterministic operation: every rupiah that enters or leaves can be traced from the transaction to the ledger entry. Layered validation on balances, cumulative stock, and recap consistency closes the gaps that allowed over-selling and hard-to-detect data discrepancies. Historical price snapshots keep old reports stable even when master prices change. With an append-only audit trail and strict role separation, the system can carry a growing volume of waste-bank transactions without losing accountability."
+    },
+    {
+      "id": "salestrack-lead-dispatch",
+      "title": "SALESTRACK — PROPERTY LEAD DISPATCH",
+      "category": "SYSTEM",
+      "year": "2026",
+      "role": "Full Stack Engineer",
+      "featured": true,
+      "headline": "Time-boxed lead dispatch with client-server deadline enforcement.",
+      "description": "Flutter client for property sales teams that pushes time-boxed leads to agents, enforces an accept-or-expire window, and tracks each lead from assignment to conversion. It replaces manual lead distribution with a deterministic, auditable status lifecycle.",
+      "media": {
+        "images": {
+          "cover": "/images/works/salestrack-lead-dispatch/cover.png",
+          "overview": "/images/works/salestrack-lead-dispatch/overview.png",
+          "architecture": "/images/works/salestrack-lead-dispatch/architecture.png"
+        },
+        "video": {
+          "type": "youtube",
+          "src": ""
+        }
+      },
+      "domains": [
+        "PROPERTY SALES",
+        "LEAD DISPATCH",
+        "REAL-TIME NOTIFICATIONS",
+        "SALES ANALYTICS"
+      ],
+      "problemPoints": [
+        "Leads were distributed manually over chat and spreadsheets, so ownership was ambiguous and two agents could contact the same prospect.",
+        "Acceptance deadlines lived in convention rather than code, so slow responses went undetected and could not be enforced or measured.",
+        "Without a server-committed accept step, client and backend could disagree on who owned a lead once it was reassigned after expiry."
+      ],
+      "overview": {
+        "problem": "Property sales teams receive leads from many channels such as social ads, WhatsApp, and property portals, and must contact them within minutes before the prospect goes cold. Before a system like this, leads were handed out over chat and spreadsheets, so ownership was ambiguous and response time was unmeasurable. When multiple agents chase or drop the same lead, duplicate calls damage the prospect experience and distort conversion metrics. The hardest constraint is time: a lead not answered inside its accept window must be released and re-dispatched, and that deadline has to hold even when the agent's phone is asleep or the app is backgrounded. Any timer that lives only in the UI will drift, freeze, or disagree with the server, producing leads that are accepted after the backend already reassigned them.",
+        "approach": "The client treats each incoming lead as a time-boxed state machine rather than a screen. When a high-priority assignment arrives, IncomingLeadProvider records the arrival timestamp and the resolved timeout, then exposes a single source of truth for remaining time that both the dashboard badge and the fullscreen alert read. Timeout resolution falls back in a defined order — push payload first, then the agent's profile autoRejectMinutes, then a hard default — so the deadline is correct even before the profile has loaded. The deadline is recomputed from the wall clock instead of being decremented, which keeps it consistent across app suspension and screen re-entry. Acceptance is a server commit via POST /leads/{id}/accept; the client only removes the pending lead after the server confirms ownership, so the UI cannot claim a lead the backend has already given away.",
+        "architecture": "The app is organized into feature modules (auth, dashboard, leads, incoming_lead, notifications, profile) over a shared core of API clients, model adapters, and services. Every HTTP call flows through a single ApiService that attaches the Bearer token, auto-injects the userId for /mobile endpoints, enforces a 30-second timeout, and normalizes errors; a 401 on any non-auth endpoint triggers a global logout that clears all providers. Responses are parsed into typed models at the boundary, with defensive casting for nested and nullable fields such as source, property, assignments, and timestamps, so malformed data degrades to defaults instead of crashing a rebuild. Notifications run through a dual-channel pipeline: one classifier decides whether a payload is an incoming lead, and a dedicated max-importance channel with fullScreenIntent and a custom sound is reserved for those alerts. Session state persists behind one storage accessor and is purged atomically on logout or token expiry.",
+        "workflow": "A lead is created and assigned by the backend, which pushes a data message to the selected agent. The device classifies the message, raises a fullscreen alert with the accept countdown, and registers the lead in the incoming provider. The agent accepts before the deadline, which commits ownership on the server and moves the lead into the active list; otherwise the timer expires and the lead is released for re-dispatch. Once owned, the agent advances the lead through contacted, interested or not_interested, and finally converted or rejected, recording notes that the activity timeline renders in order."
+      },
+      "flowPaths": [
+        {
+          "id": "path-utama",
+          "title": "Lead Acceptance (Direct Processing)",
+          "badge": "Happy Path",
+          "description": "Runs when a high-priority lead is dispatched and the agent accepts within the auto-reject window.",
+          "steps": [
+            {
+              "name": "Push Dispatch",
+              "department": "Dispatch Service → FCM",
+              "action": "Backend emits a data message tagged type=lead_assigned with priority=high; the client classifies it as an incoming lead."
+            },
+            {
+              "name": "Full-Screen Alert",
+              "department": "Notification Service",
+              "action": "Raises a max-importance notification with fullScreenIntent, starts looping lead_alert audio, and opens IncomingLeadScreen with leadId and timeout."
+            },
+            {
+              "name": "Countdown Reconciliation",
+              "department": "IncomingLeadProvider / Sales Agent",
+              "action": "Provider registers arrivalTime, derives remaining seconds from the wall clock, and the screen enriches fields from GET /mobile/leads/{id}."
+            },
+            {
+              "name": "Accept Persist",
+              "department": "LeadsProvider → ApiService",
+              "action": "POST /mobile/leads/{id}/accept commits ownership; the provider removes the pending lead, stops the sound, and routes to /leads."
+            }
+          ]
+        },
+        {
+          "id": "path-sekunder",
+          "title": "Auto-Reject Timer Expiry (Fallback Flow)",
+          "badge": "Exception Path",
+          "description": "Runs when the agent does not act before the deadline and the lead must be released.",
+          "steps": [
+            {
+              "name": "Window Exhausted",
+              "department": "IncomingLeadProvider",
+              "action": "The 1-second scheduler marks the lead expired when now exceeds arrivalTime + timeoutSeconds and prunes it from the pending list."
+            },
+            {
+              "name": "UI Teardown",
+              "department": "IncomingLeadScreen",
+              "action": "The screen detects remainingSeconds at zero, cancels its timer, stops the audio player, and pops itself."
+            },
+            {
+              "name": "Runtime Notice",
+              "department": "Client UX",
+              "action": "A snackbar reports the lead was auto-declined and the incoming badge disappears from the dashboard."
+            },
+            {
+              "name": "Backend Re-Dispatch",
+              "department": "Dispatch Service",
+              "action": "The assignment record transitions to expired and the backend reassigns the lead to the next eligible agent."
+            }
+          ]
+        },
+        {
+          "id": "path-kontrol",
+          "title": "Authorization & Session Gate",
+          "badge": "Quality & Security Gate",
+          "description": "Every request passes through a single authentication boundary that invalidates the whole session on expiry.",
+          "steps": [
+            {
+              "name": "Request Signing",
+              "department": "ApiService",
+              "action": "Attaches the Bearer token and auto-injects userId for /mobile/* endpoints from persisted session state."
+            },
+            {
+              "name": "Token Validation",
+              "department": "Backend API",
+              "action": "Validates the token and returns HTTP 401 for expired or invalid credentials."
+            },
+            {
+              "name": "Global Intercept",
+              "department": "ApiService",
+              "action": "A 401 on any non-auth endpoint clears the Auth, Leads, Dashboard, Notification, and IncomingLead providers before proceeding."
+            },
+            {
+              "name": "Session Purge",
+              "department": "Session Storage / Navigation",
+              "action": "Persisted credentials are cleared and the navigator resets to /login, preventing stale-state access."
+            }
+          ]
+        }
+      ],
+      "workflowStages": [
+        {
+          "step": "01",
+          "name": "LEAD INGESTION",
+          "department": "Dispatch Service",
+          "detail": "A lead is captured from a channel and queued for assignment to an eligible agent."
+        },
+        {
+          "step": "02",
+          "name": "PUSH ASSIGNMENT",
+          "department": "Backend / FCM",
+          "detail": "A high-priority data message is pushed to the assigned agent's device."
+        },
+        {
+          "step": "03",
+          "name": "ACCEPT GATE",
+          "department": "Sales Agent",
+          "detail": "The agent must accept within the profile-defined window; the deadline is enforced client and server side."
+        },
+        {
+          "step": "04",
+          "name": "STATUS LIFECYCLE",
+          "department": "Sales Agent",
+          "detail": "Lead advances through contacted, interested or not_interested, then converted or rejected with notes."
+        }
+      ],
+      "decisions": [
+        {
+          "number": "01",
+          "title": "WALL-CLOCK COUNTDOWN INSTEAD OF A DECREMENTING TIMER",
+          "decision": "IncomingLeadProvider stores arrivalTime and derives remainingSeconds from DateTime.now() on read, while a single 1-second timer only schedules re-render and pruning.",
+          "rationale": "A decrementing counter drifts or freezes when the OS suspends the app or backgrounds the process. Deriving from the wall clock keeps the deadline consistent across foreground, background, and screen re-entry, and makes the timer a scheduler rather than a source of truth."
+        },
+        {
+          "number": "02",
+          "title": "DUAL FCM CHANNELS WITH A CENTRALIZED CLASSIFIER",
+          "decision": "Two Android channels are declared at startup — a normal channel and a max-importance fullScreenIntent channel — and a single isIncomingLead() classifier decides routing for foreground, background, and terminated states.",
+          "rationale": "Android channel importance is immutable after creation, so urgent lead alerts require a dedicated channel that cannot be reused for routine notifications. Centralizing classification prevents three divergent interpretations of the same payload and reserves fullScreenIntent and custom sound strictly for high-priority leads."
+        },
+        {
+          "number": "03",
+          "title": "TYPED MODEL LAYER WITH NULL-SAFE NESTED ADAPTERS",
+          "decision": "Every API response is parsed into typed Dart models (LeadModel, DashboardModel, UserProfile) with defensive fromJson casting, and the UI never indexes raw maps.",
+          "rationale": "The backend returns inconsistent shapes — wrapped data, nested source/property/assignments objects, nullable timestamps. Parsing at the boundary turns runtime cast failures into controlled defaults (empty lists, fallbacks) and decouples UI rebuilds from transport-format changes."
+        },
+        {
+          "number": "04",
+          "title": "GLOBAL SESSION INTERCEPTOR IN THE HTTP LAYER",
+          "decision": "ApiService centrally injects the Bearer token and userId and converts any 401 on a non-auth endpoint into a full logout that clears all ChangeNotifier providers.",
+          "rationale": "Scattering auth handling across features leaves orphaned state and half-authenticated screens. A single interceptor guarantees that an expired token purges cached leads, dashboard, notifications, and pending alerts atomically, preventing stale data from leaking after session expiry."
+        }
+      ],
+      "architectureLayers": [
+        {
+          "number": "01",
+          "name": "CLIENT LAYER",
+          "items": [
+            "Flutter (Dart SDK ^3.6.0)",
+            "Provider / ChangeNotifier with Selector and AutomaticKeepAliveClientMixin",
+            "Typed fromJson model adapters (no runtime map casting)",
+            "flutter_localizations (en/id) with custom TikTokSans theme"
+          ]
+        },
+        {
+          "number": "02",
+          "name": "BUSINESS & DOMAIN",
+          "items": [
+            "Layered feature modules (auth, dashboard, leads, incoming_lead, notifications, profile)",
+            "IncomingLeadProvider deadline engine with status lifecycle (assigned → contacted → interested → converted/rejected)",
+            "Role/session model with global 401 invalidation and userId auto-injection",
+            "Debug-gated request/response logging with diagnostic hints"
+          ]
+        },
+        {
+          "number": "03",
+          "name": "DATA & STORAGE",
+          "items": [
+            "REST API at sales-track.net/api via package:http with 30-second timeouts",
+            "Central ApiService with per-domain clients (leads, dashboard, profile, devices, notifications)",
+            "Firebase Cloud Messaging plus flutter_local_notifications dual-channel pipeline",
+            "shared_preferences session persistence with atomic clear on logout or 401"
+          ]
+        }
+      ],
+      "highlights": [
+        "Deadline-based incoming lead engine that derives remaining time from the wall clock, so countdowns survive app suspension and screen re-entry without drift.",
+        "Payload classifier with dedicated high-priority channel delivering fullScreenIntent, custom lead_alert sound, and looping audio only for urgent assignments.",
+        "Centralized 401 interceptor that atomically purges Auth, Leads, Dashboard, Notification, and IncomingLead providers before resetting navigation to login.",
+        "Typed boundary parsing of nested, nullable API payloads (source, property, assignments) with time-bound caches and optimistic lead updates."
+      ],
+      "stack": [
+        "Flutter",
+        "Dart",
+        "Provider",
+        "Firebase Cloud Messaging",
+        "flutter_local_notifications",
+        "package:http",
+        "shared_preferences"
+      ],
+      "result": "The result is a lead pipeline whose deadlines and ownership are enforced the same way on the device and on the server, instead of being inferred from chat threads. Agents see a single, prioritized incoming alert with a countdown they cannot easily ignore, and every accepted lead carries an auditable sequence of assignment and status transitions. Managers get dashboard metrics — assigned, contacted, converted, rejected, and per-channel pipeline — computed from that consistent state. Because the deadline is recomputed rather than decremented and the session is invalidated atomically, the app stays predictable through backgrounding, poor connectivity, and token expiry. This turns lead handling from a manual, unmeasurable process into a deterministic one that can scale with volume."
+    },
+    {
+      "id": "ecarrgo-reverse-auction-logistics",
+      "title": "ECARRGO",
+      "category": "PLATFORM",
+      "year": "2026",
+      "role": "Full Stack Engineer",
+      "featured": true,
+      "headline": "A logistics reverse-auction marketplace with a controlled shipment state machine.",
+      "description": "A two-role mobile app that turns shipping orders into a rate auction: senders post an order, logistics vendors bid, and the system locks the winner, payment, and tracking status into one deterministic flow.",
+      "media": {
+        "images": {
+          "cover": "/images/works/ecarrgo-reverse-auction-logistics/cover.png",
+          "overview": "/images/works/ecarrgo-reverse-auction-logistics/overview.png",
+          "architecture": "/images/works/ecarrgo-reverse-auction-logistics/architecture.png"
+        },
+        "video": {
+          "type": "youtube",
+          "src": ""
+        }
+      },
+      "domains": [
+        "LOGISTICS",
+        "REVERSE AUCTION",
+        "MOBILE PLATFORM",
+        "PAYMENT VERIFICATION"
+      ],
+      "problemPoints": [
+        "Shipping rates were negotiated manually over chat and phone, so prices went unrecorded, could not be compared, and orders were at risk of being placed with more than one vendor.",
+        "With no single source, shipment_id, auction_id, and waybill number were easily swapped between the fill-in, payment, and tracking screens, breaking the integrity chain of the shipment data.",
+        "Transfer proofs were received without a record tying them to a transaction, so payment verification depended on manual matching by an admin and could not be audited."
+      ],
+      "overview": {
+        "problem": "Shipping used to run through intermediaries: senders contacted several vendors separately and negotiated prices with no structured record. That pattern breaks at volume because prices cannot be compared, one order risks being held by more than one vendor, and shipment status has no single authority. When the vendor, sender, and admin see different states, an order stalls with no clear owner. Without an explicit state machine and a single data source, every status change can produce two contradicting truths.",
+        "approach": "The system is built as a reverse-auction marketplace with the shipment as the aggregate root. A sender posts an order with a price limit and duration; vendors submit bids; the sender picks a winner; then the system locks the price, creates an invoice, and drives status through fixed transitions. The UI does not invent its own progress: the step shown is recomputed from the server status (waiting_approval, auction_started, shipping, completed), so navigation follows backend authority rather than client cache.",
+        "architecture": "The Flutter client separates data sources, domain, and presentation; Dio handles transport with an automatically injected Bearer token. A single FillDataProvider accumulates all wizard input into one object before it is sent as one auction payload, preventing half-sent orders. On the server, shipment status is the source of truth; the select-winner, payments, and tracking endpoints enforce per-owner authorization. The status transition history (status_history) becomes an audit trail that is rendered back to the user timeline.",
+        "workflow": "The primary flow starts when the sender picks a route on the map and fills in cargo details, followed by auction setup against a rate reference, then the order is sent as an auction and shipment. Vendors bid for the active duration, the sender selects a winner, and an admin confirms the price and starts shipping. After the sender uploads a transfer proof and an admin verifies it, the status moves to shipping and waybill tracking closes the loop until completed."
+      },
+      "flowPaths": [
+        {
+          "id": "path-order-creation",
+          "title": "Order Creation & Auction",
+          "badge": "Primary Case",
+          "description": "Runs when a sender creates a new shipment and the system must produce one shipment with one linked auction.",
+          "steps": [
+            {
+              "name": "Select Route & Schedule",
+              "department": "Sender",
+              "action": "The app captures pickup and destination points via map and geolocation, then stores the schedule in FillDataProvider."
+            },
+            {
+              "name": "Enter Cargo Details",
+              "department": "Sender",
+              "action": "Per-item validation rejects weight over 100 tons, or empty volume or value, before the data is provisionally locked."
+            },
+            {
+              "name": "Set Auction Parameters",
+              "department": "System",
+              "action": "Fetches a rate reference from the generate-rates endpoint and ensures the auction duration does not exceed the shipping time."
+            },
+            {
+              "name": "Submit Order",
+              "department": "Sender",
+              "action": "POST /auctions creates the shipment and auction together, returning auction_id, shipment_id, and resi_number that are shared to the providers."
+            }
+          ]
+        },
+        {
+          "id": "path-vendor-bidding",
+          "title": "Vendor Bidding & Winner Selection",
+          "badge": "Auction Phase",
+          "description": "Runs while the auction is active until exactly one vendor is selected as the order winner.",
+          "steps": [
+            {
+              "name": "Browse Auctions",
+              "department": "Vendor",
+              "action": "The vendor pulls the list of active auctions and filters by route and estimated order value."
+            },
+            {
+              "name": "Submit a Bid",
+              "department": "Vendor",
+              "action": "The bid is recorded with bid_amount and status, allowing sorting by lowest, highest, or newest."
+            },
+            {
+              "name": "Select Winner",
+              "department": "Sender",
+              "action": "PATCH /auctions/{id}/select-winner sets vendor_id and locks the winner so the order is not held by two parties."
+            },
+            {
+              "name": "Confirm Price",
+              "department": "Admin CS",
+              "action": "The admin confirms the price and moves the auction status toward auction_started as the payment start point."
+            }
+          ]
+        },
+        {
+          "id": "path-payment-tracking-gate",
+          "title": "Payment & Verified Tracking",
+          "badge": "Quality & Security Gate",
+          "description": "The authorization, payment verification, and audit trail that must be passed before a shipment is marked complete.",
+          "steps": [
+            {
+              "name": "Authentication & Token",
+              "department": "System",
+              "action": "Login returns access_token and role; the token is stored in secure storage and injected as a Bearer header on every request."
+            },
+            {
+              "name": "Upload Transfer Proof",
+              "department": "Sender",
+              "action": "The image is sent as multipart with Authorization and a site-password; the file name is used as a traceable transaction_id."
+            },
+            {
+              "name": "Create Payment Record",
+              "department": "System",
+              "action": "POST /payments stores amount, method, and a pending status that binds shipment_id and the paying user_id."
+            },
+            {
+              "name": "Verify & Track",
+              "department": "Admin CS",
+              "action": "After verification, the status becomes shipping and waybill tracking shows status_history as an audit trail until completed."
+            }
+          ]
+        }
+      ],
+      "workflowStages": [
+        {
+          "step": "01",
+          "name": "CONFIRMATION",
+          "department": "Admin CS",
+          "detail": "Status waiting_approval: CS verifies identity, shipment data, and order eligibility."
+        },
+        {
+          "step": "02",
+          "name": "AUCTION & PAYMENT",
+          "department": "Sender & Vendor",
+          "detail": "Status auction_started: bidding runs, a winner is chosen, then the payment proof is uploaded."
+        },
+        {
+          "step": "03",
+          "name": "EN ROUTE",
+          "department": "Logistics Vendor",
+          "detail": "Status shipping: the package is in transit and the status is recorded on the waybill tracking."
+        },
+        {
+          "step": "04",
+          "name": "DELIVERED",
+          "department": "Sender",
+          "detail": "Status completed: shipping is finished and the order is confirmed as received."
+        }
+      ],
+      "decisions": [
+        {
+          "number": "01",
+          "title": "SERVER STATUS AS A STATE MACHINE, NOT A CLIENT CACHE",
+          "decision": "UI steps are recomputed from the shipment status on the server, and local progress cache is reset when it is not backed by a confirmation.",
+          "rationale": "If the client decides its own steps, an order can stall on a stale step after the server status changed. Mapping status to steps and validating the cache keeps navigation consistent with backend authority even when the app is closed mid-flow."
+        },
+        {
+          "number": "02",
+          "title": "ONE ACCUMULATOR PROVIDER FOR THE MULTI-STEP WIZARD",
+          "decision": "All five steps of input are stored in a single FillDataProvider with per-step validation before the payload is sent.",
+          "rationale": "Sending data per step invites partial orders and orphan shipment_ids. A single accumulation ensures the auction is created only when every field is valid, at the cost of holding wizard state longer on the client."
+        },
+        {
+          "number": "03",
+          "title": "REVERSE AUCTION WITH SERVER-SIDE WINNER LOCKING",
+          "decision": "Winner selection happens through the sender's select-winner endpoint, not free negotiation on the client.",
+          "rationale": "A reverse auction lowers prices naturally, but without locking, one order can be held by many vendors. A dedicated endpoint ensures only the order owner sets the winner and prevents double assignment."
+        },
+        {
+          "number": "04",
+          "title": "SECURE TOKENS AND AUTH-BOUND DEVICE SYNC",
+          "decision": "The access token is stored in secure storage with centralized Bearer injection, and the FCM token is registered following the login cycle.",
+          "rationale": "Storing the token in plain storage or spreading headers across every call increases leak risk and inconsistency. Centralized injection simplifies authorization, while post-login device-token registration keeps notifications reaching the right user."
+        }
+      ],
+      "architectureLayers": [
+        {
+          "number": "01",
+          "name": "CLIENT LAYER",
+          "items": [
+            "Flutter (Dart) multi-platform",
+            "Provider & Riverpod for state",
+            "flutter_map + geolocator + latlong2",
+            "flutter_secure_storage & shared_preferences"
+          ]
+        },
+        {
+          "number": "02",
+          "name": "BUSINESS & DOMAIN",
+          "items": [
+            "Per-feature data-domain-presentation architecture",
+            "Data source layer + Dio HTTP client",
+            "Shipment status to flow-step mapping",
+            "Role-based navigation (customer/vendor) + l10n en/id"
+          ]
+        },
+        {
+          "number": "03",
+          "name": "DATA & STORAGE",
+          "items": [
+            "REST API with Bearer authentication",
+            "Secure storage for the access token",
+            "Local progress store as cache",
+            "Object storage for transfer proofs + status_history as audit trail"
+          ]
+        }
+      ],
+      "highlights": [
+        "UI steps are recomputed from server status and the local progress cache is reset when unconfirmed, avoiding users stuck on a stale step after a status change.",
+        "Layered per-step validation (maximum weight 100 tons and auction duration not exceeding the shipping time) rejects inconsistent auction payloads before they are sent.",
+        "Winner selection through an owner-only endpoint with a deterministic transaction_id derived from the payment proof file name, traceable back to the record.",
+        "Status transitions are recorded as status_history on the waybill tracking and rendered back into a user-side timeline."
+      ],
+      "stack": [
+        "Flutter",
+        "Dart",
+        "Dio",
+        "Provider",
+        "Riverpod",
+        "Firebase Messaging",
+        "flutter_secure_storage",
+        "flutter_map"
+      ],
+      "result": "ECARRGO turns shipping that was negotiated manually into a structured auction flow with a single status authority on the server. Every order now has a linked shipment and auction, a selected winner that cannot be duplicated, and payments that can be verified through a traceable transfer proof. Mapping status to flow steps makes the process deterministic and resumable across sessions, while the status audit trail gives operations a clear basis and room to grow shipping volume."
     }
   ]
 }

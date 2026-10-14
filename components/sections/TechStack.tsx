@@ -3,37 +3,168 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import worksData from "@/content/works.json";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-interface StackCategory {
+interface Discipline {
   number: string;
   category: string;
-  skills: string[];
   description: string;
+  keywords: string[];
 }
 
-const STACK_CATEGORIES: StackCategory[] = [
+const DISCIPLINES: Discipline[] = [
   {
     number: "01",
-    category: "FRONTEND & INTERFACES",
-    skills: ["TypeScript", "Next.js (App Router)", "React 19", "TanStack Query", "Tailwind CSS"],
-    description: "Responsive interfaces, client-side caching, robust form validation with Zod, and predictable state hydration.",
+    category: "LANGUAGES & RUNTIMES",
+    description: "Core languages behind the work, from typed web apps to PHP services and cross-platform mobile.",
+    keywords: [
+      "typescript",
+      "javascript",
+      "php",
+      "dart",
+      "python",
+      "node",
+      "bun",
+      "go",
+      "rust",
+      "kotlin",
+      "swift",
+      "java",
+    ],
   },
   {
     number: "02",
-    category: "BACKEND & DATA INTEGRITY",
-    skills: ["Node.js", "PostgreSQL", "Prisma ORM", "REST APIs", "Database Transactions"],
-    description: "Relational constraints, row-level concurrency locks, atomic database operations, and schema migrations.",
+    category: "FRAMEWORKS & INTERFACES",
+    description: "Application frameworks and interface layers, spanning server-rendered Laravel, React and Next.js, and Flutter.",
+    keywords: [
+      "next",
+      "react",
+      "vue",
+      "svelte",
+      "astro",
+      "laravel",
+      "django",
+      "flutter",
+      "blade",
+      "alpine",
+      "tailwind",
+      "tanstack",
+      "provider",
+      "riverpod",
+      "zod",
+      "express",
+      "nest",
+    ],
   },
   {
     number: "03",
-    category: "SYSTEMS & ARCHITECTURE",
-    skills: ["State Machines", "Role-Based Access Control", "MinIO Storage", "Docker", "Audit Logging"],
-    description: "Multi-department operational lifecycles, transactional approval gates, and traceable audit trails.",
+    category: "DATA & STORAGE",
+    description: "Relational databases, ORMs, object storage, and on-device persistence.",
+    keywords: [
+      "postgres",
+      "mysql",
+      "mariadb",
+      "sqlite",
+      "mongodb",
+      "redis",
+      "prisma",
+      "eloquent",
+      "minio",
+      "s3",
+      "shared_preferences",
+      "storage",
+    ],
+  },
+  {
+    number: "04",
+    category: "AUTH, PLATFORMS & TOOLING",
+    description: "Identity and permissions, push and local notifications, data import, and the tooling around each system.",
+    keywords: [
+      "nextauth",
+      "auth",
+      "spatie",
+      "permission",
+      "firebase",
+      "fcm",
+      "messaging",
+      "notification",
+      "http",
+      "dio",
+      "excel",
+      "spreadsheet",
+      "docker",
+      "kubernetes",
+      "aws",
+      "vps",
+    ],
   },
 ];
+
+const FALLBACK: Discipline = {
+  number: "",
+  category: "TOOLS & LIBRARIES",
+  description: "Additional libraries pulled in by the projects above.",
+  keywords: [],
+};
+
+function classify(item: string): Discipline {
+  const lower = item.toLowerCase();
+  let best: Discipline | null = null;
+  let bestLength = 0;
+
+  for (const discipline of DISCIPLINES) {
+    for (const keyword of discipline.keywords) {
+      if (lower.includes(keyword) && keyword.length > bestLength) {
+        best = discipline;
+        bestLength = keyword.length;
+      }
+    }
+  }
+
+  return best ?? FALLBACK;
+}
+
+function buildStackGroups() {
+  const seen = new Set<string>();
+  const buckets = new Map<string, string[]>();
+  DISCIPLINES.forEach((discipline) => buckets.set(discipline.number, []));
+
+  const fallbackItems: string[] = [];
+
+  for (const project of worksData.projects) {
+    for (const tech of project.stack ?? []) {
+      if (seen.has(tech)) continue;
+      seen.add(tech);
+
+      const discipline = classify(tech);
+      if (discipline === FALLBACK) {
+        fallbackItems.push(tech);
+      } else {
+        buckets.get(discipline.number)?.push(tech);
+      }
+    }
+  }
+
+  const groups = DISCIPLINES.map((discipline) => ({
+    ...discipline,
+    items: buckets.get(discipline.number) ?? [],
+  })).filter((group) => group.items.length > 0);
+
+  if (fallbackItems.length > 0) {
+    groups.push({
+      ...FALLBACK,
+      number: String(DISCIPLINES.length + 1).padStart(2, "0"),
+      items: fallbackItems,
+    });
+  }
+
+  return groups;
+}
+
+const STACK_GROUPS = buildStackGroups();
 
 export default function TechStack() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -131,28 +262,28 @@ export default function TechStack() {
           </h2>
 
           <p className="mt-4 sm:mt-6 font-sans text-base sm:text-lg text-zinc-300 leading-relaxed font-normal max-w-2xl">
-            Technologies and architectural patterns I work with daily to build dependable,
-            high-integrity web applications and business systems.
+            The production stack drawn from the systems below, grouped by the layer each
+            technology belongs to.
           </p>
         </div>
 
         <div ref={listRef} className="mt-12 sm:mt-16">
-          {STACK_CATEGORIES.map((item) => (
-            <div key={item.number} className="stack-row">
+          {STACK_GROUPS.map((group) => (
+            <div key={group.category} className="stack-row">
               <div className="h-px w-full bg-zinc-800/60" aria-hidden="true" />
               <div className="grid grid-cols-1 gap-5 py-8 sm:py-10 md:grid-cols-12 md:gap-10 lg:gap-12">
                 <div className="flex items-baseline gap-3 md:col-span-4">
                   <span className="font-mono text-2xl sm:text-3xl font-light tracking-tight text-zinc-500/80 select-none">
-                    {item.number}
+                    {group.number}
                   </span>
                   <h3 className="font-mono text-xs sm:text-sm uppercase tracking-[0.2em] text-white">
-                    {item.category}
+                    {group.category}
                   </h3>
                 </div>
 
                 <div className="md:col-span-8">
                   <div className="flex flex-wrap gap-x-6 gap-y-2.5">
-                    {item.skills.map((skill) => (
+                    {group.items.map((skill) => (
                       <span
                         key={skill}
                         className="flex items-center gap-2 font-sans text-sm text-zinc-200 sm:text-[15px]"
@@ -163,7 +294,7 @@ export default function TechStack() {
                     ))}
                   </div>
                   <p className="mt-3 max-w-xl font-sans text-sm leading-relaxed text-zinc-400">
-                    {item.description}
+                    {group.description}
                   </p>
                 </div>
               </div>
