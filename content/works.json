@@ -37,7 +37,7 @@
       "title": "ORDER OPERATIONS SYSTEM",
       "category": "SYSTEM",
       "year": "2026",
-      "role": "",
+      "role": "Full Stack Engineer",
       "featured": true,
       "headline": "One order, multiple fulfillment paths.",
       "description": "An order-centric operations platform connecting sales, purchasing, warehouse, inventory, and finance around a single operational lifecycle.",
@@ -932,7 +932,7 @@
         "Dio",
         "Provider",
         "Riverpod",
-        "Firebase Messaging",
+        "Firebase Cloud Messaging",
         "flutter_secure_storage",
         "flutter_map"
       ],

@@ -32,9 +32,24 @@ export async function generateMetadata({
     };
   }
 
+  const cover = project.media?.images?.cover;
+
   return {
     title: `${project.title}: Case Study`,
     description: project.description,
+    alternates: { canonical: `/works/${project.id}` },
+    openGraph: {
+      type: "article",
+      title: `${project.title}: Case Study`,
+      description: project.description,
+      ...(cover ? { images: [{ url: cover, alt: project.title }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${project.title}: Case Study`,
+      description: project.description,
+      ...(cover ? { images: [cover] } : {}),
+    },
   };
 }
 

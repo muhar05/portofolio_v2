@@ -13,9 +13,43 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const SITE_TITLE = "Muhar Ferdiansyah | Full Stack Engineer";
+
 export const metadata: Metadata = {
-  title: "MUHAR FULL STACK ENGINEER",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_TITLE,
+    template: "%s | Muhar Ferdiansyah",
+  },
   description: siteData.statement,
+  applicationName: "Muhar Ferdiansyah Portfolio",
+  authors: [{ name: "Muhar Ferdiansyah" }],
+  creator: "Muhar Ferdiansyah",
+  keywords: [
+    "Full Stack Engineer",
+    "Software Engineer",
+    "TypeScript",
+    "Next.js",
+    "React",
+    "Laravel",
+    "PHP",
+    "Flutter",
+    "PostgreSQL",
+    "Prisma",
+  ],
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "Muhar Ferdiansyah",
+    title: SITE_TITLE,
+    description: siteData.statement,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: siteData.statement,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

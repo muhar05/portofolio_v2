@@ -110,6 +110,14 @@ export default function WorkHero({ project }: WorkHeroProps) {
             <span className="text-zinc-200 font-semibold">
               {project.category}
             </span>
+            {project.role && (
+              <>
+                <span className="text-zinc-600" aria-hidden="true">
+                  ·
+                </span>
+                <span>{project.role}</span>
+              </>
+            )}
             <span className="text-zinc-600" aria-hidden="true">
               ·
             </span>
