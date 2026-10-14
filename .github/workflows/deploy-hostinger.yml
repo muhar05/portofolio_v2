@@ -1,31 +1,17 @@
-name: Deploy to Hostinger
-
-# Builds the portfolio as a static export and uploads it to Hostinger over FTP.
-#
-# Required repository secrets (Settings > Secrets and variables > Actions):
-#   FTP_SERVER    e.g. ftp.muharferdiansyah.my.id  (or your Hostinger server IP)
-#   FTP_USERNAME  the Hostinger FTP account username
-#   FTP_PASSWORD  the Hostinger FTP account password
-#
-# Optional repository variables (Settings > Secrets and variables > Actions > Variables):
-#   SITE_URL        override the canonical/OG domain (defaults to the production domain)
-#   FTP_SERVER_DIR  remote folder for the upload (defaults to /public_html/)
+name: Build and Deploy Portfolio
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
-
-concurrency:
-  group: deploy-hostinger
-  cancel-in-progress: true
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup pnpm
@@ -33,32 +19,36 @@ jobs:
         with:
           version: 10.30.0
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build static export
-        env:
-          NEXT_OUTPUT: export
-          NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL || 'https://muharferdiansyah.my.id' }}
         run: pnpm build
 
-      - name: Remove junk files
-        run: find out -name '.DS_Store' -delete
+      - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          SSH_HOST: ${{ secrets.HOSTINGER_HOST }}
+          SSH_PORT: ${{ secrets.HOSTINGER_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "$SSH_PORT" "$SSH_HOST" >> ~/.ssh/known_hosts
 
-      - name: Upload to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftps
-          local-dir: ./out/
-          server-dir: ${{ vars.FTP_SERVER_DIR || '/public_html/' }}
-          dangerous-clean-slate: false
+      - name: Deploy to Hostinger
+        env:
+          SSH_HOST: ${{ secrets.HOSTINGER_HOST }}
+          SSH_PORT: ${{ secrets.HOSTINGER_PORT }}
+          SSH_USERNAME: ${{ secrets.HOSTINGER_USERNAME }}
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p $SSH_PORT" \
+            ./out/ \
+            "$SSH_USERNAME@$SSH_HOST:/home/$SSH_USERNAME/domains/YOUR_DOMAIN/public_html/"
