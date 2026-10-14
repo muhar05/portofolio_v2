@@ -29,7 +29,14 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build static export
-        run: pnpm build
+        env:
+          NEXT_OUTPUT: export
+        run: |
+          pnpm build
+          test -d out || {
+            echo "ERROR: Folder out/ tidak dihasilkan"
+            exit 1
+          }
 
       - name: Setup SSH
         env:
