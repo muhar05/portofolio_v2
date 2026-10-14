@@ -51,4 +51,4 @@ jobs:
           rsync -avz --delete \
             -e "ssh -i ~/.ssh/deploy_key -p $SSH_PORT" \
             ./out/ \
-            "$SSH_USERNAME@$SSH_HOST:/home/$SSH_USERNAME/domains/YOUR_DOMAIN/public_html/"
+            "$SSH_USERNAME@$SSH_HOST:/home/$SSH_USERNAME/domains/muharferdiansyah.my.id/public_html/"
