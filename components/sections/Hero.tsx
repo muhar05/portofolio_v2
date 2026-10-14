@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import aboutData from "@/content/about.json";
-import FlatIllustration from "./FlatIllustration";
+import HeroScene from "./HeroScene";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -183,7 +183,9 @@ export default function Hero() {
             <div className="relative w-full max-w-[460px]">
               <div className="relative rounded-lg border border-zinc-800/60 bg-zinc-950/60 p-3">
                 <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-6 border-t border-dashed border-zinc-700/60" />
-                <FlatIllustration />
+                <div className="h-[300px] w-full sm:h-[340px] lg:h-[380px]">
+                  <HeroScene />
+                </div>
                 <div className="mt-1 flex items-center justify-between px-1 text-[9px] font-mono text-zinc-500 border-t border-zinc-900/60 pt-1">
                   <span>FIG.01 // SYSTEM CONTEXT</span>
                   <span className="text-zinc-600">{intro.concept}</span>
@@ -242,10 +244,10 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="hero-illustration mt-4 sm:mt-5 w-full max-w-[280px] sm:max-w-[320px]">
+          <div className="hero-illustration mt-4 sm:mt-5 w-full max-w-[340px] sm:max-w-[400px]">
             <div className="rounded-lg border border-zinc-800/60 bg-zinc-950/70 p-2 shadow-lg shadow-black/40">
-              <div className="max-h-[140px] sm:max-h-[160px] overflow-hidden flex items-center justify-center">
-                <FlatIllustration />
+              <div className="h-[240px] w-full sm:h-[280px]">
+                <HeroScene />
               </div>
               <div className="mt-1 flex items-center justify-between px-1 text-[8px] font-mono text-zinc-500 border-t border-zinc-900/60 pt-0.5">
                 <span>FIG.01 // CONTEXT</span>

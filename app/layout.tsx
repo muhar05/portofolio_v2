@@ -13,7 +13,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://muharferdiansyah.my.id";
 const SITE_TITLE = "Muhar Ferdiansyah | Full Stack Engineer";
 
 export const metadata: Metadata = {

@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import worksData from "@/content/works.json";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://muharferdiansyah.my.id";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
