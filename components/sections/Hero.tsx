@@ -11,7 +11,7 @@ const useIsomorphicLayoutEffect =
 
 function AvailabilityBadge({ text }: { text: string }) {
   return (
-    <span className="inline-flex max-w-full items-center gap-1.5 rounded border border-zinc-800/80 bg-zinc-950/60 px-2 py-1 font-mono text-[8.5px] leading-tight text-zinc-300 sm:gap-2 sm:px-2.5 sm:text-[10px]">
+    <span className="inline-flex max-w-full items-center gap-1.5 rounded border border-zinc-800/80 bg-zinc-950/60 px-2 py-1 font-mono text-[8.5px] uppercase leading-tight text-zinc-300 sm:gap-2 sm:px-2.5 sm:text-[10px]">
       <span
         className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
         aria-hidden="true"
@@ -153,6 +153,10 @@ export default function Hero() {
               </span>
             </div>
 
+            <div className="mb-3">
+              <AvailabilityBadge text={intro.availability} />
+            </div>
+
             <h1 className="font-sans text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-none">
               {intro.name}
             </h1>
@@ -165,12 +169,10 @@ export default function Hero() {
               {intro.supporting}
             </p>
 
-            <div className="mt-3 flex flex-wrap items-center gap-2.5">
+            <div className="mt-3 flex items-center gap-2">
               <span className="font-mono text-xs font-semibold tracking-[0.2em] text-[#fb923c] uppercase">
                 {intro.concept}
               </span>
-              <span className="h-px w-6 bg-zinc-800" aria-hidden="true" />
-              <AvailabilityBadge text={intro.availability} />
             </div>
 
             <div className="mt-4 max-w-xl space-y-3">
@@ -187,7 +189,7 @@ export default function Hero() {
                 href={`mailto:${siteData.email}`}
                 className="inline-flex min-h-11 items-center justify-center rounded bg-[#f97316] px-4 py-2 text-[11px] font-semibold text-zinc-950 transition-colors hover:bg-[#fb923c]"
               >
-                LET&apos;S TALK
+                {"LET'S TALK"}
               </a>
               <a
                 href="#selected-work"
@@ -224,6 +226,10 @@ export default function Hero() {
               </span>
             </div>
 
+            <div className="mb-2.5">
+              <AvailabilityBadge text={intro.availability} />
+            </div>
+
             <h1 className="font-sans text-3xl sm:text-4xl font-bold tracking-tight text-white leading-tight">
               {intro.name}
             </h1>
@@ -236,11 +242,10 @@ export default function Hero() {
               {intro.supporting}
             </p>
 
-            <div className="mt-2.5 flex flex-col items-center gap-2">
+            <div className="mt-2">
               <span className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] text-[#fb923c] uppercase">
                 {intro.concept}
               </span>
-              <AvailabilityBadge text={intro.availability} />
             </div>
 
             <div className="mt-3 px-2 max-w-sm space-y-2">
@@ -257,7 +262,7 @@ export default function Hero() {
                 href={`mailto:${siteData.email}`}
                 className="inline-flex min-h-11 items-center justify-center rounded bg-[#f97316] px-3.5 py-2 font-semibold text-zinc-950"
               >
-                LET&apos;S TALK
+                {"LET'S TALK"}
               </a>
               <a
                 href="#selected-work"

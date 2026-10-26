@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import siteData from "@/content/site.json";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,9 +24,20 @@ const PERSON_JSON_LD = {
   "@type": "Person",
   name: "Muhar Ferdiansyah",
   jobTitle: "Full Stack Engineer",
-  url: SITE_URL,
-  sameAs: [siteData.contact.github.href, siteData.contact.linkedin.href],
-  knowsAbout: ["Next.js", "Laravel", "Flutter"],
+  url: "https://muharferdiansyah.my.id",
+  sameAs: [
+    "https://github.com/muhar05",
+    "https://www.linkedin.com/in/muhar-ferdiansyah-b44161291/",
+  ],
+  knowsAbout: [
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Laravel",
+    "PHP",
+    "Flutter",
+    "PostgreSQL",
+  ],
 };
 
 export const metadata: Metadata = {
