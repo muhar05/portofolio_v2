@@ -8,6 +8,7 @@ export interface ProjectMediaProps {
   title: string;
   variant?: "cover" | "overview" | "architecture";
   mode?: "image" | "video";
+  display?: "card" | "hero";
   className?: string;
   priority?: boolean;
 }
@@ -17,6 +18,7 @@ export default function ProjectMedia({
   title,
   variant = "cover",
   mode = "image",
+  display = "hero",
   className = "",
   priority = false,
 }: ProjectMediaProps) {
@@ -76,17 +78,28 @@ export default function ProjectMedia({
 
   // IMAGE MODE: Render project image only (no video fallback or container)
   const imageSrc = images[variant] || images.cover;
+  const isPortrait = images.portrait === true;
+  const frameClassName = isPortrait
+    ? display === "card"
+      ? "aspect-[4/5]"
+      : "aspect-[9/16] max-w-[420px] mx-auto"
+    : "aspect-video";
+  const sizes = isPortrait
+    ? display === "card"
+      ? "(max-width: 1024px) 100vw, 400px"
+      : "(max-width: 768px) 100vw, 420px"
+    : "(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1024px";
 
   return (
     <div
-      className={`relative aspect-video w-full overflow-hidden rounded border border-zinc-800/80 bg-zinc-950 ${className}`}
+      className={`relative ${frameClassName} w-full overflow-hidden rounded border border-zinc-800/80 bg-zinc-950 ${className}`}
     >
       <Image
         src={imageSrc}
         alt={`${title} - ${variant} visual`}
         fill
         priority={priority}
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1024px"
+        sizes={sizes}
         className="h-full w-full object-contain"
       />
     </div>

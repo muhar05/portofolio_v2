@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,15 +16,16 @@ const geistMono = Geist_Mono({
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://muharferdiansyah.my.id";
 const SITE_TITLE =
-  "Muhar Ferdiansyah | Full Stack Engineer (Next.js, Laravel, Flutter)";
+  "Muhar Ferdiansyah | Full Stack Developer (Next.js, Laravel, Flutter)";
 const SITE_DESCRIPTION =
-  "Full stack engineer available for remote and freelance work. I build and improve production systems with Next.js, Laravel, and Flutter.";
+  "Full stack developer available for remote and freelance work. I build and improve production systems with Next.js, Laravel, and Flutter.";
+const GOOGLE_SITE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION;
 
 const PERSON_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: "Muhar Ferdiansyah",
-  jobTitle: "Full Stack Engineer",
+  jobTitle: "Full Stack Developer",
   url: "https://muharferdiansyah.my.id",
   sameAs: [
     "https://github.com/muhar05",
@@ -62,6 +64,9 @@ export const metadata: Metadata = {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
   },
+  ...(GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: GOOGLE_SITE_VERIFICATION } }
+    : {}),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -75,6 +80,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSON_LD) }}
         />
+        <GoogleAnalytics />
         {children}
       </body>
     </html>

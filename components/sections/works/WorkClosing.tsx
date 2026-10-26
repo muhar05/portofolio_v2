@@ -3,11 +3,18 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import gsap from "gsap";
+import siteData from "@/content/site.json";
+import { trackEvent } from "@/lib/analytics";
+import type { Project } from "@/types/works";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-export default function WorkClosing() {
+interface WorkClosingProps {
+  nextProject?: Project;
+}
+
+export default function WorkClosing({ nextProject }: WorkClosingProps) {
   const rootRef = useRef<HTMLElement>(null);
 
   useIsomorphicLayoutEffect(() => {
@@ -91,10 +98,45 @@ export default function WorkClosing() {
 
           <div
             data-reveal
-            className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4 sm:mt-14"
+            className="mt-12 flex flex-wrap items-center gap-4 sm:mt-14"
+          >
+            <a
+              href={`mailto:${siteData.email}`}
+              onClick={() =>
+                trackEvent("contact_click", {
+                  channel: "email",
+                  location: "case_study",
+                })
+              }
+              className="inline-flex min-h-11 items-center justify-center rounded bg-[#f97316] px-4 py-2 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-zinc-950 transition-colors hover:bg-[#fb923c]"
+            >
+              Discuss a similar project
+            </a>
+
+            {nextProject && (
+              <Link
+                href={`/works/${nextProject.id}`}
+                className="group inline-flex min-h-11 items-center gap-2.5 font-mono text-xs uppercase tracking-[0.2em] text-zinc-300 transition-colors hover:text-white sm:text-sm"
+              >
+                <span className="border-b border-zinc-700 pb-0.5 transition-colors group-hover:border-white">
+                  Next case study
+                </span>
+                <span
+                  className="text-[#f97316] transition-transform duration-200 group-hover:translate-x-1"
+                  aria-hidden="true"
+                >
+                  →
+                </span>
+              </Link>
+            )}
+          </div>
+
+          <div
+            data-reveal
+            className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4"
           >
             <Link
-              href="/#works"
+              href="/#selected-work"
               className="group inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.2em] text-zinc-100 transition-colors hover:text-white sm:text-sm"
             >
               <span className="border-b border-zinc-700 pb-0.5 transition-colors group-hover:border-white">

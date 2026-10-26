@@ -26,7 +26,9 @@ export default function SelectedWork() {
     const sectionEl = sectionRef.current;
     if (!sectionEl) return;
 
-    const rows = sectionEl.querySelectorAll(".work-project-row");
+    const rows = sectionEl.querySelectorAll(
+      ".work-project-row, .work-category-block"
+    );
 
     if (prefersReducedMotion) {
       if (headerRef.current) gsap.set(headerRef.current, { opacity: 1, y: 0 });
@@ -113,7 +115,30 @@ export default function SelectedWork() {
           </p>
         </div>
 
-        <div className="mt-12 sm:mt-16">
+        <div className="work-category-block mt-8 border-t border-zinc-800/60 pt-6 sm:mt-10 sm:pt-8">
+          <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-zinc-400 sm:text-[11px]">
+            WHAT I WORK ON
+          </div>
+          <ul className="mt-4 grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+            {works.items.map((item) => (
+              <li key={item.number} className="flex items-start gap-2.5">
+                <span className="mt-0.5 font-mono text-[10px] text-[#f97316]">
+                  {item.number}
+                </span>
+                <div>
+                  <h3 className="font-mono text-[11px] uppercase tracking-[0.16em] text-zinc-200">
+                    {item.title}
+                  </h3>
+                  <p className="mt-1 hidden font-sans text-xs leading-relaxed text-zinc-400 sm:block">
+                    {item.description}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="mt-8 sm:mt-10">
           {projects.map((project, index) => (
             <div key={project.id} className="work-project-row">
               <div className="h-px w-full bg-zinc-800/60" aria-hidden="true" />
@@ -183,7 +208,7 @@ export default function SelectedWork() {
                         title={project.title}
                         variant="cover"
                         mode="image"
-                        priority={index < 2}
+                        display="card"
                       />
                     </Link>
                   </div>

@@ -95,7 +95,7 @@ export default function WorkArchitecture({ project }: WorkArchitectureProps) {
           data-reveal
           className="mt-6 sm:mt-8 max-w-4xl font-sans text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.12]"
         >
-          Engineered for relational integrity.
+          Built to keep state consistent.
         </h2>
 
         <p

@@ -2,6 +2,7 @@ export interface ProjectImages {
   cover: string;
   overview: string;
   architecture: string;
+  portrait?: boolean;
 }
 
 export interface ProjectVideo {
@@ -63,6 +64,8 @@ export interface Project {
   role: string;
   featured: boolean;
   headline: string;
+  problemHeadline?: string;
+  flowHeadline?: string;
   description: string;
   media?: ProjectMedia;
   domains?: string[];

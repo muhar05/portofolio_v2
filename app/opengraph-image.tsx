@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import siteData from "@/content/site.json";
 
 export const dynamic = "force-static";
-export const alt = "Muhar Ferdiansyah, Full Stack Engineer";
+export const alt = "Muhar Ferdiansyah, Full Stack Developer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -55,7 +55,7 @@ export default function OpengraphImage() {
             {siteData.statement}
           </div>
           <div style={{ fontSize: "28px", color: "#a1a1aa" }}>
-            Web, Laravel, and Flutter systems
+            Next.js, Laravel, and Flutter systems
           </div>
         </div>
 

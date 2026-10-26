@@ -166,17 +166,17 @@ export default function WorkFulfillmentFlow({ project }: WorkFulfillmentFlowProp
         <h2
           id="flow-heading"
           data-reveal
-          className="mt-6 sm:mt-8 max-w-4xl font-sans text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.12]"
+          className="mt-6 sm:mt-8 max-w-4xl text-balance font-sans text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.12]"
         >
-          One order. Multiple fulfillment paths.
+          {project.flowHeadline ?? "How the system holds the process together."}
         </h2>
 
         <p
           data-reveal
           className="mt-6 sm:mt-8 max-w-3xl font-sans text-base sm:text-lg text-zinc-300 leading-relaxed font-normal"
         >
-          Explore how the system splits each line item into independent operational
-          branches while enforcing strict transactional convergence before dispatch.
+          {project.overview.workflow ??
+            "Select a path below to inspect the steps the system enforces."}
         </p>
 
         {/* Interactive Feature Card Container */}
@@ -192,6 +192,7 @@ export default function WorkFulfillmentFlow({ project }: WorkFulfillmentFlowProp
                 <button
                   key={path.id}
                   type="button"
+                  aria-pressed={isActive}
                   onClick={() => setActiveTabId(path.id)}
                   className={`cursor-pointer rounded-md px-3.5 py-2 font-mono text-xs uppercase tracking-wider transition-all duration-200 ${
                     isActive

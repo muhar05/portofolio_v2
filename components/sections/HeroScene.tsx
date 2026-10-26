@@ -31,11 +31,52 @@ function getReducedMotionServerSnapshot() {
 
 type SceneStatus = "loading" | "ready" | "error";
 
+interface NetworkInformation {
+  saveData?: boolean;
+  effectiveType?: string;
+  addEventListener?: (type: "change", listener: () => void) => void;
+  removeEventListener?: (type: "change", listener: () => void) => void;
+}
+
+function getConnection() {
+  if (typeof navigator === "undefined") return undefined;
+
+  return (navigator as Navigator & { connection?: NetworkInformation })
+    .connection;
+}
+
+function subscribeConnection(callback: () => void) {
+  const connection = getConnection();
+  if (!connection?.addEventListener) return () => {};
+
+  connection.addEventListener("change", callback);
+  return () => connection.removeEventListener?.("change", callback);
+}
+
+function getSlowConnectionSnapshot() {
+  const connection = getConnection();
+
+  return Boolean(
+    connection?.saveData ||
+      connection?.effectiveType === "slow-2g" ||
+      connection?.effectiveType === "2g"
+  );
+}
+
+function getSlowConnectionServerSnapshot() {
+  return false;
+}
+
 export default function HeroScene() {
   const reduceMotion = useSyncExternalStore(
     subscribeReducedMotion,
     getReducedMotionSnapshot,
     getReducedMotionServerSnapshot
+  );
+  const slowConnection = useSyncExternalStore(
+    subscribeConnection,
+    getSlowConnectionSnapshot,
+    getSlowConnectionServerSnapshot
   );
   const containerRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -57,12 +98,13 @@ export default function HeroScene() {
   }, []);
 
   useEffect(() => {
-    if (status !== "loading") return;
+    if (!visible || slowConnection || status !== "loading") return;
+
     const timer = setTimeout(() => setStatus("error"), LOAD_TIMEOUT_MS);
     return () => clearTimeout(timer);
-  }, [status]);
+  }, [status, visible, slowConnection]);
 
-  if (reduceMotion || status === "error") {
+  if (reduceMotion || slowConnection || status === "error") {
     return <FlatIllustration />;
   }
 
@@ -80,7 +122,7 @@ export default function HeroScene() {
         </span>
       </div>
 
-      {visible && (
+      {visible && !slowConnection && (
         <Spline
           scene={SCENE_URL}
           onLoad={() => setStatus("ready")}

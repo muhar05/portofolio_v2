@@ -23,10 +23,17 @@ html {
   scroll-behavior: smooth;
 }
 
+a,
+button,
+[tabindex] {
+  outline-color: #f97316;
+}
+
 a:focus-visible,
 button:focus-visible,
 [tabindex]:focus-visible {
   outline: 2px solid #f97316;
+  outline-color: #f97316;
   outline-offset: 3px;
   border-radius: 3px;
 }
@@ -58,4 +65,214 @@ button:focus-visible,
 
 .animate-hero-tagline {
   animation: heroReveal 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+}
+
+.hero-art-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-art {
+  position: absolute;
+  top: 10%;
+  right: -12%;
+  width: 58%;
+  height: 80%;
+  opacity: 0.9;
+}
+
+.hero-art__slab-main {
+  position: absolute;
+  inset: 4% 0 4% 16%;
+  clip-path: polygon(18% 0%, 100% 10%, 86% 100%, 0% 86%);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, transparent 24%),
+    linear-gradient(145deg, #303036 0%, #1a1a1e 42%, #0b0b0e 100%);
+}
+
+.hero-art__slab-secondary {
+  position: absolute;
+  inset: 30% 26% 12% 0%;
+  clip-path: polygon(0% 16%, 82% 0%, 100% 82%, 18% 100%);
+  background: linear-gradient(120deg, #26262b 0%, #121215 62%, #09090b 100%);
+  opacity: 0.92;
+}
+
+.hero-art__void {
+  position: absolute;
+  top: 24%;
+  left: 40%;
+  width: 27%;
+  height: 42%;
+  transform: rotate(-11deg);
+  clip-path: polygon(16% 0%, 100% 12%, 86% 100%, 0% 84%);
+  background: #08080a;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+
+.hero-art__edge {
+  position: absolute;
+  top: 16%;
+  left: 20%;
+  width: 1px;
+  height: 58%;
+  transform: rotate(8deg);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    #f97316 20%,
+    #f97316 74%,
+    transparent 100%
+  );
+  opacity: 0.85;
+}
+
+.hero-art__edge-secondary {
+  position: absolute;
+  right: 6%;
+  bottom: 16%;
+  width: 24%;
+  height: 1px;
+  transform: rotate(-7deg);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(249, 115, 22, 0.7) 50%,
+    transparent 100%
+  );
+}
+
+.hero-art__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    #08080a 0%,
+    rgba(8, 8, 10, 0.97) 34%,
+    rgba(8, 8, 10, 0.7) 62%,
+    rgba(8, 8, 10, 0) 100%
+  );
+}
+
+@media (max-width: 1023px) {
+  .hero-art {
+    top: 6%;
+    right: -20%;
+    width: 78%;
+    height: 76%;
+    opacity: 0.6;
+  }
+
+  .hero-art__scrim {
+    background: linear-gradient(
+      90deg,
+      #08080a 0%,
+      rgba(8, 8, 10, 0.96) 42%,
+      rgba(8, 8, 10, 0.62) 72%,
+      rgba(8, 8, 10, 0) 100%
+    );
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-art {
+    top: 38%;
+    right: -42%;
+    width: 124%;
+    height: 52%;
+    opacity: 0.55;
+  }
+
+  .hero-art__scrim {
+    background: linear-gradient(
+      90deg,
+      #08080a 0%,
+      rgba(8, 8, 10, 0.94) 42%,
+      rgba(8, 8, 10, 0.42) 76%,
+      rgba(8, 8, 10, 0) 100%
+    );
+  }
+}
+
+@keyframes heroEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes heroEnterArt {
+  from {
+    opacity: 0;
+    transform: scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes heroArtFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -7px, 0) rotate(0.3deg);
+  }
+}
+
+@keyframes heroStatusPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.hero-reveal-label,
+.hero-reveal-copy,
+.hero-reveal-cta {
+  animation: heroEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.hero-reveal-headline {
+  animation: heroEnter 0.55s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.hero-reveal-art {
+  animation: heroEnterArt 0.55s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.hero-art {
+  animation: heroArtFloat 10s ease-in-out infinite;
+}
+
+.hero-status-dot {
+  animation: heroStatusPulse 3.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-reveal-label,
+  .hero-reveal-headline,
+  .hero-reveal-copy,
+  .hero-reveal-cta,
+  .hero-reveal-art,
+  .hero-art,
+  .hero-status-dot {
+    animation: none;
+  }
+
+  .hero-status-dot {
+    opacity: 1;
+  }
 }

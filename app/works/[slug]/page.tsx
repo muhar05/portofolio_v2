@@ -6,6 +6,7 @@ import WorkProblem from "@/components/sections/works/WorkProblem";
 import WorkFulfillmentFlow from "@/components/sections/works/WorkFulfillmentFlow";
 import WorkArchitecture from "@/components/sections/works/WorkArchitecture";
 import WorkClosing from "@/components/sections/works/WorkClosing";
+import ProjectViewTracker from "@/components/analytics/ProjectViewTracker";
 import type { Project } from "@/types/works";
 
 interface PageProps {
@@ -32,23 +33,21 @@ export async function generateMetadata({
     };
   }
 
-  const cover = project.media?.images?.cover;
-
   return {
     title: `${project.title}: Case Study`,
     description: project.description,
     alternates: { canonical: `/works/${project.id}` },
     openGraph: {
       type: "article",
+      url: `/works/${project.id}`,
+      siteName: "Muhar Ferdiansyah",
       title: `${project.title}: Case Study`,
       description: project.description,
-      ...(cover ? { images: [{ url: cover, alt: project.title }] } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title: `${project.title}: Case Study`,
       description: project.description,
-      ...(cover ? { images: [cover] } : {}),
     },
   };
 }
@@ -61,13 +60,26 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const currentIndex = worksData.projects.findIndex(
+    (item) => item.id === project.id
+  );
+  const nextProject =
+    worksData.projects.length > 1
+      ? worksData.projects[(currentIndex + 1) % worksData.projects.length]
+      : undefined;
+
   return (
     <main className="flex-1">
+      <ProjectViewTracker
+        slug={project.id}
+        title={project.title}
+        category={project.category}
+      />
       <WorkHero project={project as Project} />
       <WorkProblem project={project as Project} />
       <WorkFulfillmentFlow project={project as Project} />
       <WorkArchitecture project={project as Project} />
-      <WorkClosing />
+      <WorkClosing nextProject={nextProject as Project | undefined} />
     </main>
   );
 }

@@ -3,11 +3,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { trackEvent } from "@/lib/analytics";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 interface ContactChannel {
+  id: "email" | "whatsapp" | "github" | "linkedin";
   label: string;
   display: string;
   href: string;
@@ -174,6 +176,7 @@ export default function ContactContent({
 
   const channels: ContactChannel[] = [
     {
+      id: "email",
       label: "EMAIL",
       display: email,
       href: `mailto:${email}`,
@@ -181,6 +184,7 @@ export default function ContactContent({
       external: false,
     },
     {
+      id: "whatsapp",
       label: "WHATSAPP",
       display: contact.whatsapp.display,
       href: contact.whatsapp.href,
@@ -188,6 +192,7 @@ export default function ContactContent({
       external: true,
     },
     {
+      id: "github",
       label: "GITHUB",
       display: contact.github.display,
       href: contact.github.href,
@@ -195,6 +200,7 @@ export default function ContactContent({
       external: true,
     },
     {
+      id: "linkedin",
       label: "LINKEDIN",
       display: contact.linkedin.display,
       href: contact.linkedin.href,
@@ -260,6 +266,18 @@ export default function ContactContent({
                   ? `${channel.label}: ${channel.display} (opens in a new tab)`
                   : `${channel.label}: ${channel.display}`
               }
+              onClick={() => {
+                if (channel.id === "email" || channel.id === "whatsapp") {
+                  trackEvent("contact_click", {
+                    channel: channel.id,
+                    location: "contact",
+                  });
+                }
+
+                if (channel.id === "github") {
+                  trackEvent("github_click", { location: "contact" });
+                }
+              }}
               className="contact-row group grid grid-cols-12 items-baseline gap-2 sm:gap-4 py-5 sm:py-6 border-b border-zinc-800/40"
             >
               <span className="col-span-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 group-hover:text-zinc-200 transition-colors">
@@ -290,7 +308,13 @@ export default function ContactContent({
           >
             <button
               type="button"
-              onClick={() => setIsCvOpen(true)}
+              onClick={() => {
+                trackEvent("resume_click", {
+                  source: "contact",
+                  action: "preview",
+                });
+                setIsCvOpen(true);
+              }}
               aria-haspopup="dialog"
               className="group inline-flex items-center gap-2.5 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] text-zinc-100 hover:text-white transition-colors"
             >
@@ -308,6 +332,12 @@ export default function ContactContent({
             <a
               href={contact.cv}
               download
+              onClick={() =>
+                trackEvent("resume_click", {
+                  source: "contact",
+                  action: "download",
+                })
+              }
               aria-label="Download Muhar Ferdiansyah CV as PDF"
               className="group inline-flex items-center gap-2.5 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors"
             >
@@ -353,6 +383,12 @@ export default function ContactContent({
                 <a
                   href={contact.cv}
                   download
+                  onClick={() =>
+                    trackEvent("resume_click", {
+                      source: "cv_modal",
+                      action: "download",
+                    })
+                  }
                   className="hidden font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-300 transition-colors hover:text-white sm:inline"
                 >
                   DOWNLOAD

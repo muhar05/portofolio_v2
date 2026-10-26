@@ -110,6 +110,8 @@ MacBook menjadi gateway antara dua dunia.
 
 4. Hero Experience
 
+> **Superseded:** Untuk halaman utama saat ini, arah hero di bagian 4–18 digantikan oleh bagian 39 (MONOLITH / 01). Bagian lama disimpan sebagai arsip eksplorasi.
+
 Hero merupakan cinematic introduction.
 
 Pengunjung pertama kali melihat sebuah developer workspace.
@@ -1027,3 +1029,64 @@ Pilihan berikut melawan default generik secara sengaja dan sudah disepakati; per
 ## 38.8 Cara skill aktif
 
 Skill `frontend-design` dimuat OpenCode lewat `skills.paths` di `.opencode/opencode.json` (nilai `".agents/skills"`). Verifikasi: jalankan `opencode` dari root project, lalu panggil tool `skill` dengan nama `frontend-design`; skill harus muncul. Setelah mengubah `opencode.json`, **restart opencode** agar konfigurasi ter-reload.
+
+---
+
+# 39. Hero Redesign 2026 — MONOLITH / 01 (authoritative)
+
+Bagian ini menggantikan arah hero lama di bagian 4–18 untuk halaman utama saat ini. Bagian lama tetap disimpan sebagai arsip eksplorasi.
+
+## 39.1 Positioning
+
+- Satu H1: **“From interface to infrastructure.”**
+- Nama **MUHAR FERDIANSYAH** menjadi masthead, bukan H1.
+- Supporting copy: “I build and improve digital products across web, backend, and Flutter mobile, with thoughtful design and engineering at every layer.”
+- Availability badge dan label **SOFTWARE × BUSINESS × PEOPLE** tetap dipertahankan.
+- Primary CTA: **View Selected Work** ke `#selected-work`.
+- Secondary CTA: **About My Approach** ke `#thinking`.
+- Utility actions: **Download CV** dan **Let's Talk**.
+- Tidak boleh ada H1 duplikat di desktop dan mobile.
+
+## 39.2 Komposisi
+
+- Komposisi typography-led dan editorial, bukan dua kolom text kiri dan objek kanan yang terpisah.
+- Desktop 1024px ke atas: H1 dua baris, artwork abstrak absolute di sisi kanan dan belakang headline, scrim gelap untuk keterbacaan, tanpa card dan tanpa caption plate.
+- Tablet 768–1023px: H1 dua baris, artwork digeser ke kanan atau bawah, overlap dan kontras artwork dikurangi, CTA tetap terlihat.
+- Mobile di bawah 768px: H1 tiga baris (`From` / `interface to` / `infrastructure.`), artwork menjadi layer background tipis dengan scrim, CTA berada di atas area artwork yang tinggi.
+- Grid teknikal 36px, near-black `#08080a`, aksen orange `#f97316`, Geist Sans dan Geist Mono tetap menjadi fondasi visual.
+
+## 39.3 Phase A placeholder
+
+- Phase A memakai placeholder geometris CSS untuk memvalidasi tipografi, hierarki, overlap, dan responsive layout.
+- Placeholder terdiri dari slab grafit bertumpuk, void negatif, dan satu edge orange tipis.
+- Belum ada integrasi atau perubahan scene Spline pada phase ini.
+- Class placeholder berada di `app/globals.css` dan hanya dipakai oleh hero.
+- Phase B akan mengganti placeholder dengan static abstract fallback yang match dengan scene final.
+
+## 39.4 Motion
+
+- Konten utama harus sudah terbaca sejak first paint. Entrance tidak boleh menyembunyikan H1 atau CTA dalam waktu lama.
+- Entrance memakai translasi vertikal singkat untuk konten dan fade untuk artwork. Tidak memakai opacity-zero panjang pada headline.
+- `prefers-reduced-motion: reduce` melewati GSAP entrance sepenuhnya.
+- Tidak ada scroll-jacking atau pinning.
+- Motion scene Spline nanti harus lambat, interruptible, dan tidak menutupi konten.
+
+## 39.5 Accessibility
+
+- Satu H1 dengan accessible name yang benar.
+- Artwork dekoratif memakai `aria-hidden="true"`.
+- Focus keyboard terlihat.
+- Tap target minimal 44px.
+- Tidak ada interaksi yang hanya bisa dipakai dengan mouse.
+- Layout harus tetap usable pada 200% zoom.
+- Tidak ada horizontal overflow pada 320px, 375px, 768px, 1024px, dan 1440px.
+- `select-none` tidak dipakai pada teks yang bisa dibaca.
+
+## 39.6 Future Spline scene — MONOLITH / 01
+
+- Scene baru: bentuk arsitektural grafit asimetris, bukan robot atau maskot AI.
+- Material grafit matte, satu warm orange rim light, deep shadow, tanpa bloom, particle, atau neon.
+- Scene di-host di Spline dan dikonfigurasi lewat `NEXT_PUBLIC_SPLINE_SCENE` saat build.
+- Static abstract fallback dipakai untuk reduced motion, slow connection, WebGL failure, timeout, atau scene URL yang tidak tersedia.
+- Performance target: `.splinecode` ≤800KB (ideal ≤500KB), triangle ≤50k, draw call ≤8, texture maksimal 2 × 512px.
+- LCP ≤2.5s, INP ≤200ms, CLS ≤0.1 pada p75 mobile. Angka ini adalah target, bukan hasil yang sudah terverifikasi.

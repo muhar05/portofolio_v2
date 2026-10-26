@@ -88,11 +88,9 @@ export default function WorkProblem({ project }: WorkProblemProps) {
         <h2
           id="problem-heading"
           data-reveal
-          className="mt-6 sm:mt-8 max-w-4xl font-sans text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.12]"
+          className="mt-6 sm:mt-8 max-w-4xl text-balance font-sans text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.12]"
         >
-          Orders were simple on paper.
-          <br />
-          Fulfillment was fragmented.
+          {project.problemHeadline ?? "The process broke before the software did."}
         </h2>
 
         <div className="mt-8 sm:mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
@@ -146,6 +144,20 @@ export default function WorkProblem({ project }: WorkProblemProps) {
             ))}
           </div>
         </div>
+
+        {project.overview.approach && (
+          <div
+            data-reveal
+            className="mt-12 sm:mt-16 border-t border-zinc-800/60 pt-8 sm:pt-10"
+          >
+            <div className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-[#f97316]">
+              THE APPROACH
+            </div>
+            <p className="mt-4 max-w-3xl font-sans text-base sm:text-lg text-zinc-200 leading-relaxed font-normal">
+              {project.overview.approach}
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );
