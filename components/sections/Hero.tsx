@@ -3,10 +3,23 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import aboutData from "@/content/about.json";
+import siteData from "@/content/site.json";
 import HeroScene from "./HeroScene";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+function AvailabilityBadge({ text }: { text: string }) {
+  return (
+    <span className="inline-flex max-w-full items-center gap-1.5 rounded border border-zinc-800/80 bg-zinc-950/60 px-2 py-1 font-mono text-[8.5px] leading-tight text-zinc-300 sm:gap-2 sm:px-2.5 sm:text-[10px]">
+      <span
+        className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
+        aria-hidden="true"
+      />
+      <span className="tracking-[0.02em] sm:tracking-[0.06em]">{text}</span>
+    </span>
+  );
+}
 
 export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
@@ -148,10 +161,16 @@ export default function Hero() {
               &ldquo;{intro.headline}&rdquo;
             </p>
 
-            <div className="mt-3 flex items-center gap-2">
+            <p className="mt-3 max-w-xl font-sans text-sm leading-relaxed text-zinc-200 lg:text-[15px]">
+              {intro.supporting}
+            </p>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2.5">
               <span className="font-mono text-xs font-semibold tracking-[0.2em] text-[#fb923c] uppercase">
                 {intro.concept}
               </span>
+              <span className="h-px w-6 bg-zinc-800" aria-hidden="true" />
+              <AvailabilityBadge text={intro.availability} />
             </div>
 
             <div className="mt-4 max-w-xl space-y-3">
@@ -165,16 +184,16 @@ export default function Hero() {
 
             <div className="mt-5 flex flex-wrap items-center gap-3 font-mono text-xs uppercase tracking-wider">
               <a
-                href="#selected-work"
-                className="rounded bg-[#f97316] px-3.5 py-1.5 text-[11px] font-semibold text-zinc-950 transition-colors hover:bg-[#fb923c]"
+                href={`mailto:${siteData.email}`}
+                className="inline-flex min-h-11 items-center justify-center rounded bg-[#f97316] px-4 py-2 text-[11px] font-semibold text-zinc-950 transition-colors hover:bg-[#fb923c]"
               >
-                VIEW SELECTED WORK ↓
+                LET&apos;S TALK
               </a>
               <a
-                href="#contact"
-                className="rounded border border-zinc-700/80 px-3.5 py-1.5 text-[11px] font-medium text-zinc-300 transition-colors hover:border-zinc-500 hover:text-white"
+                href="#selected-work"
+                className="inline-flex min-h-11 items-center justify-center rounded border border-zinc-700/80 px-4 py-2 text-[11px] font-medium text-zinc-300 transition-colors hover:border-zinc-500 hover:text-white"
               >
-                CONTACT / CV
+                VIEW SELECTED WORK ↓
               </a>
             </div>
           </div>
@@ -213,10 +232,15 @@ export default function Hero() {
               &ldquo;{intro.headline}&rdquo;
             </p>
 
-            <div className="mt-2">
+            <p className="mt-2.5 max-w-sm px-2 font-sans text-sm leading-relaxed text-zinc-200 sm:text-[15px]">
+              {intro.supporting}
+            </p>
+
+            <div className="mt-2.5 flex flex-col items-center gap-2">
               <span className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] text-[#fb923c] uppercase">
                 {intro.concept}
               </span>
+              <AvailabilityBadge text={intro.availability} />
             </div>
 
             <div className="mt-3 px-2 max-w-sm space-y-2">
@@ -228,18 +252,18 @@ export default function Hero() {
               </p>
             </div>
 
-            <div className="mt-4 flex items-center justify-center gap-2.5 font-mono text-[10px] uppercase tracking-wider">
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5 font-mono text-[10px] uppercase tracking-wider">
               <a
-                href="#selected-work"
-                className="rounded bg-[#f97316] px-3 py-1.5 font-semibold text-zinc-950"
+                href={`mailto:${siteData.email}`}
+                className="inline-flex min-h-11 items-center justify-center rounded bg-[#f97316] px-3.5 py-2 font-semibold text-zinc-950"
               >
-                VIEW WORK ↓
+                LET&apos;S TALK
               </a>
               <a
-                href="#contact"
-                className="rounded border border-zinc-700/80 px-3 py-1.5 text-zinc-300"
+                href="#selected-work"
+                className="inline-flex min-h-11 items-center justify-center rounded border border-zinc-700/80 px-3.5 py-2 text-zinc-300"
               >
-                CONTACT
+                VIEW SELECTED WORK ↓
               </a>
             </div>
           </div>

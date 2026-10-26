@@ -9,5 +9,11 @@ export default function Contact() {
     join(process.cwd(), "public", siteData.contact.cv.replace(/^\//, ""))
   );
 
-  return <ContactContent contact={siteData.contact} cvAvailable={cvAvailable} />;
+  return (
+    <ContactContent
+      contact={siteData.contact}
+      email={siteData.email}
+      cvAvailable={cvAvailable}
+    />
+  );
 }

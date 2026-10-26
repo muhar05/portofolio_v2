@@ -12,6 +12,7 @@ interface ContactChannel {
   display: string;
   href: string;
   note: string;
+  external: boolean;
 }
 
 interface ContactData {
@@ -26,10 +27,15 @@ interface ContactData {
 
 interface ContactContentProps {
   contact: ContactData;
+  email: string;
   cvAvailable: boolean;
 }
 
-export default function ContactContent({ contact, cvAvailable }: ContactContentProps) {
+export default function ContactContent({
+  contact,
+  email,
+  cvAvailable,
+}: ContactContentProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const chapterRef = useRef<HTMLDivElement>(null);
@@ -168,22 +174,32 @@ export default function ContactContent({ contact, cvAvailable }: ContactContentP
 
   const channels: ContactChannel[] = [
     {
+      label: "EMAIL",
+      display: email,
+      href: `mailto:${email}`,
+      note: "PREFERRED",
+      external: false,
+    },
+    {
       label: "WHATSAPP",
       display: contact.whatsapp.display,
       href: contact.whatsapp.href,
       note: "DIRECT MESSAGE",
+      external: true,
     },
     {
       label: "GITHUB",
       display: contact.github.display,
       href: contact.github.href,
       note: "CODE",
+      external: true,
     },
     {
       label: "LINKEDIN",
       display: contact.linkedin.display,
       href: contact.linkedin.href,
       note: "PROFILE",
+      external: true,
     },
   ];
 
@@ -237,19 +253,23 @@ export default function ContactContent({ contact, cvAvailable }: ContactContentP
             <a
               key={channel.label}
               href={channel.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${channel.label}: ${channel.display} (opens in a new tab)`}
+              target={channel.external ? "_blank" : undefined}
+              rel={channel.external ? "noopener noreferrer" : undefined}
+              aria-label={
+                channel.external
+                  ? `${channel.label}: ${channel.display} (opens in a new tab)`
+                  : `${channel.label}: ${channel.display}`
+              }
               className="contact-row group grid grid-cols-12 items-baseline gap-2 sm:gap-4 py-5 sm:py-6 border-b border-zinc-800/40"
             >
-              <span className="col-span-4 sm:col-span-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-500 group-hover:text-zinc-300 transition-colors">
+              <span className="col-span-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 group-hover:text-zinc-200 transition-colors">
                 {channel.label}
               </span>
-              <span className="col-span-7 sm:col-span-8 font-sans text-base sm:text-lg text-zinc-100 font-medium tracking-tight">
+              <span className="col-span-8 min-w-0 break-all font-sans text-base sm:text-lg text-zinc-100 font-medium tracking-tight">
                 {channel.display}
               </span>
               <span className="col-span-1 flex justify-end items-center gap-2">
-                <span className="hidden md:inline font-mono text-[10px] text-zinc-600 uppercase tracking-widest">
+                <span className="hidden md:inline font-mono text-[10px] text-zinc-400 uppercase tracking-widest">
                   {channel.note}
                 </span>
                 <span
