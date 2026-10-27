@@ -6,7 +6,7 @@ import { trackEvent } from "@/lib/analytics";
 
 function AvailabilityBadge({ text }: { text: string }) {
   return (
-    <span className="inline-flex max-w-full items-center gap-1.5 rounded border border-zinc-800/80 bg-zinc-950/60 px-2 py-1 font-mono text-[8.5px] uppercase leading-tight text-zinc-300 sm:gap-2 sm:px-2.5 sm:text-[10px]">
+    <span className="inline-flex max-w-full items-center gap-1.5 rounded border border-zinc-800/80 bg-zinc-950/60 px-2 py-1 font-mono text-[8.5px] uppercase leading-tight text-zinc-200 sm:gap-2 sm:px-2.5 sm:text-[10px]">
       <span
         className="hero-status-dot h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
         aria-hidden="true"
@@ -71,14 +71,14 @@ export default function Hero() {
         <div className="hero-art__scrim" />
       </div>
 
-      <header className="hero-system-bar relative z-20 flex items-center justify-between border-b border-zinc-800/40 pb-2 text-[9.5px] font-mono text-zinc-400 sm:pb-2.5 sm:text-[10.5px]">
+      <header className="hero-system-bar fixed inset-x-0 top-0 z-50 flex items-center justify-between border-b border-zinc-800/40 bg-[#08080a]/95 px-4 py-2 text-[9.5px] font-mono text-zinc-400 sm:px-6 sm:py-2.5 sm:text-[10.5px] md:px-8 lg:px-12">
         <div className="flex items-center gap-1.5 sm:gap-2">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
           <span className="font-medium uppercase tracking-[0.16em] text-zinc-300 sm:tracking-[0.2em]">
             MUHAR.01
           </span>
           <span className="hidden text-zinc-700 sm:inline-block">|</span>
-          <span className="hidden tracking-wider text-zinc-500 sm:inline-block">
+          <span className="hidden tracking-wider text-zinc-400 sm:inline-block">
             FULL STACK DEVELOPER
           </span>
         </div>
@@ -87,41 +87,42 @@ export default function Hero() {
           aria-label="Hero navigation"
           className="hidden items-center gap-5 text-[10px] uppercase tracking-[0.2em] md:flex"
         >
-          <a href="#stack" className="text-zinc-400 transition-colors hover:text-white">
+          <a href="#stack" className="text-zinc-300 transition-colors hover:text-white">
             STACK
           </a>
-          <a href="#selected-work" className="text-zinc-400 transition-colors hover:text-white">
+          <a href="#selected-work" className="text-zinc-300 transition-colors hover:text-white">
             WORK
           </a>
-          <a href="#thinking" className="text-zinc-400 transition-colors hover:text-white">
+          <a href="#thinking" className="text-zinc-300 transition-colors hover:text-white">
             ABOUT
           </a>
-          <a href="#contact" className="text-zinc-400 transition-colors hover:text-white">
+          <a href="#contact" className="text-zinc-300 transition-colors hover:text-white">
             CONTACT
           </a>
         </nav>
 
-        <div className="flex items-center gap-1.5 font-mono text-[9.5px] tracking-[0.18em] sm:gap-2 sm:text-[10.5px] sm:tracking-[0.2em]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#f97316]" />
-          <span className="font-semibold text-[#f97316]">{intro.chapter}</span>
-        </div>
+        <a
+          href={`mailto:${siteData.email}`}
+          onClick={() =>
+            trackEvent("contact_click", {
+              channel: "email",
+              location: "navbar",
+            })
+          }
+          className="inline-flex min-h-11 items-center justify-center rounded border border-[#f97316]/70 px-3 font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-[#fb923c] transition-colors duration-200 hover:border-[#f97316] hover:bg-[#f97316] hover:text-zinc-950 sm:text-[10px]"
+        >
+          {"LET'S TALK"}
+        </a>
       </header>
 
       <main className="relative z-20 my-auto flex flex-1 flex-col justify-center py-8 sm:py-10 md:py-12">
         <div className="mx-auto w-full max-w-6xl">
           <div className="hero-main-content max-w-4xl lg:max-w-none">
             <div
-              className="hero-reveal-label flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[10px] uppercase tracking-[0.24em] text-zinc-400"
+              className="hero-reveal-label font-mono text-[10px] uppercase tracking-[0.24em] text-zinc-200"
               style={{ animationDelay: "60ms" }}
             >
-              <span className="text-zinc-200">{intro.name}</span>
-              <span
-                className="hidden h-px w-8 bg-zinc-800 sm:block"
-                aria-hidden="true"
-              />
-              <span className="hidden text-zinc-500 sm:inline">
-                FULL STACK DEVELOPER
-              </span>
+              {intro.name}
             </div>
 
             <div
@@ -167,48 +168,40 @@ export default function Hero() {
               style={{ animationDelay: "400ms" }}
             >
               <a
-                href="#selected-work"
+                href={`mailto:${siteData.email}`}
+                onClick={() =>
+                  trackEvent("contact_click", {
+                    channel: "email",
+                    location: "hero",
+                  })
+                }
                 className="inline-flex min-h-11 items-center justify-center rounded bg-[#f97316] px-4 py-2 font-semibold text-zinc-950 transition-all duration-200 motion-safe:hover:-translate-y-0.5 hover:bg-[#fb923c]"
               >
-                View Selected Work
+                {"LET'S TALK"}
+              </a>
+              <a
+                href="#selected-work"
+                className="inline-flex min-h-11 items-center justify-center rounded border border-zinc-700/80 px-4 py-2 font-medium text-zinc-300 transition-colors duration-200 hover:border-zinc-500 hover:text-white"
+              >
+                {"VIEW SELECTED WORK"}
                 <span className="ml-1.5" aria-hidden="true">
                   ↓
                 </span>
               </a>
               <a
-                href="#thinking"
-                className="inline-flex min-h-11 items-center justify-center rounded border border-zinc-700/80 px-4 py-2 font-medium text-zinc-300 transition-colors duration-200 hover:border-zinc-500 hover:text-white"
+                href={siteData.contact.cv}
+                download
+                onClick={() =>
+                  trackEvent("resume_click", {
+                    source: "hero",
+                    action: "download",
+                  })
+                }
+                aria-label="Download Muhar Ferdiansyah CV as PDF"
+                className="inline-flex min-h-11 items-center justify-center text-[10px] tracking-[0.18em] text-zinc-400 underline decoration-zinc-700 underline-offset-4 transition-colors duration-200 hover:text-white hover:decoration-zinc-300"
               >
-                About My Approach
+                DOWNLOAD CV
               </a>
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-                <a
-                  href={siteData.contact.cv}
-                  download
-                  onClick={() =>
-                    trackEvent("resume_click", {
-                      source: "hero",
-                      action: "download",
-                    })
-                  }
-                  aria-label="Download Muhar Ferdiansyah CV as PDF"
-                  className="inline-flex min-h-11 items-center justify-center text-[10px] tracking-[0.18em] text-zinc-400 underline decoration-zinc-700 underline-offset-4 transition-colors duration-200 hover:text-white hover:decoration-zinc-300"
-                >
-                  Download CV
-                </a>
-                <a
-                  href={`mailto:${siteData.email}`}
-                  onClick={() =>
-                    trackEvent("contact_click", {
-                      channel: "email",
-                      location: "hero",
-                    })
-                  }
-                  className="inline-flex min-h-11 items-center justify-center text-[10px] tracking-[0.18em] text-zinc-400 underline decoration-zinc-700 underline-offset-4 transition-colors duration-200 hover:text-white hover:decoration-zinc-300"
-                >
-                  Let&apos;s Talk
-                </a>
-              </div>
             </div>
           </div>
         </div>
@@ -216,19 +209,19 @@ export default function Hero() {
 
       <footer className="hero-system-bar relative z-20 flex items-center justify-between border-t border-zinc-800/40 pb-2 pt-2 text-[8.5px] font-mono text-zinc-400 sm:pb-2.5 sm:text-[9.5px] md:text-[10px]">
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <span className="text-zinc-500">WORKSPACE:</span>
+          <span className="text-zinc-400">WORKSPACE:</span>
           <span className="text-zinc-300">ACTIVE</span>
         </div>
 
         <a
           href="#stack"
-          className="hidden cursor-pointer text-[9px] uppercase tracking-[0.18em] text-zinc-500 transition-colors hover:text-zinc-300 sm:inline-block"
+          className="hidden cursor-pointer text-[9px] uppercase tracking-[0.18em] text-zinc-400 transition-colors hover:text-zinc-300 sm:inline-block"
         >
           [ SCROLL TO STACK &amp; WORK ↓ ]
         </a>
 
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <span className="text-zinc-500">CANVAS:</span>
+          <span className="text-zinc-400">CANVAS:</span>
           <span className="text-[#f97316]">MONOLITH / 01</span>
         </div>
       </footer>
