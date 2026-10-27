@@ -143,10 +143,10 @@ export default function ContactContent({
     >
       <div
         ref={panelRef}
-        className="mx-auto w-full max-w-[80rem] overflow-hidden rounded-[2rem] bg-[#111110] px-6 py-14 text-[#f2f1ed] sm:px-10 sm:py-20 lg:px-16 lg:py-24"
+        className="mx-auto w-full max-w-[80rem] overflow-hidden rounded-[2rem] bg-[#111c17] px-6 py-14 text-[#edf0ea] sm:px-10 sm:py-20 lg:px-16 lg:py-24"
       >
         <div className="mx-auto max-w-[46rem] text-center">
-          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#f2f1ed]/55">
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#edf0ea]/55">
             {contact.chapter}
           </p>
 
@@ -159,7 +159,7 @@ export default function ContactContent({
             {headlineWords.slice(2).join(" ")}
           </h2>
 
-          <p className="mx-auto mt-5 max-w-[30rem] text-[15px] leading-relaxed text-[#f2f1ed]/65">
+          <p className="mx-auto mt-5 max-w-[30rem] text-[15px] leading-relaxed text-[#edf0ea]/65">
             {contact.description}
           </p>
 
@@ -172,7 +172,7 @@ export default function ContactContent({
                   location: "finale",
                 })
               }
-              className="btn-pill bg-[#f2f1ed] text-[#111110] transition-colors hover:bg-white"
+              className="btn-pill bg-[#edf0ea] text-[#111c17] transition-colors hover:bg-white"
             >
               Let&apos;s talk
             </a>
@@ -187,7 +187,7 @@ export default function ContactContent({
                   setIsCvOpen(true);
                 }}
                 aria-haspopup="dialog"
-                className="btn-pill border border-white/20 text-[#f2f1ed] transition-colors hover:bg-white/10"
+                className="btn-pill border border-white/20 text-[#edf0ea] transition-colors hover:bg-white/10"
               >
                 Preview CV
               </button>
@@ -221,15 +221,15 @@ export default function ContactContent({
               }}
               className="group grid grid-cols-12 items-baseline gap-2 border-b border-white/12 py-4 sm:gap-4 sm:py-5"
             >
-              <span className="col-span-4 text-[11px] font-medium uppercase tracking-[0.16em] text-[#f2f1ed]/50 transition-colors group-hover:text-[#f2f1ed]/80 sm:col-span-3">
+              <span className="col-span-4 text-[11px] font-medium uppercase tracking-[0.16em] text-[#edf0ea]/50 transition-colors group-hover:text-[#edf0ea]/80 sm:col-span-3">
                 {channel.label}
               </span>
-              <span className="col-span-7 min-w-0 break-all text-[14px] font-medium text-[#f2f1ed] sm:col-span-8 sm:text-[15px]">
+              <span className="col-span-7 min-w-0 break-all text-[14px] font-medium text-[#edf0ea] sm:col-span-8 sm:text-[15px]">
                 {channel.display}
               </span>
               <span className="col-span-1 flex justify-end">
                 <span
-                  className="text-[#f2f1ed]/50 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#f2f1ed]"
+                  className="text-[#edf0ea]/50 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#edf0ea]"
                   aria-hidden="true"
                 >
                   ↗
@@ -251,7 +251,7 @@ export default function ContactContent({
                 })
               }
               aria-label="Download Muhar Ferdiansyah CV as PDF"
-              className="text-[12px] font-medium text-[#f2f1ed]/55 underline decoration-white/25 underline-offset-4 transition-colors hover:text-[#f2f1ed] hover:decoration-white/60"
+              className="text-[12px] font-medium text-[#edf0ea]/55 underline decoration-white/25 underline-offset-4 transition-colors hover:text-[#edf0ea] hover:decoration-white/60"
             >
               Download CV
             </a>
@@ -270,7 +270,7 @@ export default function ContactContent({
             type="button"
             aria-label="Close CV preview"
             onClick={() => setIsCvOpen(false)}
-            className="absolute inset-0 h-full w-full cursor-default bg-[#111110]/70 backdrop-blur-sm"
+            className="absolute inset-0 h-full w-full cursor-default bg-[#111c17]/70 backdrop-blur-sm"
           />
 
           <div className="relative z-10 flex h-full max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-line bg-[var(--background)] shadow-2xl shadow-black/30">

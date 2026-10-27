@@ -1,4 +1,5 @@
 import siteData from "@/content/site.json";
+import Logo from "@/components/ui/Logo";
 
 export default function Footer() {
   return (
@@ -6,8 +7,9 @@ export default function Footer() {
       <div className="mx-auto w-full max-w-[90rem]">
         <div className="flex flex-col justify-between gap-10 md:flex-row">
           <div>
-            <p className="font-display text-2xl font-semibold tracking-[-0.03em] text-foreground">
-              muhar<span className="text-[var(--accent)]">.</span>
+            <p className="flex items-center gap-2.5 font-display text-2xl font-semibold tracking-[-0.03em] text-foreground">
+              <Logo className="h-7 w-7" />
+              <span>muhar</span>
             </p>
             <p className="mt-2 max-w-[26rem] text-[14px] leading-relaxed text-ink-muted">
               {siteData.statement}
@@ -71,8 +73,8 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 overflow-hidden" aria-hidden="true">
-          <p className="select-none font-display text-[clamp(4.5rem,18vw,16rem)] font-semibold leading-[0.78] tracking-[-0.055em] text-foreground/10">
-            MUHAR
+          <p className="footer-wordmark select-none font-display text-[clamp(4.5rem,18vw,16rem)] font-semibold leading-[0.78] tracking-[-0.055em]">
+            MUHAR<span className="footer-wordmark__dot">.</span>
           </p>
         </div>
       </div>

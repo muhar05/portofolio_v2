@@ -16,8 +16,8 @@ export default function OpengraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          backgroundColor: "#08080a",
-          color: "#f4f4f5",
+          backgroundColor: "#111c17",
+          color: "#edf0ea",
           padding: "72px",
           fontFamily: "sans-serif",
         }}
@@ -29,7 +29,7 @@ export default function OpengraphImage() {
             gap: "18px",
             fontSize: "22px",
             letterSpacing: "4px",
-            color: "#f97316",
+            color: "#e07a52",
           }}
         >
           <div
@@ -37,7 +37,7 @@ export default function OpengraphImage() {
               width: "12px",
               height: "12px",
               borderRadius: "9999px",
-              backgroundColor: "#f97316",
+              backgroundColor: "#c9552e",
             }}
           />
           <div>MUHAR FERDIANSYAH</div>
@@ -54,7 +54,7 @@ export default function OpengraphImage() {
           >
             {siteData.statement}
           </div>
-          <div style={{ fontSize: "28px", color: "#a1a1aa" }}>
+          <div style={{ fontSize: "28px", color: "#9aa79e" }}>
             Next.js, Laravel, and Flutter systems
           </div>
         </div>
@@ -64,7 +64,7 @@ export default function OpengraphImage() {
             display: "flex",
             justifyContent: "space-between",
             fontSize: "22px",
-            color: "#71717a",
+            color: "#7f8d84",
             letterSpacing: "3px",
           }}
         >

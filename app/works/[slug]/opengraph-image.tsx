@@ -34,8 +34,8 @@ export default async function Image({ params }: ImageProps) {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          backgroundColor: "#08080a",
-          color: "#f4f4f5",
+          backgroundColor: "#111c17",
+          color: "#edf0ea",
           padding: "64px",
           fontFamily: "sans-serif",
         }}
@@ -47,7 +47,7 @@ export default async function Image({ params }: ImageProps) {
             gap: "18px",
             fontSize: "22px",
             letterSpacing: "4px",
-            color: "#f97316",
+            color: "#e07a52",
           }}
         >
           <div
@@ -55,7 +55,7 @@ export default async function Image({ params }: ImageProps) {
               width: "12px",
               height: "12px",
               borderRadius: "9999px",
-              backgroundColor: "#f97316",
+              backgroundColor: "#c9552e",
             }}
           />
           <div>MUHAR FERDIANSYAH</div>
@@ -66,7 +66,7 @@ export default async function Image({ params }: ImageProps) {
             style={{
               fontSize: "22px",
               letterSpacing: "4px",
-              color: "#a1a1aa",
+              color: "#9aa79e",
             }}
           >
             {`${category}${year ? ` / ${year}` : ""}`}
@@ -85,7 +85,7 @@ export default async function Image({ params }: ImageProps) {
             style={{
               fontSize: "30px",
               lineHeight: 1.3,
-              color: "#d4d4d8",
+              color: "#c9d3cb",
               maxWidth: "1040px",
             }}
           >
@@ -98,7 +98,7 @@ export default async function Image({ params }: ImageProps) {
             display: "flex",
             justifyContent: "space-between",
             fontSize: "20px",
-            color: "#71717a",
+            color: "#7f8d84",
             letterSpacing: "3px",
           }}
         >

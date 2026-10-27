@@ -7,6 +7,7 @@ import aboutData from "@/content/about.json";
 import siteData from "@/content/site.json";
 import worksData from "@/content/works.json";
 import { trackEvent } from "@/lib/analytics";
+import Logo from "@/components/ui/Logo";
 import RollText from "@/components/ui/RollText";
 
 const NAV_LINKS = [
@@ -76,10 +77,13 @@ export default function Hero() {
       <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-4 bg-gradient-to-b from-[var(--background)] via-[var(--background)]/90 to-transparent px-[var(--page-pad)] py-4 md:py-5">
         <Link
           href="#hero"
-          className="font-display text-lg font-semibold tracking-[-0.03em] text-foreground"
+          className="flex items-center gap-2 text-foreground"
           aria-label="Muhar Ferdiansyah, back to top"
         >
-          muhar<span className="text-[var(--accent)]">.</span>
+          <Logo className="h-5 w-5" />
+          <span className="font-display text-lg font-semibold tracking-[-0.03em]">
+            muhar
+          </span>
         </Link>
 
         <nav
@@ -233,7 +237,7 @@ export default function Hero() {
                     sizes="(max-width: 768px) 60vw, 22rem"
                     className="object-cover"
                   />
-                  <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/85 via-black/25 to-transparent p-3 text-left">
+                  <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-[#0b140f]/85 via-[#0b140f]/25 to-transparent p-3 text-left">
                     <span className="text-[11px] font-medium text-white">
                       {project.title}
                     </span>

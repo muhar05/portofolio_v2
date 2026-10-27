@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import "./globals.css";
@@ -73,6 +73,10 @@ export const metadata: Metadata = {
   ...(GOOGLE_SITE_VERIFICATION
     ? { verification: { google: GOOGLE_SITE_VERIFICATION } }
     : {}),
+};
+
+export const viewport: Viewport = {
+  themeColor: "#edf0ea",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
