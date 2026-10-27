@@ -72,91 +72,92 @@ export default function WorkArchitecture({ project }: WorkArchitectureProps) {
       ref={rootRef}
       id="architecture"
       aria-labelledby="architecture-heading"
-      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-16 sm:py-20 md:py-24"
+      className="relative w-full border-t border-line px-[var(--page-pad)] py-20 sm:py-24 lg:py-28"
     >
-      <div className="mx-auto w-full max-w-5xl">
+      <div className="mx-auto w-full max-w-[80rem]">
         <div
           data-reveal
-          className="flex items-center gap-2.5 font-mono text-[11px] sm:text-xs uppercase tracking-[0.24em] text-[#f97316] font-semibold"
+          className="flex flex-wrap items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-muted"
         >
           <span
-            className="h-1.5 w-1.5 rounded-full bg-[#f97316]"
+            className="h-1.5 w-1.5 rounded-full bg-accent"
             aria-hidden="true"
           />
-          <span>04 / ARCHITECTURE &amp; STACK</span>
-          <span className="h-px w-6 sm:w-8 bg-zinc-800" aria-hidden="true" />
-          <span className="text-[10px] text-zinc-400 uppercase tracking-widest hidden sm:inline-block">
-            SYSTEM FOUNDATION
+          <span className="text-accent-ink">04 / Architecture &amp; stack</span>
+          <span className="text-line-strong" aria-hidden="true">
+            /
           </span>
+          <span>System foundation</span>
         </div>
 
         <h2
           id="architecture-heading"
           data-reveal
-          className="mt-6 sm:mt-8 max-w-4xl font-sans text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.12]"
+          className="mt-6 max-w-[52rem] font-display text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.035em] text-foreground"
         >
           Built to keep state consistent.
         </h2>
 
         <p
           data-reveal
-          className="mt-6 sm:mt-8 max-w-3xl font-sans text-base sm:text-lg text-zinc-300 leading-relaxed font-normal"
+          className="mt-5 max-w-[46rem] text-[15px] leading-relaxed text-ink-muted sm:mt-6 sm:text-base"
         >
           {project.overview.architecture}
         </p>
 
-        {/* Layer Breakdown */}
-        <div className="mt-12 sm:mt-14 space-y-4">
+        <div className="mt-12 space-y-4 sm:mt-14">
           <div
             data-reveal
-            className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-zinc-500 mb-3"
+            className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted sm:text-[11px]"
           >
-            ARCHITECTURE TIERS
+            Architecture tiers
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 sm:gap-6">
             {layers.map((layer) => (
               <div
                 key={layer.number}
                 data-reveal
-                className="rounded-lg border border-zinc-800/70 bg-zinc-950/60 p-5 flex flex-col justify-between"
+                className="flex flex-col rounded-2xl border border-line bg-surface p-5 transition-colors hover:bg-surface-strong/60 sm:p-6"
               >
-                <div>
-                  <div className="flex items-center gap-2 font-mono text-xs">
-                    <span className="text-[#f97316] font-semibold">{layer.number}</span>
-                    <span className="text-zinc-500">|</span>
-                    <h3 className="uppercase tracking-widest text-zinc-200 font-medium">
-                      {layer.name}
-                    </h3>
-                  </div>
-
-                  <ul className="mt-4 space-y-2">
-                    {layer.items.map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-center gap-2 font-sans text-xs sm:text-sm text-zinc-300"
-                      >
-                        <span className="h-1 w-1 rounded-full bg-zinc-600" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="font-mono font-semibold text-accent-ink">
+                    {layer.number}
+                  </span>
+                  <span className="text-line-strong">|</span>
+                  <h3 className="font-medium uppercase tracking-[0.14em] text-foreground">
+                    {layer.name}
+                  </h3>
                 </div>
+
+                <ul className="mt-4 space-y-2">
+                  {layer.items.map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-center gap-2 text-[13px] text-ink-muted"
+                    >
+                      <span
+                        className="h-1 w-1 rounded-full bg-accent"
+                        aria-hidden="true"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Production Stack Badges */}
-        <div data-reveal className="mt-12 pt-8 border-t border-zinc-800/60">
-          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500 block mb-4">
-            CORE PRODUCTION STACK
+        <div data-reveal className="mt-12 border-t border-line pt-8">
+          <span className="mb-4 block text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted">
+            Core production stack
           </span>
           <div className="flex flex-wrap gap-2">
             {project.stack.map((tech) => (
               <span
                 key={tech}
-                className="rounded border border-zinc-800 bg-zinc-900/60 px-3 py-1 font-mono text-xs text-zinc-300"
+                className="rounded-full border border-line bg-background/70 px-3 py-1.5 text-[12px] font-medium text-foreground"
               >
                 {tech}
               </span>
@@ -164,25 +165,24 @@ export default function WorkArchitecture({ project }: WorkArchitectureProps) {
           </div>
         </div>
 
-        {/* Operational Outcome Card */}
         <div
           data-reveal
-          className="mt-12 rounded-xl border border-zinc-800/80 bg-zinc-950/90 p-6 sm:p-8"
+          className="mt-12 rounded-3xl bg-[#111c17] p-6 text-[#edf0ea] sm:p-8"
         >
-          <div className="flex items-center gap-2 font-mono text-xs text-[#f97316] uppercase tracking-wider font-semibold">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#f97316]" />
-            <span>OPERATIONAL OUTCOME &amp; RESULT</span>
+          <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-[#e07a52]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#c9552e]" />
+            <span>Operational outcome &amp; result</span>
           </div>
 
-          <p className="mt-4 font-sans text-base sm:text-lg text-zinc-200 leading-relaxed">
+          <p className="mt-4 max-w-[52rem] text-[15px] leading-relaxed text-[#edf0ea]/80 sm:text-base">
             {project.result}
           </p>
 
           {project.highlights && project.highlights.length > 0 && (
-            <div className="mt-6 pt-6 border-t border-zinc-800/60 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm text-zinc-300 font-sans">
+            <div className="mt-6 grid grid-cols-1 gap-3 border-t border-white/12 pt-6 text-[13px] text-[#edf0ea]/75 sm:grid-cols-2 sm:text-sm">
               {project.highlights.map((highlight) => (
                 <div key={highlight} className="flex items-start gap-2">
-                  <span className="text-[#f97316] font-bold">✓</span>
+                  <span className="font-bold text-[#e07a52]">✓</span>
                   <span>{highlight}</span>
                 </div>
               ))}

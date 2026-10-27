@@ -67,48 +67,51 @@ export default function WorkProblem({ project }: WorkProblemProps) {
       ref={rootRef}
       id="problem"
       aria-labelledby="problem-heading"
-      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-16 sm:py-20 md:py-24"
+      className="relative w-full border-t border-line px-[var(--page-pad)] py-20 sm:py-24 lg:py-28"
     >
-      <div className="mx-auto w-full max-w-5xl">
+      <div className="mx-auto w-full max-w-[80rem]">
         <div
           data-reveal
-          className="flex items-center gap-2.5 font-mono text-[11px] sm:text-xs uppercase tracking-[0.24em] text-[#f97316] font-semibold"
+          className="flex flex-wrap items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-muted"
         >
           <span
-            className="h-1.5 w-1.5 rounded-full bg-[#f97316]"
+            className="h-1.5 w-1.5 rounded-full bg-accent"
             aria-hidden="true"
           />
-          <span>02 / THE CHALLENGE</span>
-          <span className="h-px w-6 sm:w-8 bg-zinc-800" aria-hidden="true" />
-          <span className="text-[10px] text-zinc-400 uppercase tracking-widest hidden sm:inline-block">
-            CONTEXT &amp; BOTTLENECKS
+          <span className="text-accent-ink">02 / The challenge</span>
+          <span className="text-line-strong" aria-hidden="true">
+            /
           </span>
+          <span>Context &amp; bottlenecks</span>
         </div>
 
         <h2
           id="problem-heading"
           data-reveal
-          className="mt-6 sm:mt-8 max-w-4xl text-balance font-sans text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.12]"
+          className="mt-6 max-w-[52rem] text-balance font-display text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.035em] text-foreground"
         >
           {project.problemHeadline ?? "The process broke before the software did."}
         </h2>
 
-        <div className="mt-8 sm:mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          <div data-reveal className="lg:col-span-8 flex flex-col gap-4">
-            <p className="font-sans text-base sm:text-lg text-zinc-300 leading-relaxed font-normal">
+        <div className="mt-8 grid grid-cols-1 gap-8 lg:mt-10 lg:grid-cols-12 lg:gap-12">
+          <div data-reveal className="flex flex-col gap-4 lg:col-span-8">
+            <p className="max-w-[44rem] text-[15px] leading-relaxed text-ink-muted sm:text-base">
               {project.overview.problem}
             </p>
           </div>
 
           <aside data-reveal className="lg:col-span-4">
-            <div className="rounded-lg border border-zinc-800/80 bg-zinc-950/70 p-4 sm:p-5">
-              <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500">
-                OPERATIONAL DOMAINS
+            <div className="rounded-2xl border border-line bg-surface p-5 sm:p-6">
+              <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted">
+                Operational domains
               </span>
-              <ul className="mt-3 flex flex-wrap lg:flex-col gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-zinc-300">
+              <ul className="mt-3 flex flex-wrap gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-foreground lg:flex-col">
                 {domains.map((domain) => (
                   <li key={domain} className="flex items-center gap-2">
-                    <span className="h-1 w-1 rounded-full bg-[#f97316]" aria-hidden="true" />
+                    <span
+                      className="h-1 w-1 rounded-full bg-accent"
+                      aria-hidden="true"
+                    />
                     <span>{domain}</span>
                   </li>
                 ))}
@@ -120,26 +123,24 @@ export default function WorkProblem({ project }: WorkProblemProps) {
         <div className="mt-12 sm:mt-16">
           <div
             data-reveal
-            className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-zinc-500 mb-6"
+            className="mb-6 text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted sm:text-[11px]"
           >
-            KEY FAILURE MODES ADDRESSED
+            Key failure modes addressed
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {problemPoints.map((point, index) => (
               <div
                 key={point}
                 data-reveal
-                className="relative rounded-lg border border-zinc-800/60 bg-zinc-950/50 p-5 sm:p-6 flex flex-col justify-between"
+                className="flex flex-col rounded-2xl border border-line bg-surface p-5 transition-colors hover:bg-surface-strong/60 sm:p-6"
               >
-                <div>
-                  <span className="font-mono text-2xl font-light tracking-tight text-[#f97316] select-none">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <p className="mt-3 font-sans text-sm sm:text-[15px] leading-relaxed text-zinc-300">
-                    {point}
-                  </p>
-                </div>
+                <span className="font-mono text-2xl font-light tracking-tight text-accent-ink">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <p className="mt-3 text-[14px] leading-relaxed text-ink-muted">
+                  {point}
+                </p>
               </div>
             ))}
           </div>
@@ -148,12 +149,12 @@ export default function WorkProblem({ project }: WorkProblemProps) {
         {project.overview.approach && (
           <div
             data-reveal
-            className="mt-12 sm:mt-16 border-t border-zinc-800/60 pt-8 sm:pt-10"
+            className="mt-12 border-t border-line pt-8 sm:mt-16 sm:pt-10"
           >
-            <div className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-[#f97316]">
-              THE APPROACH
+            <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-accent-ink sm:text-[11px]">
+              The approach
             </div>
-            <p className="mt-4 max-w-3xl font-sans text-base sm:text-lg text-zinc-200 leading-relaxed font-normal">
+            <p className="mt-4 max-w-[46rem] text-[15px] leading-relaxed text-ink-muted sm:text-base">
               {project.overview.approach}
             </p>
           </div>

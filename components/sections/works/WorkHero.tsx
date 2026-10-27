@@ -4,6 +4,10 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import ProjectMedia from "@/components/sections/works/ProjectMedia";
+import Logo from "@/components/ui/Logo";
+import RollText from "@/components/ui/RollText";
+import siteData from "@/content/site.json";
+import { trackEvent } from "@/lib/analytics";
 import type { Project, ProjectMedia as ProjectMediaType } from "@/types/works";
 
 const useIsomorphicLayoutEffect =
@@ -53,80 +57,101 @@ export default function WorkHero({ project }: WorkHeroProps) {
   return (
     <section
       ref={rootRef}
-      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-16 sm:py-20 md:py-24"
+      className="relative w-full overflow-hidden px-[var(--page-pad)] pb-16 pt-4 sm:pb-24"
     >
-      <div className="mx-auto w-full max-w-5xl">
-        <nav aria-label="Back to work" className="mb-12 sm:mb-16" data-reveal>
+      <div className="mx-auto w-full max-w-[80rem]">
+        <div className="flex items-center justify-between gap-4 py-4">
           <Link
-            href="/#selected-work"
-            className="group inline-flex items-center gap-2.5 font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors"
+            href="/"
+            className="flex items-center gap-2 text-foreground"
+            aria-label="Muhar Ferdiansyah, back to homepage"
           >
-            <span className="border-b border-transparent group-hover:border-white pb-0.5 transition-colors">
-              BACK TO WORK
-            </span>
-            <span
-              className="text-[#f97316] transition-transform duration-200 group-hover:translate-x-1"
-              aria-hidden="true"
-            >
-              →
+            <Logo className="h-6 w-6" />
+            <span className="font-display text-lg font-semibold tracking-[-0.03em]">
+              muhar
             </span>
           </Link>
-        </nav>
 
-        <header>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/#selected-work"
+              className="hidden text-[13px] font-medium text-ink-muted transition-colors hover:text-foreground sm:inline"
+            >
+              All work
+            </Link>
+            <a
+              href={`mailto:${siteData.email}`}
+              onClick={() =>
+                trackEvent("contact_click", {
+                  channel: "email",
+                  location: "case_study_nav",
+                })
+              }
+              className="btn-pill btn-ink btn-sheen px-4 text-[13px]"
+            >
+              <RollText text="Let's talk" gap="0.04em" />
+            </a>
+          </div>
+        </div>
+
+        <div className="mt-12 w-full max-w-[64rem] sm:mt-16">
           <div
             data-reveal
-            className="flex items-center gap-2.5 font-mono text-[11px] sm:text-xs uppercase tracking-[0.24em] text-[#f97316] font-semibold"
+            className="flex flex-wrap items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-muted"
           >
             <span
-              className="h-1.5 w-1.5 rounded-full bg-[#f97316]"
+              className="h-1.5 w-1.5 rounded-full bg-accent"
               aria-hidden="true"
             />
-            <span>01 / PROJECT</span>
-            <span className="h-px w-6 sm:w-8 bg-zinc-800" aria-hidden="true" />
-            <span className="text-[10px] text-zinc-400 uppercase tracking-widest hidden sm:inline-block">
-              CASE STUDY
+            <span className="text-accent-ink">Case study</span>
+            <span className="text-line-strong" aria-hidden="true">
+              /
             </span>
+            <span>{project.category}</span>
+            <span className="text-line-strong" aria-hidden="true">
+              /
+            </span>
+            <span>{project.year}</span>
           </div>
 
           <h1
             data-reveal
-            className="mt-6 sm:mt-8 font-sans text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.03]"
+            className="mt-6 font-display text-[clamp(2.5rem,6vw,4.75rem)] font-semibold leading-[0.98] tracking-[-0.045em] text-foreground"
           >
             {project.title}
           </h1>
 
           <p
             data-reveal
-            className="mt-6 sm:mt-8 max-w-3xl font-sans text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-100 leading-[1.14]"
+            className="mt-5 max-w-[46rem] font-display text-[clamp(1.35rem,2.6vw,2.15rem)] font-medium leading-[1.15] tracking-[-0.025em] text-ink-muted"
           >
             {project.headline}
           </p>
 
           <div
             data-reveal
-            className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400"
+            className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-medium uppercase tracking-[0.16em] text-ink-muted"
           >
-            <span className="text-zinc-200 font-semibold">
+            <span className="font-semibold text-foreground">
               {project.category}
             </span>
             {project.role && (
               <>
-                <span className="text-zinc-600" aria-hidden="true">
+                <span className="text-line-strong" aria-hidden="true">
                   ·
                 </span>
                 <span>{project.role}</span>
               </>
             )}
-            <span className="text-zinc-600" aria-hidden="true">
+            <span className="text-line-strong" aria-hidden="true">
               ·
             </span>
             <span>{project.year}</span>
           </div>
-        </header>
+        </div>
 
         {project.media && (
-          <figure className="mt-12 sm:mt-16" data-reveal>
+          <figure className="mt-10 sm:mt-14" data-reveal>
             <ProjectMedia
               media={project.media as ProjectMediaType}
               title={project.title}
@@ -134,16 +159,16 @@ export default function WorkHero({ project }: WorkHeroProps) {
               mode="image"
               priority
             />
-            <figcaption className="mt-2.5 flex items-center justify-between text-[9.5px] font-mono text-zinc-500 uppercase tracking-widest">
-              <span>PROJECT ARTIFACT</span>
-              <span>PRIMARY VISUAL</span>
+            <figcaption className="mt-2.5 flex items-center justify-between text-[9.5px] font-medium uppercase tracking-[0.18em] text-ink-muted">
+              <span>Project artifact</span>
+              <span>Primary visual</span>
             </figcaption>
           </figure>
         )}
 
         <p
           data-reveal
-          className="mt-10 sm:mt-14 max-w-2xl font-sans text-base sm:text-lg text-zinc-300 leading-relaxed font-normal"
+          className="mt-10 max-w-[42rem] text-[15px] leading-relaxed text-ink-muted sm:mt-14 sm:text-base"
         >
           {project.description}
         </p>

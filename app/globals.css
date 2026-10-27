@@ -9,6 +9,7 @@
   --line: rgba(21, 32, 27, 0.12);
   --line-strong: rgba(21, 32, 27, 0.22);
   --accent: #c9552e;
+  --accent-ink: #a8431f;
   --accent-soft: #f0dcd2;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --page-pad: clamp(1.25rem, 4vw, 4.5rem);
@@ -21,7 +22,9 @@
   --color-surface-strong: var(--surface-strong);
   --color-ink-muted: var(--ink-muted);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-plus-jakarta), var(--font-geist-sans), sans-serif;

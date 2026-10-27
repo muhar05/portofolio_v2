@@ -42,7 +42,7 @@ export default function ProjectMedia({
 
       return (
         <div
-          className={`relative aspect-video w-full overflow-hidden rounded border border-zinc-800/80 bg-zinc-950 ${className}`}
+          className={`relative aspect-video w-full overflow-hidden rounded-xl border border-line bg-surface ${className}`}
         >
           <iframe
             src={embedUrl}
@@ -58,7 +58,7 @@ export default function ProjectMedia({
     if (video.type === "local") {
       return (
         <div
-          className={`relative aspect-video w-full overflow-hidden rounded border border-zinc-800/80 bg-zinc-950 ${className}`}
+          className={`relative aspect-video w-full overflow-hidden rounded-xl border border-line bg-surface ${className}`}
         >
           <video
             src={videoSrc}
@@ -90,9 +90,11 @@ export default function ProjectMedia({
       : "(max-width: 768px) 100vw, 420px"
     : "(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1024px";
 
+  const imageClassName = variant === "cover" ? "object-cover" : "object-contain";
+
   return (
     <div
-      className={`relative ${frameClassName} w-full overflow-hidden rounded border border-zinc-800/80 bg-zinc-950 ${className}`}
+      className={`relative ${frameClassName} w-full overflow-hidden rounded-xl border border-line bg-surface ${className}`}
     >
       <Image
         src={imageSrc}
@@ -100,7 +102,7 @@ export default function ProjectMedia({
         fill
         priority={priority}
         sizes={sizes}
-        className="h-full w-full object-contain"
+        className={`h-full w-full ${imageClassName}`}
       />
     </div>
   );

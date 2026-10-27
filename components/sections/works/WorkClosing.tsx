@@ -64,108 +64,68 @@ export default function WorkClosing({ nextProject }: WorkClosingProps) {
   return (
     <section
       ref={rootRef}
-      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-16 sm:py-20 md:py-24"
+      className="relative w-full border-t border-line px-[var(--page-pad)] py-20 sm:py-24 lg:py-28"
     >
-      <div className="mx-auto w-full max-w-5xl">
-        <div className="h-px w-full bg-zinc-700/60" aria-hidden="true" />
+      <div
+        data-reveal
+        className="mx-auto w-full max-w-[80rem] overflow-hidden rounded-[2rem] bg-[#111c17] px-6 py-14 text-[#edf0ea] sm:px-10 sm:py-20 lg:px-16"
+      >
+        <div className="flex flex-wrap items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-[#e07a52]">
+          <span
+            className="h-1.5 w-1.5 rounded-full bg-[#c9552e]"
+            aria-hidden="true"
+          />
+          <span>Next work</span>
+        </div>
 
-        <div className="mt-14 sm:mt-20 md:mt-24">
-          <div
-            data-reveal
-            className="flex items-center gap-2.5 font-mono text-[11px] sm:text-xs uppercase tracking-[0.24em] text-[#f97316] font-semibold"
+        <h2 className="mt-6 max-w-[42rem] font-display text-[clamp(2.2rem,5vw,4rem)] font-semibold leading-[1.04] tracking-[-0.04em]">
+          More systems worth exploring.
+        </h2>
+
+        <p className="mt-5 max-w-[34rem] text-[15px] leading-relaxed text-[#edf0ea]/65">
+          Explore another project where software, business processes, and
+          practical engineering meet.
+        </p>
+
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <a
+            href={`mailto:${siteData.email}`}
+            onClick={() =>
+              trackEvent("contact_click", {
+                channel: "email",
+                location: "case_study",
+              })
+            }
+            className="btn-pill bg-[#edf0ea] text-[#111c17] transition-colors hover:bg-white"
           >
-            <span
-              className="h-1.5 w-1.5 rounded-full bg-[#f97316]"
-              aria-hidden="true"
-            />
-            <span>NEXT WORK</span>
-          </div>
+            Discuss a similar project
+          </a>
 
-          <h2
-            data-reveal
-            className="mt-6 sm:mt-8 max-w-3xl font-sans text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.05]"
-          >
-            More systems worth exploring.
-          </h2>
-
-          <p
-            data-reveal
-            className="mt-8 sm:mt-10 max-w-2xl font-sans text-lg sm:text-xl text-zinc-300 leading-relaxed font-normal"
-          >
-            Explore another project where software, business processes, and
-            practical engineering meet.
-          </p>
-
-          <div
-            data-reveal
-            className="mt-12 flex flex-wrap items-center gap-4 sm:mt-14"
-          >
-            <a
-              href={`mailto:${siteData.email}`}
-              onClick={() =>
-                trackEvent("contact_click", {
-                  channel: "email",
-                  location: "case_study",
-                })
-              }
-              className="inline-flex min-h-11 items-center justify-center rounded bg-[#f97316] px-4 py-2 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-zinc-950 transition-colors hover:bg-[#fb923c]"
-            >
-              Discuss a similar project
-            </a>
-
-            {nextProject && (
-              <Link
-                href={`/works/${nextProject.id}`}
-                className="group inline-flex min-h-11 items-center gap-2.5 font-mono text-xs uppercase tracking-[0.2em] text-zinc-300 transition-colors hover:text-white sm:text-sm"
-              >
-                <span className="border-b border-zinc-700 pb-0.5 transition-colors group-hover:border-white">
-                  Next case study
-                </span>
-                <span
-                  className="text-[#f97316] transition-transform duration-200 group-hover:translate-x-1"
-                  aria-hidden="true"
-                >
-                  →
-                </span>
-              </Link>
-            )}
-          </div>
-
-          <div
-            data-reveal
-            className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4"
-          >
+          {nextProject && (
             <Link
-              href="/#selected-work"
-              className="group inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.2em] text-zinc-100 transition-colors hover:text-white sm:text-sm"
+              href={`/works/${nextProject.id}`}
+              className="btn-pill border border-white/20 text-[#edf0ea] transition-colors hover:bg-white/10"
             >
-              <span className="border-b border-zinc-700 pb-0.5 transition-colors group-hover:border-white">
-                BACK TO WORKS
-              </span>
-              <span
-                className="text-[#f97316] transition-transform duration-200 group-hover:translate-x-1"
-                aria-hidden="true"
-              >
-                →
-              </span>
+              Next: {nextProject.title}
+              <span aria-hidden="true">→</span>
             </Link>
+          )}
+        </div>
 
-            <button
-              type="button"
-              onClick={handleBackToTop}
-              className="group inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.2em] text-zinc-400 transition-colors hover:text-white sm:text-sm"
-            >
-              <span className="border-b border-transparent pb-0.5 transition-colors group-hover:border-white">
-                BACK TO TOP
-              </span>
-              <span
-                className="transition-transform duration-200 group-hover:-translate-y-0.5"
-                aria-hidden="true"
-              >
-                ↑
-              </span>
-            </button>
-          </div>
+        <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-white/12 pt-6 text-[12px] font-medium text-[#edf0ea]/60">
+          <Link
+            href="/#selected-work"
+            className="transition-colors hover:text-[#edf0ea]"
+          >
+            Back to works
+          </Link>
+          <button
+            type="button"
+            onClick={handleBackToTop}
+            className="transition-colors hover:text-[#edf0ea]"
+          >
+            Back to top ↑
+          </button>
         </div>
       </div>
     </section>
