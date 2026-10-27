@@ -82,7 +82,7 @@ export default function WorkProblem({ project }: WorkProblemProps) {
           <span className="text-line-strong" aria-hidden="true">
             /
           </span>
-          <span>Context &amp; bottlenecks</span>
+          <span>Where it broke</span>
         </div>
 
         <h2
@@ -95,15 +95,25 @@ export default function WorkProblem({ project }: WorkProblemProps) {
 
         <div className="mt-8 grid grid-cols-1 gap-8 lg:mt-10 lg:grid-cols-12 lg:gap-12">
           <div data-reveal className="flex flex-col gap-4 lg:col-span-8">
-            <p className="max-w-[44rem] text-[15px] leading-relaxed text-ink-muted sm:text-base">
-              {project.overview.problem}
+            <p className="max-w-[44rem] text-pretty text-[15px] leading-relaxed text-ink-muted sm:text-base">
+              {project.problemLead ?? project.overview.problem}
             </p>
+            {project.problemLead && (
+              <details className="max-w-[44rem]">
+                <summary className="cursor-pointer text-[13px] font-medium text-accent-ink transition-colors hover:text-foreground">
+                  Read the full context
+                </summary>
+                <p className="mt-3 text-[14px] leading-relaxed text-ink-muted">
+                  {project.overview.problem}
+                </p>
+              </details>
+            )}
           </div>
 
           <aside data-reveal className="lg:col-span-4">
             <div className="rounded-2xl border border-line bg-surface p-5 sm:p-6">
               <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted">
-                Operational domains
+                Teams involved
               </span>
               <ul className="mt-3 flex flex-wrap gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-foreground lg:flex-col">
                 {domains.map((domain) => (
@@ -125,7 +135,7 @@ export default function WorkProblem({ project }: WorkProblemProps) {
             data-reveal
             className="mb-6 text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted sm:text-[11px]"
           >
-            Key failure modes addressed
+            What was going wrong
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">

@@ -69,7 +69,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       : undefined;
 
   return (
-    <main className="flex-1">
+    <main id="main-content" tabIndex={-1} className="flex-1">
       <ProjectViewTracker
         slug={project.id}
         title={project.title}

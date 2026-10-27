@@ -83,11 +83,11 @@ export default function WorkArchitecture({ project }: WorkArchitectureProps) {
             className="h-1.5 w-1.5 rounded-full bg-accent"
             aria-hidden="true"
           />
-          <span className="text-accent-ink">04 / Architecture &amp; stack</span>
+          <span className="text-accent-ink">04 / What it runs on</span>
           <span className="text-line-strong" aria-hidden="true">
             /
           </span>
-          <span>System foundation</span>
+          <span>Data, access, and files</span>
         </div>
 
         <h2
@@ -98,19 +98,21 @@ export default function WorkArchitecture({ project }: WorkArchitectureProps) {
           Built to keep state consistent.
         </h2>
 
-        <p
-          data-reveal
-          className="mt-5 max-w-[46rem] text-[15px] leading-relaxed text-ink-muted sm:mt-6 sm:text-base"
-        >
-          {project.overview.architecture}
-        </p>
+        <details className="mt-5 max-w-[46rem]" data-reveal>
+          <summary className="cursor-pointer text-[13px] font-medium text-accent-ink transition-colors hover:text-foreground">
+            Read the technical detail
+          </summary>
+          <p className="mt-3 text-[14px] leading-relaxed text-ink-muted">
+            {project.overview.architecture}
+          </p>
+        </details>
 
         <div className="mt-12 space-y-4 sm:mt-14">
           <div
             data-reveal
             className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted sm:text-[11px]"
           >
-            Architecture tiers
+            System layers
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 sm:gap-6">
@@ -151,7 +153,7 @@ export default function WorkArchitecture({ project }: WorkArchitectureProps) {
 
         <div data-reveal className="mt-12 border-t border-line pt-8">
           <span className="mb-4 block text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted">
-            Core production stack
+            Technologies used
           </span>
           <div className="flex flex-wrap gap-2">
             {project.stack.map((tech) => (
@@ -171,7 +173,7 @@ export default function WorkArchitecture({ project }: WorkArchitectureProps) {
         >
           <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-[#e07a52]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#c9552e]" />
-            <span>Operational outcome &amp; result</span>
+            <span>What changed</span>
           </div>
 
           <p className="mt-4 max-w-[52rem] text-[15px] leading-relaxed text-[#edf0ea]/80 sm:text-base">

@@ -151,8 +151,8 @@ export default function About() {
               {thinking.headline}
             </h2>
             <p className="mt-5 max-w-[30rem] text-[15px] leading-relaxed text-ink-muted">
-              Three habits that keep existing systems stable while they keep
-              changing.
+              Three principles I use to keep existing systems stable while they
+              change.
             </p>
             <div className="mt-10 hidden lg:block">
               <LayerDiagram />

@@ -41,8 +41,17 @@
       "featured": true,
       "headline": "One order, multiple fulfillment paths.",
       "problemHeadline": "Orders were simple on paper. Fulfillment was fragmented.",
+      "problemLead": "A single order rarely follows one path. Some items are in stock, others must be purchased, and fragmented communication loses track of both.",
       "flowHeadline": "One order. Multiple fulfillment paths.",
       "description": "An order-centric operations platform connecting sales, purchasing, warehouse, inventory, and finance around a single operational lifecycle.",
+      "summary": "One order can mix items already in stock with items that still need purchasing. The system gives each item its own path, then requires warehouse and finance approval before dispatch.",
+      "atAGlance": [
+        { "value": "5", "label": "departments connected" },
+        { "value": "3", "label": "fulfillment paths" },
+        { "value": "9", "label": "operational roles" },
+        { "value": "2", "label": "approvals before dispatch" }
+      ],
+      "impact": [],
       "media": {
         "images": {
           "cover": "/images/works/order-operations-system/cover.webp",
@@ -75,7 +84,7 @@
       "flowPaths": [
         {
           "id": "in-stock",
-          "title": "Direct Stock Path",
+          "title": "Item in stock",
           "badge": "In-Stock Items",
           "description": "Immediate inventory reservation bypassing procurement chains entirely.",
           "steps": [
@@ -85,12 +94,12 @@
               "action": "Line item confirmed & live stock reservation triggered"
             },
             {
-              "name": "Atomic Stock Hold",
+              "name": "Stock reserved",
               "department": "Warehouse",
               "action": "Row-level hold in database transaction locks allocated quantity"
             },
             {
-              "name": "Dual-Gate Sign-off",
+              "name": "Two approvals",
               "department": "Warehouse & Finance",
               "action": "Physical readiness check + financial credit terms verified"
             },
@@ -103,7 +112,7 @@
         },
         {
           "id": "procurement",
-          "title": "Procurement Path",
+          "title": "Item needs purchase",
           "badge": "Backordered Items",
           "description": "Automated replenishment chain connecting Purchase Requests to warehouse floor receipts.",
           "steps": [
@@ -131,7 +140,7 @@
         },
         {
           "id": "dual-gate",
-          "title": "Sequential Dual-Gate",
+          "title": "Two-step approval",
           "badge": "Dispatch Gate",
           "description": "Eliminates premature dispatches through mandatory sequential operational and financial approval.",
           "steps": [
@@ -277,8 +286,17 @@
       "featured": true,
       "headline": "A waste-bank ledger with guarded Excel imports and protected stock.",
       "problemHeadline": "Deposits lived in spreadsheets. The ledger did not.",
+      "problemLead": "Dozens of date-separated spreadsheets made every deposit a manual reconciliation. Prices, stock, and audit history had no single source of truth.",
       "flowHeadline": "One ledger. Three guarded paths.",
       "description": "A Laravel operations system for a community waste bank that unites deposit, withdrawal, and collector-sale records under one ledger of record. It handles dual pricing, bulk Excel import, cumulative stock control, and a multi-role audit trail.",
+      "summary": "Waste-bank records used to live in dozens of spreadsheets, with prices and stock reconciled by hand. The system puts deposits, withdrawals, and collector sales into one ledger, validates bulk imports, and blocks any sale that would make stock negative.",
+      "atAGlance": [
+        { "value": "3", "label": "record types in one ledger" },
+        { "value": "2", "label": "price layers kept separate" },
+        { "value": "4", "label": "ledger tables" },
+        { "value": "1", "label": "append-only audit trail" }
+      ],
+      "impact": [],
       "media": {
         "images": {
           "cover": "/images/works/ecobank026-bank-sampah/cover.webp",
@@ -310,7 +328,7 @@
       "flowPaths": [
         {
           "id": "path-utama",
-          "title": "Direct Processing: Daily Deposits",
+          "title": "Daily deposits",
           "badge": "Operational Transaction",
           "description": "The primary path that runs every day when an operator records a waste deposit directly at the waste bank.",
           "steps": [
@@ -338,7 +356,7 @@
         },
         {
           "id": "path-sekunder",
-          "title": "Excel Import: Historical Migration",
+          "title": "Historical Excel import",
           "badge": "Bulk Onboarding",
           "description": "The branch that loads thousands of legacy transaction rows from spreadsheets without dragging inconsistencies into the master data.",
           "steps": [
@@ -358,7 +376,7 @@
               "action": "processRows computes price and total, and buildRecap verifies that material, customer, and transaction totals are consistent before commit; flagged rows are blocked."
             },
             {
-              "name": "Idempotent Chronological Commit",
+              "name": "Commit in date order",
               "department": "BankSampahService",
               "action": "A single DB::transaction saves deposits per customer, syncs master prices, and stamps a fingerprint (md5 of file+sheet+date) so re-importing the same file is rejected."
             }
@@ -366,8 +384,8 @@
         },
         {
           "id": "path-kontrol",
-          "title": "Sales Gate: Stock & Margin Control",
-          "badge": "Quality & Security Gate",
+          "title": "Collector sale with stock check",
+          "badge": "Checks and access",
           "description": "The control applied before a collector sale is processed: it ensures stock never goes negative and the margin is recorded correctly.",
           "steps": [
             {
@@ -376,7 +394,7 @@
               "action": "getDailyRemainingWaste computes cumulative deposit weight minus sales per category up to the transaction date for the selected collector."
             },
             {
-              "name": "Lock & Full-Timeline Guard",
+              "name": "Check stock across dates",
               "department": "BankSampahService",
               "action": "lockForUpdate on the stock row is followed by assertCumulativeStockNotNegative, which scans the whole timeline and rejects a sale that would make stock negative on any date."
             },
@@ -502,8 +520,17 @@
       "featured": true,
       "headline": "Time-boxed lead dispatch with client-server deadline enforcement.",
       "problemHeadline": "Leads arrived with a deadline. The process had none.",
+      "problemLead": "Leads arrive from many channels and must be contacted within minutes. Handing them out over chat made ownership and response time impossible to measure.",
       "flowHeadline": "One lead. A deadline enforced on both sides.",
       "description": "Flutter client for property sales teams that pushes time-boxed leads to agents, enforces an accept-or-expire window, and tracks each lead from assignment to conversion. It replaces manual lead distribution with a deterministic, auditable status lifecycle.",
+      "summary": "Property leads arrive from several channels and go cold in minutes. The app gives each agent a countdown to accept, enforces the same deadline on the server, and records every status change so managers can see what happened.",
+      "atAGlance": [
+        { "value": "3", "label": "lead sources" },
+        { "value": "4", "label": "pipeline metrics" },
+        { "value": "1", "label": "server-owned deadline" },
+        { "value": "1", "label": "countdown per lead" }
+      ],
+      "impact": [],
       "media": {
         "images": {
           "cover": "/images/works/salestrack-lead-dispatch/cover.webp",
@@ -536,8 +563,8 @@
       "flowPaths": [
         {
           "id": "path-utama",
-          "title": "Lead Acceptance (Direct Processing)",
-          "badge": "Happy Path",
+          "title": "Lead accepted",
+          "badge": "Normal flow",
           "description": "Runs when a high-priority lead is dispatched and the agent accepts within the auto-reject window.",
           "steps": [
             {
@@ -551,7 +578,7 @@
               "action": "Raises a max-importance notification with fullScreenIntent, starts looping lead_alert audio, and opens IncomingLeadScreen with leadId and timeout."
             },
             {
-              "name": "Countdown Reconciliation",
+              "name": "Countdown syncs with server",
               "department": "IncomingLeadProvider / Sales Agent",
               "action": "Provider registers arrivalTime, derives remaining seconds from the wall clock, and the screen enriches fields from GET /mobile/leads/{id}."
             },
@@ -564,8 +591,8 @@
         },
         {
           "id": "path-sekunder",
-          "title": "Auto-Reject Timer Expiry (Fallback Flow)",
-          "badge": "Exception Path",
+          "title": "Deadline expires",
+          "badge": "Fallback flow",
           "description": "Runs when the agent does not act before the deadline and the lead must be released.",
           "steps": [
             {
@@ -592,8 +619,8 @@
         },
         {
           "id": "path-kontrol",
-          "title": "Authorization & Session Gate",
-          "badge": "Quality & Security Gate",
+          "title": "Session expires",
+          "badge": "Checks and access",
           "description": "Every request passes through a single authentication boundary that invalidates the whole session on expiry.",
           "steps": [
             {
@@ -607,7 +634,7 @@
               "action": "Validates the token and returns HTTP 401 for expired or invalid credentials."
             },
             {
-              "name": "Global Intercept",
+              "name": "Session cleared",
               "department": "ApiService",
               "action": "A 401 on any non-auth endpoint clears the Auth, Leads, Dashboard, Notification, and IncomingLead providers before proceeding."
             },
@@ -729,8 +756,17 @@
       "featured": true,
       "headline": "A logistics reverse-auction marketplace with a controlled shipment state machine.",
       "problemHeadline": "Rates were negotiated in chat. The shipment had no single owner.",
+      "problemLead": "Shipping ran through intermediaries with no structured record. Prices were hard to compare, and one order could be held by more than one vendor.",
       "flowHeadline": "One shipment. A controlled auction state machine.",
       "description": "A two-role mobile app that turns shipping orders into a rate auction: senders post an order, logistics vendors bid, and the system locks the winner, payment, and tracking status into one deterministic flow.",
+      "summary": "Senders post a shipment, vendors bid, and the lowest offer wins. The app locks the winner, payment, and tracking into one status flow so an order cannot be claimed twice or lose its owner.",
+      "atAGlance": [
+        { "value": "3", "label": "parties in one flow" },
+        { "value": "4", "label": "shipment states" },
+        { "value": "1", "label": "winner per order" },
+        { "value": "100", "label": "tons maximum weight" }
+      ],
+      "impact": [],
       "media": {
         "images": {
           "cover": "/images/works/ecarrgo-reverse-auction-logistics/cover.webp",
@@ -819,7 +855,7 @@
         {
           "id": "path-payment-tracking-gate",
           "title": "Payment & Verified Tracking",
-          "badge": "Quality & Security Gate",
+          "badge": "Checks and access",
           "description": "The authorization, payment verification, and audit trail that must be passed before a shipment is marked complete.",
           "steps": [
             {

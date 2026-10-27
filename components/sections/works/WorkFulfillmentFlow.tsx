@@ -156,11 +156,11 @@ export default function WorkFulfillmentFlow({ project }: WorkFulfillmentFlowProp
             className="h-1.5 w-1.5 rounded-full bg-accent"
             aria-hidden="true"
           />
-          <span className="text-accent-ink">03 / System flow &amp; decisions</span>
+          <span className="text-accent-ink">03 / How it works</span>
           <span className="text-line-strong" aria-hidden="true">
             /
           </span>
-          <span>Interactive state machine</span>
+          <span>Step by step</span>
         </div>
 
         <h2
@@ -175,9 +175,19 @@ export default function WorkFulfillmentFlow({ project }: WorkFulfillmentFlowProp
           data-reveal
           className="mt-5 max-w-[46rem] text-[15px] leading-relaxed text-ink-muted sm:mt-6 sm:text-base"
         >
-          {project.overview.workflow ??
-            "Select a path below to inspect the steps the system enforces."}
+          Pick a path to see the steps and approvals the system enforces.
         </p>
+
+        {project.overview.workflow && (
+          <details className="mt-4 max-w-[46rem]" data-reveal>
+            <summary className="cursor-pointer text-[13px] font-medium text-accent-ink transition-colors hover:text-foreground">
+              Read the full flow description
+            </summary>
+            <p className="mt-3 text-[14px] leading-relaxed text-ink-muted">
+              {project.overview.workflow}
+            </p>
+          </details>
+        )}
 
         <div
           data-reveal
@@ -257,7 +267,7 @@ export default function WorkFulfillmentFlow({ project }: WorkFulfillmentFlowProp
             data-reveal
             className="mb-6 text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted sm:text-[11px]"
           >
-            Key architectural decisions &amp; trade-offs
+            Key decisions and trade-offs
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 sm:gap-6">
@@ -282,7 +292,7 @@ export default function WorkFulfillmentFlow({ project }: WorkFulfillmentFlowProp
 
                 <div className="mt-4 border-t border-line pt-4">
                   <span className="block text-[10px] font-medium uppercase tracking-[0.16em] text-ink-muted">
-                    Rationale
+                    Why this choice
                   </span>
                   <p className="mt-1 text-[12.5px] leading-relaxed text-ink-muted">
                     {item.rationale}

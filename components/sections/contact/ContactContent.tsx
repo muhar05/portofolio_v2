@@ -39,7 +39,9 @@ export default function ContactContent({
 }: ContactContentProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
   const [isCvOpen, setIsCvOpen] = useState(false);
 
   useIsomorphicLayoutEffect(() => {
@@ -86,8 +88,42 @@ export default function ContactContent({
   useEffect(() => {
     if (!isCvOpen) return;
 
+    previousFocusRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+
+    const dialog = dialogRef.current;
+    const getFocusable = () =>
+      dialog
+        ? Array.from(
+            dialog.querySelectorAll<HTMLElement>(
+              'a[href], button:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])'
+            )
+          )
+        : [];
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsCvOpen(false);
+      if (event.key === "Escape") {
+        setIsCvOpen(false);
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = getFocusable();
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
     const previousOverflow = document.body.style.overflow;
@@ -98,6 +134,7 @@ export default function ContactContent({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = previousOverflow;
+      previousFocusRef.current?.focus();
     };
   }, [isCvOpen]);
 
@@ -297,12 +334,16 @@ export default function ContactContent({
         >
           <button
             type="button"
+            tabIndex={-1}
             aria-label="Close CV preview"
             onClick={() => setIsCvOpen(false)}
             className="absolute inset-0 h-full w-full cursor-default bg-[#111c17]/70 backdrop-blur-sm"
           />
 
-          <div className="relative z-10 flex h-full max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-line bg-[var(--background)] shadow-2xl shadow-black/30">
+          <div
+            ref={dialogRef}
+            className="relative z-10 flex h-full max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-line bg-[var(--background)] shadow-2xl shadow-black/30"
+          >
             <div className="flex items-center justify-between gap-4 border-b border-line px-4 py-3 sm:px-5">
               <div className="flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-muted">
                 <span

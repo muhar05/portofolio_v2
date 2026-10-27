@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import aboutData from "@/content/about.json";
 import siteData from "@/content/site.json";
 import worksData from "@/content/works.json";
@@ -22,11 +22,65 @@ const HEADLINE_LINES = ["From interface", "to infrastructure"];
 export default function Hero() {
   const intro = aboutData.introduction;
   const navRef = useRef<HTMLElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuPanelRef = useRef<HTMLDivElement>(null);
+  const firstMenuLinkRef = useRef<HTMLAnchorElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [navIndicator, setNavIndicator] = useState({
     left: 0,
     width: 0,
     opacity: 0,
   });
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const panel = menuPanelRef.current;
+    const focusables = panel
+      ? Array.from(
+          panel.querySelectorAll<HTMLElement>("a[href], button:not([disabled])")
+        )
+      : [];
+
+    const focusTimer = window.setTimeout(() => {
+      firstMenuLinkRef.current?.focus();
+    }, 0);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        menuButtonRef.current?.focus();
+        return;
+      }
+
+      if (event.key !== "Tab" || focusables.length === 0) return;
+
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const handleDesktop = () => {
+      if (desktop.matches) setMenuOpen(false);
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    desktop.addEventListener("change", handleDesktop);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener("keydown", handleKeyDown);
+      desktop.removeEventListener("change", handleDesktop);
+    };
+  }, [menuOpen]);
 
   const projectCovers = worksData.projects.flatMap((project) => {
     const cover = project.media?.images?.cover;
@@ -74,10 +128,20 @@ export default function Hero() {
       aria-label="Portfolio introduction"
       className="relative w-full overflow-hidden px-[var(--page-pad)] pt-28 pb-16 sm:pt-32 lg:pt-36"
     >
+      {menuOpen && (
+        <button
+          type="button"
+          tabIndex={-1}
+          aria-hidden="true"
+          onClick={() => setMenuOpen(false)}
+          className="fixed inset-0 z-40 cursor-default bg-transparent lg:hidden"
+        />
+      )}
+
       <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-4 bg-gradient-to-b from-[var(--background)] via-[var(--background)]/90 to-transparent px-[var(--page-pad)] py-4 md:py-5">
         <Link
           href="#hero"
-          className="flex items-center gap-2 text-foreground"
+          className="flex min-h-11 items-center gap-2 text-foreground"
           aria-label="Muhar Ferdiansyah, back to top"
         >
           <Logo className="h-5 w-5" />
@@ -137,7 +201,89 @@ export default function Hero() {
           >
             <RollText text="Let's talk" gap="0.04em" />
           </a>
+
+          <button
+            ref={menuButtonRef}
+            type="button"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-nav"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            onClick={() => setMenuOpen((open) => !open)}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-foreground transition-colors hover:bg-surface lg:hidden"
+          >
+            {menuOpen ? (
+              <span aria-hidden="true" className="text-lg leading-none">
+                ✕
+              </span>
+            ) : (
+              <span aria-hidden="true" className="flex w-4 flex-col gap-1">
+                <span className="h-px w-full bg-current" />
+                <span className="h-px w-full bg-current" />
+              </span>
+            )}
+          </button>
         </div>
+
+        {menuOpen && (
+          <div
+            id="mobile-nav"
+            ref={menuPanelRef}
+            className="absolute right-[var(--page-pad)] top-full z-50 mt-1 w-72 max-w-[calc(100vw-2.5rem)] rounded-3xl border border-line bg-background/95 p-2 shadow-xl backdrop-blur-lg lg:hidden"
+          >
+            <nav aria-label="Mobile primary" className="flex flex-col">
+              {NAV_LINKS.map((link, index) => (
+                <a
+                  key={link.href}
+                  ref={index === 0 ? firstMenuLinkRef : undefined}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-2xl px-4 py-3.5 text-[14px] font-medium text-foreground transition-colors hover:bg-surface"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+
+            <div className="mt-1 flex flex-col border-t border-line pt-1">
+              <a
+                href={siteData.contact.github.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  setMenuOpen(false);
+                  trackEvent("github_click", { location: "mobile_menu" });
+                }}
+                className="rounded-2xl px-4 py-3.5 text-[14px] font-medium text-foreground transition-colors hover:bg-surface"
+              >
+                GitHub
+              </a>
+              <a
+                href={`mailto:${siteData.email}?subject=Portfolio%20inquiry`}
+                onClick={() => {
+                  setMenuOpen(false);
+                  trackEvent("contact_click", {
+                    channel: "email",
+                    location: "mobile_menu",
+                  });
+                }}
+                className="rounded-2xl px-4 py-3.5 text-[14px] font-medium text-foreground transition-colors hover:bg-surface"
+              >
+                Email
+              </a>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                menuButtonRef.current?.focus();
+              }}
+              className="mt-1 w-full rounded-2xl px-4 py-3.5 text-left text-[13px] font-medium text-ink-muted transition-colors hover:bg-surface"
+            >
+              Close menu
+            </button>
+          </div>
+        )}
       </header>
 
       <div className="mx-auto flex w-full max-w-[54rem] flex-col items-center pt-10 text-center sm:pt-14 lg:pt-16">

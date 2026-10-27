@@ -83,8 +83,8 @@ export default function WorkClosing({ nextProject }: WorkClosingProps) {
         </h2>
 
         <p className="mt-5 max-w-[34rem] text-[15px] leading-relaxed text-[#edf0ea]/65">
-          Explore another project where software, business processes, and
-          practical engineering meet.
+          Open another case study to see the problem, the decisions, and what
+          changed.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-3">

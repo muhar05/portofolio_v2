@@ -56,6 +56,17 @@ export interface ArchitectureLayer {
   items: string[];
 }
 
+export interface ProjectFact {
+  value: string;
+  label: string;
+}
+
+export interface ProjectImpact {
+  value: string;
+  label: string;
+  note?: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -65,8 +76,12 @@ export interface Project {
   featured: boolean;
   headline: string;
   problemHeadline?: string;
+  problemLead?: string;
   flowHeadline?: string;
   description: string;
+  summary?: string;
+  atAGlance?: ProjectFact[];
+  impact?: ProjectImpact[];
   media?: ProjectMedia;
   domains?: string[];
   problemPoints?: string[];

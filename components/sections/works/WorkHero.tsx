@@ -148,6 +148,71 @@ export default function WorkHero({ project }: WorkHeroProps) {
             </span>
             <span>{project.year}</span>
           </div>
+
+          {project.summary && (
+            <div
+              data-reveal
+              className="mt-8 max-w-[44rem] border-l-2 border-accent pl-4 sm:pl-5"
+            >
+              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-accent-ink">
+                In short
+              </p>
+              <p className="mt-2 text-[16px] leading-relaxed text-foreground/85 sm:text-[17px]">
+                {project.summary}
+              </p>
+            </div>
+          )}
+
+          {project.atAGlance && project.atAGlance.length > 0 && (
+            <div data-reveal className="mt-8">
+              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted">
+                At a glance
+              </p>
+              <dl className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {project.atAGlance.map((fact) => (
+                  <div
+                    key={fact.label}
+                    className="rounded-2xl border border-line bg-surface p-4"
+                  >
+                    <dt className="text-[10px] font-medium uppercase tracking-[0.14em] text-ink-muted">
+                      {fact.label}
+                    </dt>
+                    <dd className="mt-1 font-display text-2xl font-semibold tracking-[-0.02em] text-foreground">
+                      {fact.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          )}
+
+          {project.impact && project.impact.length > 0 && (
+            <div
+              data-reveal
+              className="mt-8 rounded-3xl bg-[#111c17] p-6 text-[#edf0ea] sm:p-8"
+            >
+              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#e07a52]">
+                Impact
+              </p>
+              <dl className="mt-4 grid grid-cols-2 gap-6 sm:grid-cols-4">
+                {project.impact.map((item) => (
+                  <div key={item.label}>
+                    <dd className="font-display text-3xl font-semibold tracking-[-0.02em]">
+                      {item.value}
+                    </dd>
+                    <dt className="mt-1 text-[11px] leading-snug text-[#edf0ea]/60">
+                      {item.label}
+                    </dt>
+                    {item.note && (
+                      <p className="mt-1 text-[10px] leading-snug text-[#edf0ea]/45">
+                        {item.note}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </dl>
+            </div>
+          )}
         </div>
 
         {project.media && (
@@ -160,8 +225,8 @@ export default function WorkHero({ project }: WorkHeroProps) {
               priority
             />
             <figcaption className="mt-2.5 flex items-center justify-between text-[9.5px] font-medium uppercase tracking-[0.18em] text-ink-muted">
-              <span>Project artifact</span>
-              <span>Primary visual</span>
+              <span>Project preview</span>
+              <span>Main visual</span>
             </figcaption>
           </figure>
         )}

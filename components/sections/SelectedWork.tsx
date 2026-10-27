@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
@@ -15,6 +15,32 @@ export default function SelectedWork() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
+  const [scrollState, setScrollState] = useState({
+    left: false,
+    right: true,
+  });
+
+  useEffect(() => {
+    const rail = railRef.current;
+    if (!rail) return;
+
+    const update = () => {
+      const max = rail.scrollWidth - rail.clientWidth;
+      setScrollState({
+        left: rail.scrollLeft > 4,
+        right: rail.scrollLeft < max - 4,
+      });
+    };
+
+    update();
+    rail.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+
+    return () => {
+      rail.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
 
   useIsomorphicLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -121,16 +147,18 @@ export default function SelectedWork() {
             <button
               type="button"
               onClick={() => scrollRail(-1)}
+              disabled={!scrollState.left}
               aria-label="Scroll projects left"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-foreground transition-colors hover:bg-surface"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-foreground transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent"
             >
               <span aria-hidden="true">←</span>
             </button>
             <button
               type="button"
               onClick={() => scrollRail(1)}
+              disabled={!scrollState.right}
               aria-label="Scroll projects right"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-foreground transition-colors hover:bg-surface"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-foreground transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent"
             >
               <span aria-hidden="true">→</span>
             </button>

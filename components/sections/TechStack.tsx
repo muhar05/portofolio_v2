@@ -264,8 +264,7 @@ export default function TechStack() {
             The stack behind the work.
           </h2>
           <p className="mx-auto mt-4 max-w-[34rem] text-[15px] leading-relaxed text-ink-muted">
-            Drawn from the systems above, grouped by the layer each technology
-            belongs to.
+            I grouped the technologies from the systems above by layer.
           </p>
         </div>
 
