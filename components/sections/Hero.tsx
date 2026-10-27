@@ -1,230 +1,255 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
+import { useRef, useState } from "react";
 import aboutData from "@/content/about.json";
 import siteData from "@/content/site.json";
+import worksData from "@/content/works.json";
 import { trackEvent } from "@/lib/analytics";
+import RollText from "@/components/ui/RollText";
 
-function AvailabilityBadge({ text }: { text: string }) {
-  return (
-    <span className="inline-flex max-w-full items-center gap-1.5 rounded border border-zinc-800/80 bg-zinc-950/60 px-2 py-1 font-mono text-[8.5px] uppercase leading-tight text-zinc-200 sm:gap-2 sm:px-2.5 sm:text-[10px]">
-      <span
-        className="hero-status-dot h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
-        aria-hidden="true"
-      />
-      <span className="tracking-[0.02em] sm:tracking-[0.06em]">{text}</span>
-    </span>
-  );
-}
+const NAV_LINKS = [
+  { href: "#selected-work", label: "Work" },
+  { href: "#stack", label: "Stack" },
+  { href: "#thinking", label: "About" },
+  { href: "#contact", label: "Contact" },
+];
+
+const HEADLINE_LINES = ["From interface", "to infrastructure"];
 
 export default function Hero() {
   const intro = aboutData.introduction;
+  const navRef = useRef<HTMLElement>(null);
+  const [navIndicator, setNavIndicator] = useState({
+    left: 0,
+    width: 0,
+    opacity: 0,
+  });
+
+  const projectCovers = worksData.projects.flatMap((project) => {
+    const cover = project.media?.images?.cover;
+    if (!cover) return [];
+    return [
+      {
+        id: project.id,
+        title: project.title,
+        category: project.category,
+        cover,
+      },
+    ];
+  });
+
+  const moveIndicator = (target: HTMLAnchorElement) => {
+    const parent = navRef.current;
+    if (!parent) return;
+    const targetRect = target.getBoundingClientRect();
+    const parentRect = parent.getBoundingClientRect();
+    setNavIndicator({
+      left: targetRect.left - parentRect.left,
+      width: targetRect.width,
+      opacity: 1,
+    });
+  };
+
+  const handleEnter = (event: React.MouseEvent<HTMLAnchorElement>) =>
+    moveIndicator(event.currentTarget);
+
+  const handleFocus = (event: React.FocusEvent<HTMLAnchorElement>) =>
+    moveIndicator(event.currentTarget);
+
+  const hideIndicator = () =>
+    setNavIndicator((prev) => ({ ...prev, opacity: 0 }));
+
+  const handleBlur = (event: React.FocusEvent<HTMLAnchorElement>) => {
+    const next = event.relatedTarget;
+    if (next instanceof Node && navRef.current?.contains(next)) return;
+    hideIndicator();
+  };
 
   return (
     <section
       id="hero"
-      aria-label="Portfolio Introduction"
-      className="relative flex min-h-screen min-h-[100dvh] w-full flex-col justify-between overflow-hidden bg-[#08080a] p-4 text-zinc-100 sm:p-6 md:p-8 lg:p-12"
+      aria-label="Portfolio introduction"
+      className="relative w-full overflow-hidden px-[var(--page-pad)] pt-28 pb-16 sm:pt-32 lg:pt-36"
     >
-      <div id="intro" className="sr-only" aria-hidden="true" />
-
-      <div
-        className="pointer-events-none absolute inset-0 z-20"
-        aria-hidden="true"
-      >
-        <div
-          className="absolute inset-0 opacity-[0.06] sm:opacity-[0.07]"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, #ffffff 1px, transparent 1px),
-              linear-gradient(to bottom, #ffffff 1px, transparent 1px)
-            `,
-            backgroundSize: "36px 36px",
-          }}
-        />
-
-        <div className="absolute top-2.5 left-2.5 text-[9px] font-mono text-zinc-600 sm:top-3 sm:left-3 sm:text-[10px]">
-          +
-        </div>
-        <div className="absolute top-2.5 right-2.5 text-[9px] font-mono text-zinc-600 sm:top-3 sm:right-3 sm:text-[10px]">
-          +
-        </div>
-        <div className="absolute bottom-2.5 left-2.5 text-[9px] font-mono text-zinc-600 sm:bottom-3 sm:left-3 sm:text-[10px]">
-          +
-        </div>
-        <div className="absolute bottom-2.5 right-2.5 text-[9px] font-mono text-zinc-600 sm:bottom-3 sm:right-3 sm:text-[10px]">
-          +
-        </div>
-      </div>
-
-      <div
-        className="hero-art-layer hero-reveal-art"
-        style={{ animationDelay: "220ms" }}
-        aria-hidden="true"
-      >
-        <div className="hero-art">
-          <div className="hero-art__slab-main" />
-          <div className="hero-art__slab-secondary" />
-          <div className="hero-art__void" />
-          <div className="hero-art__edge" />
-          <div className="hero-art__edge-secondary" />
-        </div>
-        <div className="hero-art__scrim" />
-      </div>
-
-      <header className="hero-system-bar fixed inset-x-0 top-0 z-50 flex items-center justify-between border-b border-zinc-800/40 bg-[#08080a]/95 px-4 py-2 text-[9.5px] font-mono text-zinc-400 sm:px-6 sm:py-2.5 sm:text-[10.5px] md:px-8 lg:px-12">
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
-          <span className="font-medium uppercase tracking-[0.16em] text-zinc-300 sm:tracking-[0.2em]">
-            MUHAR.01
-          </span>
-          <span className="hidden text-zinc-700 sm:inline-block">|</span>
-          <span className="hidden tracking-wider text-zinc-400 sm:inline-block">
-            FULL STACK DEVELOPER
-          </span>
-        </div>
+      <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-4 bg-gradient-to-b from-[var(--background)] via-[var(--background)]/90 to-transparent px-[var(--page-pad)] py-4 md:py-5">
+        <Link
+          href="#hero"
+          className="font-display text-lg font-semibold tracking-[-0.03em] text-foreground"
+          aria-label="Muhar Ferdiansyah, back to top"
+        >
+          muhar<span className="text-[var(--accent)]">.</span>
+        </Link>
 
         <nav
-          aria-label="Hero navigation"
-          className="hidden items-center gap-5 text-[10px] uppercase tracking-[0.2em] md:flex"
+          ref={navRef}
+          aria-label="Primary"
+          onMouseLeave={hideIndicator}
+          className="nav-pill hidden lg:inline-flex"
         >
-          <a href="#stack" className="text-zinc-300 transition-colors hover:text-white">
-            STACK
-          </a>
-          <a href="#selected-work" className="text-zinc-300 transition-colors hover:text-white">
-            WORK
-          </a>
-          <a href="#thinking" className="text-zinc-300 transition-colors hover:text-white">
-            ABOUT
-          </a>
-          <a href="#contact" className="text-zinc-300 transition-colors hover:text-white">
-            CONTACT
-          </a>
+          <span
+            aria-hidden="true"
+            className="nav-pill__indicator"
+            style={{
+              transform: `translate3d(${navIndicator.left}px, -50%, 0)`,
+              width: `${navIndicator.width}px`,
+              opacity: navIndicator.opacity,
+            }}
+          />
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onMouseEnter={handleEnter}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              className="nav-pill__link text-[13px] font-medium"
+            >
+              <RollText text={link.label} />
+            </a>
+          ))}
         </nav>
 
-        <a
-          href={`mailto:${siteData.email}`}
-          onClick={() =>
-            trackEvent("contact_click", {
-              channel: "email",
-              location: "navbar",
-            })
-          }
-          className="inline-flex min-h-11 items-center justify-center rounded border border-[#f97316]/70 px-3 font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-[#fb923c] transition-colors duration-200 hover:border-[#f97316] hover:bg-[#f97316] hover:text-zinc-950 sm:text-[10px]"
-        >
-          {"LET'S TALK"}
-        </a>
+        <div className="flex items-center gap-4">
+          <a
+            href={siteData.contact.github.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackEvent("github_click", { location: "navbar" })}
+            className="hidden text-[13px] font-medium text-ink-muted transition-colors hover:text-foreground sm:inline"
+          >
+            GitHub
+          </a>
+          <a
+            href={`mailto:${siteData.email}`}
+            onClick={() =>
+              trackEvent("contact_click", {
+                channel: "email",
+                location: "navbar",
+              })
+            }
+            className="btn-pill btn-ink btn-sheen px-4 text-[13px]"
+          >
+            <RollText text="Let's talk" gap="0.04em" />
+          </a>
+        </div>
       </header>
 
-      <main className="relative z-20 my-auto flex flex-1 flex-col justify-center py-8 sm:py-10 md:py-12">
-        <div className="mx-auto w-full max-w-6xl">
-          <div className="hero-main-content max-w-4xl lg:max-w-none">
-            <div
-              className="hero-reveal-label font-mono text-[10px] uppercase tracking-[0.24em] text-zinc-200"
-              style={{ animationDelay: "60ms" }}
-            >
-              {intro.name}
-            </div>
-
-            <div
-              className="hero-reveal-label mt-3 sm:mt-4"
-              style={{ animationDelay: "100ms" }}
-            >
-              <AvailabilityBadge text={intro.availability} />
-            </div>
-
-            <h1
-              aria-label={intro.headline}
-              className="hero-reveal-headline mt-6 max-w-5xl font-sans text-[clamp(2.1rem,9.2vw,3.5rem)] font-bold leading-[0.92] tracking-[-0.04em] text-white sm:mt-8 md:text-[clamp(3.5rem,7vw,5rem)] lg:mt-10 lg:text-[clamp(3.75rem,6vw,6.5rem)]"
-              style={{ animationDelay: "180ms" }}
-            >
-              <span className="block md:inline">From</span>{" "}
-              <span>interface</span>{" "}
-              <span className="hidden md:block" aria-hidden="true" />
-              <span>to</span>{" "}
-              <span className="block md:hidden" aria-hidden="true" />
-              <span>
-                infrastructure<span className="text-[#f97316]">.</span>
-              </span>
-            </h1>
-
-            <p
-              className="hero-reveal-copy mt-6 max-w-xl font-sans text-base leading-relaxed text-zinc-300 sm:text-lg"
-              style={{ animationDelay: "300ms" }}
-            >
-              {intro.supporting}
-            </p>
-
-            <div
-              className="hero-reveal-copy mt-4 flex items-center gap-2"
-              style={{ animationDelay: "340ms" }}
-            >
-              <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-[#fb923c] sm:text-[11px]">
-                {intro.concept}
-              </span>
-            </div>
-
-            <div
-              className="hero-reveal-cta mt-6 flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em]"
-              style={{ animationDelay: "400ms" }}
-            >
-              <a
-                href={`mailto:${siteData.email}`}
-                onClick={() =>
-                  trackEvent("contact_click", {
-                    channel: "email",
-                    location: "hero",
-                  })
-                }
-                className="inline-flex min-h-11 items-center justify-center rounded bg-[#f97316] px-4 py-2 font-semibold text-zinc-950 transition-all duration-200 motion-safe:hover:-translate-y-0.5 hover:bg-[#fb923c]"
-              >
-                {"LET'S TALK"}
-              </a>
-              <a
-                href="#selected-work"
-                className="inline-flex min-h-11 items-center justify-center rounded border border-zinc-700/80 px-4 py-2 font-medium text-zinc-300 transition-colors duration-200 hover:border-zinc-500 hover:text-white"
-              >
-                {"VIEW SELECTED WORK"}
-                <span className="ml-1.5" aria-hidden="true">
-                  ↓
-                </span>
-              </a>
-              <a
-                href={siteData.contact.cv}
-                download
-                onClick={() =>
-                  trackEvent("resume_click", {
-                    source: "hero",
-                    action: "download",
-                  })
-                }
-                aria-label="Download Muhar Ferdiansyah CV as PDF"
-                className="inline-flex min-h-11 items-center justify-center text-[10px] tracking-[0.18em] text-zinc-400 underline decoration-zinc-700 underline-offset-4 transition-colors duration-200 hover:text-white hover:decoration-zinc-300"
-              >
-                DOWNLOAD CV
-              </a>
-            </div>
-          </div>
-        </div>
-      </main>
-
-      <footer className="hero-system-bar relative z-20 flex items-center justify-between border-t border-zinc-800/40 pb-2 pt-2 text-[8.5px] font-mono text-zinc-400 sm:pb-2.5 sm:text-[9.5px] md:text-[10px]">
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <span className="text-zinc-400">WORKSPACE:</span>
-          <span className="text-zinc-300">ACTIVE</span>
-        </div>
-
-        <a
-          href="#stack"
-          className="hidden cursor-pointer text-[9px] uppercase tracking-[0.18em] text-zinc-400 transition-colors hover:text-zinc-300 sm:inline-block"
+      <div className="mx-auto flex w-full max-w-[54rem] flex-col items-center pt-10 text-center sm:pt-14 lg:pt-16">
+        <div
+          className="hero-fade inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.02em] text-ink-muted"
+          style={{ animationDelay: "80ms" }}
         >
-          [ SCROLL TO STACK &amp; WORK ↓ ]
-        </a>
-
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <span className="text-zinc-400">CANVAS:</span>
-          <span className="text-[#f97316]">MONOLITH / 01</span>
+          <span
+            className="h-1.5 w-1.5 rounded-full bg-emerald-600"
+            aria-hidden="true"
+          />
+          {intro.availability}
         </div>
-      </footer>
+
+        <h1 className="mt-6 font-display text-[clamp(2.5rem,5.4vw,4.25rem)] font-semibold leading-[1.06] tracking-[-0.04em] text-foreground">
+          {HEADLINE_LINES.map((line, index) => (
+            <span className="mask-line" key={line}>
+              <span
+                className="mask-line__inner"
+                style={{ animationDelay: `${140 + index * 110}ms` }}
+              >
+                {line}
+                {index === HEADLINE_LINES.length - 1 && (
+                  <span className="text-[var(--accent)]">.</span>
+                )}
+              </span>
+            </span>
+          ))}
+        </h1>
+
+        <p
+          className="hero-fade mt-6 max-w-[34rem] text-[15px] leading-relaxed text-ink-muted sm:text-base"
+          style={{ animationDelay: "480ms" }}
+        >
+          {intro.supporting}
+        </p>
+
+        <div
+          className="hero-fade mt-8 flex flex-wrap items-center justify-center gap-2.5"
+          style={{ animationDelay: "580ms" }}
+        >
+          <a
+            href={`mailto:${siteData.email}`}
+            onClick={() =>
+              trackEvent("contact_click", {
+                channel: "email",
+                location: "hero",
+              })
+            }
+            className="btn-pill btn-ink btn-sheen"
+          >
+            <RollText text="Let's talk" gap="0.04em" />
+          </a>
+          <a href="#selected-work" className="btn-pill btn-soft">
+            View selected work
+            <span aria-hidden="true" className="text-[0.85em]">
+              ↓
+            </span>
+          </a>
+        </div>
+
+        <p
+          className="hero-fade mt-6 text-[10px] font-medium uppercase tracking-[0.2em] text-ink-muted"
+          style={{ animationDelay: "660ms" }}
+        >
+          {intro.concept}
+        </p>
+      </div>
+
+      <div
+        className="ticker mt-12 sm:mt-16 lg:mt-20"
+        aria-label="Selected project previews"
+      >
+        <div className="ticker__track">
+          {[0, 1].map((setIndex) => (
+            <div
+              key={setIndex}
+              className="flex"
+              aria-hidden={setIndex === 1 ? "true" : undefined}
+            >
+              {projectCovers.map((project) => (
+                <Link
+                  key={`${setIndex}-${project.id}`}
+                  href={`/works/${project.id}`}
+                  tabIndex={setIndex === 1 ? -1 : undefined}
+                  aria-label={
+                    setIndex === 0
+                      ? `View ${project.title} case study`
+                      : undefined
+                  }
+                  className="ticker__card group aspect-[4/3]"
+                >
+                  <Image
+                    src={project.cover}
+                    alt=""
+                    fill
+                    sizes="(max-width: 768px) 60vw, 22rem"
+                    className="object-cover"
+                  />
+                  <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/85 via-black/25 to-transparent p-3 text-left">
+                    <span className="text-[11px] font-medium text-white">
+                      {project.title}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="text-[9px] font-medium uppercase tracking-[0.16em] text-white/85"
+                    >
+                      {project.category}
+                    </span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

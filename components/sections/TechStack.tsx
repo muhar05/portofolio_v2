@@ -18,8 +18,9 @@ interface Discipline {
 const DISCIPLINES: Discipline[] = [
   {
     number: "01",
-    category: "LANGUAGES & RUNTIMES",
-    description: "Core languages behind the work, from typed web apps to PHP services and cross-platform mobile.",
+    category: "Languages & runtimes",
+    description:
+      "Core languages behind the work, from typed web apps to PHP services and cross-platform mobile.",
     keywords: [
       "typescript",
       "javascript",
@@ -37,8 +38,9 @@ const DISCIPLINES: Discipline[] = [
   },
   {
     number: "02",
-    category: "FRAMEWORKS & INTERFACES",
-    description: "Application frameworks and interface layers, spanning server-rendered Laravel, React and Next.js, and Flutter.",
+    category: "Frameworks & interfaces",
+    description:
+      "Application frameworks and interface layers, spanning server-rendered Laravel, React and Next.js, and Flutter.",
     keywords: [
       "next",
       "react",
@@ -61,8 +63,9 @@ const DISCIPLINES: Discipline[] = [
   },
   {
     number: "03",
-    category: "DATA & STORAGE",
-    description: "Relational databases, ORMs, object storage, and on-device persistence.",
+    category: "Data & storage",
+    description:
+      "Relational databases, ORMs, object storage, and on-device persistence.",
     keywords: [
       "postgres",
       "mysql",
@@ -80,8 +83,9 @@ const DISCIPLINES: Discipline[] = [
   },
   {
     number: "04",
-    category: "AUTH, PLATFORMS & TOOLING",
-    description: "Identity and permissions, push and local notifications, data import, and the tooling around each system.",
+    category: "Auth, platforms & tooling",
+    description:
+      "Identity and permissions, notifications, data import, and the tooling around each system.",
     keywords: [
       "nextauth",
       "auth",
@@ -105,7 +109,7 @@ const DISCIPLINES: Discipline[] = [
 
 const FALLBACK: Discipline = {
   number: "",
-  category: "TOOLS & LIBRARIES",
+  category: "Tools & libraries",
   description: "Additional libraries pulled in by the projects above.",
   keywords: [],
 };
@@ -183,7 +187,12 @@ export default function TechStack() {
 
     if (prefersReducedMotion) {
       if (headerRef.current) gsap.set(headerRef.current, { opacity: 1, y: 0 });
-      if (listRef.current) gsap.set(listRef.current, { opacity: 1, y: 0 });
+      if (listRef.current) {
+        gsap.set(listRef.current.querySelectorAll(".stack-row"), {
+          opacity: 1,
+          y: 0,
+        });
+      }
       return;
     }
 
@@ -191,12 +200,12 @@ export default function TechStack() {
       if (headerRef.current) {
         gsap.fromTo(
           headerRef.current,
-          { opacity: 0, y: 16 },
+          { opacity: 0, y: 28 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.55,
-            ease: "power2.out",
+            duration: 1,
+            ease: "expo.out",
             scrollTrigger: {
               trigger: headerRef.current,
               start: "top 85%",
@@ -211,13 +220,13 @@ export default function TechStack() {
         const rows = listRef.current.querySelectorAll(".stack-row");
         gsap.fromTo(
           rows,
-          { opacity: 0, y: 18 },
+          { opacity: 0, y: 28 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.55,
+            duration: 1,
             stagger: 0.1,
-            ease: "power2.out",
+            ease: "expo.out",
             scrollTrigger: {
               trigger: listRef.current,
               start: "top 85%",
@@ -241,66 +250,62 @@ export default function TechStack() {
       ref={sectionRef}
       id="stack"
       aria-labelledby="stack-heading"
-      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-16 sm:py-20 md:py-24 border-b border-zinc-800/40"
+      className="relative w-full border-t border-line px-[var(--page-pad)] py-20 sm:py-24 lg:py-32"
     >
-      <div className="mx-auto w-full max-w-5xl">
-        <div ref={headerRef} className="max-w-3xl">
-          <div className="flex items-center gap-2.5 font-mono text-[11px] sm:text-xs uppercase tracking-[0.24em] text-[#f97316] font-semibold">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#f97316]" aria-hidden="true" />
-            <span>02 / TECHNICAL EXPERTISE</span>
-            <span className="h-px w-6 sm:w-8 bg-zinc-800" aria-hidden="true" />
-            <span className="text-[10px] text-zinc-400 uppercase tracking-widest hidden sm:inline-block">
-              CORE PRODUCTION STACK
-            </span>
-          </div>
-
+      <div className="mx-auto w-full max-w-[80rem]">
+        <div ref={headerRef} className="mx-auto max-w-[46rem] text-center">
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted">
+            Stack
+          </p>
           <h2
             id="stack-heading"
-            className="mt-6 sm:mt-8 font-sans text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.12]"
+            className="mt-4 font-display text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.035em] text-foreground"
           >
-            Built for reliability and scale.
+            The stack behind the work.
           </h2>
-
-          <p className="mt-4 sm:mt-6 font-sans text-base sm:text-lg text-zinc-300 leading-relaxed font-normal max-w-2xl">
-            The production stack drawn from the systems below, grouped by the layer each
-            technology belongs to.
+          <p className="mx-auto mt-4 max-w-[34rem] text-[15px] leading-relaxed text-ink-muted">
+            Drawn from the systems above, grouped by the layer each technology
+            belongs to.
           </p>
         </div>
 
-        <div ref={listRef} className="mt-12 sm:mt-16">
+        <div
+          ref={listRef}
+          className="mt-12 overflow-hidden rounded-3xl border border-line bg-surface sm:mt-16"
+        >
           {STACK_GROUPS.map((group) => (
-            <div key={group.category} className="stack-row">
-              <div className="h-px w-full bg-zinc-800/60" aria-hidden="true" />
-              <div className="grid grid-cols-1 gap-5 py-8 sm:py-10 md:grid-cols-12 md:gap-10 lg:gap-12">
-                <div className="flex items-baseline gap-3 md:col-span-4">
-                  <span className="font-mono text-2xl sm:text-3xl font-light tracking-tight text-zinc-500/80 select-none">
+            <div
+              key={group.category}
+              className="stack-row grid grid-cols-1 gap-5 border-b border-line p-6 transition-colors last:border-b-0 hover:bg-background/40 sm:p-8 md:grid-cols-12 md:gap-10 lg:p-10"
+            >
+              <div className="md:col-span-4">
+                <div className="flex items-baseline gap-3">
+                  <span className="font-mono text-[11px] text-ink-muted">
                     {group.number}
                   </span>
-                  <h3 className="font-mono text-xs sm:text-sm uppercase tracking-[0.2em] text-white">
+                  <h3 className="font-display text-lg font-semibold leading-snug tracking-[-0.02em] text-foreground sm:text-xl">
                     {group.category}
                   </h3>
                 </div>
+                <p className="mt-3 max-w-[24rem] text-[13.5px] leading-relaxed text-ink-muted">
+                  {group.description}
+                </p>
+              </div>
 
-                <div className="md:col-span-8">
-                  <div className="flex flex-wrap gap-x-6 gap-y-2.5">
-                    {group.items.map((skill) => (
-                      <span
-                        key={skill}
-                        className="flex items-center gap-2 font-sans text-sm text-zinc-200 sm:text-[15px]"
-                      >
-                        <span className="h-1 w-1 rounded-full bg-zinc-600" aria-hidden="true" />
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="mt-3 max-w-xl font-sans text-sm leading-relaxed text-zinc-400">
-                    {group.description}
-                  </p>
+              <div className="md:col-span-8">
+                <div className="flex flex-wrap gap-1.5">
+                  {group.items.map((skill) => (
+                    <span
+                      key={skill}
+                      className="rounded-full border border-line bg-background/70 px-3 py-1.5 text-[12px] font-medium text-foreground"
+                    >
+                      {skill}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
           ))}
-          <div className="h-px w-full bg-zinc-800/40" aria-hidden="true" />
         </div>
       </div>
     </section>

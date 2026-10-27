@@ -51,13 +51,13 @@ export default function WorkArchitecture({ project }: WorkArchitectureProps) {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         targets,
-        { opacity: 0, y: 16 },
+        { opacity: 0, y: 28 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.55,
-          ease: "power2.out",
-          stagger: 0.08,
+          duration: 1,
+          ease: "expo.out",
+          stagger: 0.1,
         }
       );
     }, root);

@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import worksData from "@/content/works.json";
-import ProjectMedia from "@/components/sections/works/ProjectMedia";
-import type { ProjectMedia as ProjectMediaType } from "@/types/works";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -15,6 +14,7 @@ export default function SelectedWork() {
   const { works, projects } = worksData;
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
+  const railRef = useRef<HTMLDivElement>(null);
 
   useIsomorphicLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -26,13 +26,11 @@ export default function SelectedWork() {
     const sectionEl = sectionRef.current;
     if (!sectionEl) return;
 
-    const rows = sectionEl.querySelectorAll(
-      ".work-project-row, .work-category-block"
-    );
+    const cards = sectionEl.querySelectorAll(".project-card");
 
     if (prefersReducedMotion) {
       if (headerRef.current) gsap.set(headerRef.current, { opacity: 1, y: 0 });
-      if (rows.length > 0) gsap.set(rows, { opacity: 1, y: 0 });
+      if (cards.length > 0) gsap.set(cards, { opacity: 1, y: 0 });
       return;
     }
 
@@ -40,12 +38,12 @@ export default function SelectedWork() {
       if (headerRef.current) {
         gsap.fromTo(
           headerRef.current,
-          { opacity: 0, y: 16 },
+          { opacity: 0, y: 28 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.55,
-            ease: "power2.out",
+            duration: 1,
+            ease: "expo.out",
             scrollTrigger: {
               trigger: headerRef.current,
               start: "top 85%",
@@ -56,24 +54,23 @@ export default function SelectedWork() {
         );
       }
 
-      rows.forEach((row) => {
-        gsap.fromTo(
-          row,
-          { opacity: 0, y: 18 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: row,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
-              invalidateOnRefresh: true,
-            },
-          }
-        );
-      });
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 28 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          stagger: 0.1,
+          ease: "expo.out",
+          scrollTrigger: {
+            trigger: railRef.current,
+            start: "top 88%",
+            toggleActions: "play none none reverse",
+            invalidateOnRefresh: true,
+          },
+        }
+      );
 
       ScrollTrigger.sort();
     }, sectionEl);
@@ -83,96 +80,113 @@ export default function SelectedWork() {
     };
   }, []);
 
+  const scrollRail = (direction: -1 | 1) => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const card = rail.querySelector<HTMLElement>(".project-card");
+    const amount = card ? card.offsetWidth + 16 : rail.clientWidth * 0.8;
+    rail.scrollBy({ left: amount * direction, behavior: "smooth" });
+  };
+
   return (
     <section
       ref={sectionRef}
       id="selected-work"
       aria-labelledby="selected-work-heading"
-      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-16 sm:py-20 md:py-24 overflow-hidden border-b border-zinc-800/40"
+      className="relative w-full overflow-hidden border-t border-line px-[var(--page-pad)] py-20 sm:py-24 lg:py-32"
     >
-      <div id="project" className="absolute -top-12" aria-hidden="true" />
+      <div id="project" className="absolute -top-20" aria-hidden="true" />
 
-      <div className="mx-auto w-full max-w-5xl">
-        <div ref={headerRef} className="max-w-3xl">
-          <div className="flex items-center gap-2.5 font-mono text-[11px] sm:text-xs uppercase tracking-[0.24em] text-[#f97316] font-semibold">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#f97316]" aria-hidden="true" />
-            <span>03 / FEATURED WORK</span>
-            <span className="h-px w-6 sm:w-8 bg-zinc-800" aria-hidden="true" />
-            <span className="text-[10px] text-zinc-400 uppercase tracking-widest hidden sm:inline-block">
-              PRODUCTION ARTIFACTS
-            </span>
-          </div>
-
+      <div className="mx-auto w-full max-w-[90rem]">
+        <div ref={headerRef} className="mx-auto max-w-[46rem] text-center">
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted">
+            Selected work
+          </p>
           <h2
             id="selected-work-heading"
-            className="mt-6 sm:mt-8 font-sans text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.12]"
+            className="mt-4 font-display text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.035em] text-foreground"
           >
             {works.headline}
           </h2>
-
-          <p className="mt-4 sm:mt-6 max-w-2xl font-sans text-base sm:text-lg font-normal leading-relaxed text-zinc-300">
+          <p className="mx-auto mt-4 max-w-[34rem] text-[15px] leading-relaxed text-ink-muted">
             {works.description}
           </p>
         </div>
 
-        <div className="work-category-block mt-8 border-t border-zinc-800/60 pt-6 sm:mt-10 sm:pt-8">
-          <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-zinc-400 sm:text-[11px]">
-            WHAT I WORK ON
+        <div className="mt-10 flex items-center justify-between gap-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-ink-muted">
+            {projects.length} production systems
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => scrollRail(-1)}
+              aria-label="Scroll projects left"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-foreground transition-colors hover:bg-surface"
+            >
+              <span aria-hidden="true">←</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollRail(1)}
+              aria-label="Scroll projects right"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-foreground transition-colors hover:bg-surface"
+            >
+              <span aria-hidden="true">→</span>
+            </button>
           </div>
-          <ul className="mt-4 grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
-            {works.items.map((item) => (
-              <li key={item.number} className="flex items-start gap-2.5">
-                <span className="mt-0.5 font-mono text-[10px] text-[#f97316]">
-                  {item.number}
-                </span>
-                <div>
-                  <h3 className="font-mono text-[11px] uppercase tracking-[0.16em] text-zinc-200">
-                    {item.title}
-                  </h3>
-                  <p className="mt-1 hidden font-sans text-xs leading-relaxed text-zinc-400 sm:block">
-                    {item.description}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
         </div>
 
-        <div className="mt-8 sm:mt-10">
-          {projects.map((project, index) => (
-            <div key={project.id} className="work-project-row">
-              <div className="h-px w-full bg-zinc-800/60" aria-hidden="true" />
-              <div className="grid grid-cols-1 items-center gap-8 py-10 sm:py-12 md:py-14 lg:grid-cols-12 lg:gap-12">
-                <div className="flex flex-col lg:col-span-7">
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-[0.18em] text-zinc-400 sm:text-xs">
-                    <span className="text-2xl font-light tracking-tight text-zinc-500/80 select-none sm:text-3xl">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="font-semibold text-zinc-200">{project.title}</span>
-                    <span className="text-zinc-600" aria-hidden="true">
-                      ·
-                    </span>
+        <div
+          ref={railRef}
+          className="project-rail mt-4"
+          tabIndex={0}
+          role="region"
+          aria-label="Project carousel"
+        >
+          {projects.map((project) => {
+            const cover = project.media?.images?.cover;
+            return (
+              <article
+                key={project.id}
+                className="project-card flex h-full flex-col rounded-2xl bg-surface p-3"
+              >
+                <Link
+                  href={`/works/${project.id}`}
+                  aria-label={`View ${project.title} case study`}
+                  className="project-card__media relative block aspect-[4/3] overflow-hidden rounded-xl bg-surface-strong"
+                >
+                  {cover && (
+                    <Image
+                      src={cover}
+                      alt=""
+                      fill
+                      sizes="(max-width: 640px) 92vw, (max-width: 1023px) 82vw, 30vw"
+                      className="object-cover"
+                    />
+                  )}
+                </Link>
+
+                <div className="flex flex-1 flex-col px-2 pb-1 pt-4">
+                  <div className="flex items-center justify-between gap-3 text-[10px] font-medium uppercase tracking-[0.16em] text-ink-muted">
                     <span>{project.category}</span>
-                    <span className="text-zinc-600" aria-hidden="true">
-                      ·
-                    </span>
                     <span>{project.year}</span>
                   </div>
 
-                  <h3 className="mt-4 font-sans text-2xl font-bold tracking-tight text-white leading-[1.15] sm:text-3xl">
+                  <h3 className="mt-3 font-display text-[22px] font-semibold leading-[1.15] tracking-[-0.02em] text-foreground">
                     {project.headline}
                   </h3>
 
-                  <p className="mt-3 max-w-2xl font-sans text-base font-normal leading-relaxed text-zinc-300 sm:text-lg">
+                  <p className="mt-2 line-clamp-3 text-[13.5px] leading-relaxed text-ink-muted">
                     {project.description}
                   </p>
 
                   {project.stack && project.stack.length > 0 && (
                     <div className="mt-4 flex flex-wrap gap-1.5">
-                      {project.stack.slice(0, 6).map((tech) => (
+                      {project.stack.slice(0, 5).map((tech) => (
                         <span
                           key={tech}
-                          className="rounded border border-zinc-800 bg-zinc-900/60 px-2.5 py-1 font-mono text-[11px] text-zinc-300"
+                          className="rounded-full border border-line px-2.5 py-1 text-[10.5px] font-medium text-ink-muted"
                         >
                           {tech}
                         </span>
@@ -182,41 +196,17 @@ export default function SelectedWork() {
 
                   <Link
                     href={`/works/${project.id}`}
-                    className="group mt-5 inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.2em] text-zinc-100 transition-colors hover:text-white sm:text-sm"
+                    className="mt-auto flex items-center justify-between gap-3 border-t border-line pt-4 text-[12px] font-medium text-foreground"
                   >
-                    <span className="border-b border-zinc-700 pb-0.5 font-medium transition-colors group-hover:border-white">
-                      VIEW CASE STUDY
-                    </span>
-                    <span
-                      className="text-[#f97316] transition-transform duration-200 group-hover:translate-x-1"
-                      aria-hidden="true"
-                    >
+                    Read case study
+                    <span className="project-card__arrow" aria-hidden="true">
                       →
                     </span>
                   </Link>
                 </div>
-
-                {project.media && (
-                  <div className="lg:col-span-5">
-                    <Link
-                      href={`/works/${project.id}`}
-                      aria-label={`View ${project.title} case study`}
-                      className="block"
-                    >
-                      <ProjectMedia
-                        media={project.media as ProjectMediaType}
-                        title={project.title}
-                        variant="cover"
-                        mode="image"
-                        display="card"
-                      />
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-          <div className="h-px w-full bg-zinc-800/40" aria-hidden="true" />
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>

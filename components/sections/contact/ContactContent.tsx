@@ -13,7 +13,6 @@ interface ContactChannel {
   label: string;
   display: string;
   href: string;
-  note: string;
   external: boolean;
 }
 
@@ -39,12 +38,7 @@ export default function ContactContent({
   cvAvailable,
 }: ContactContentProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const chapterRef = useRef<HTMLDivElement>(null);
-  const headlineRef = useRef<HTMLHeadingElement>(null);
-  const descriptionRef = useRef<HTMLParagraphElement>(null);
-  const linksRef = useRef<HTMLDivElement>(null);
-  const cvRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const [isCvOpen, setIsCvOpen] = useState(false);
 
@@ -56,95 +50,30 @@ export default function ContactContent({
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const sectionEl = sectionRef.current;
-    if (!sectionEl) return;
+    if (!sectionEl || !panelRef.current) return;
 
     if (prefersReducedMotion) {
-      if (headerRef.current) gsap.set(headerRef.current, { opacity: 1, y: 0 });
-      if (linksRef.current) gsap.set(linksRef.current, { opacity: 1, y: 0 });
-      if (cvRef.current) gsap.set(cvRef.current, { opacity: 1, y: 0 });
+      gsap.set(panelRef.current, { opacity: 1, y: 0 });
       return;
     }
 
     const ctx = gsap.context(() => {
-      if (headerRef.current) {
-        const headerTl = gsap.timeline({
+      gsap.fromTo(
+        panelRef.current,
+        { opacity: 0, y: 28 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "expo.out",
           scrollTrigger: {
-            trigger: headerRef.current,
+            trigger: panelRef.current,
             start: "top 85%",
             toggleActions: "play none none reverse",
             invalidateOnRefresh: true,
-            refreshPriority: -4,
           },
-        });
-
-        if (chapterRef.current) {
-          headerTl.fromTo(
-            chapterRef.current,
-            { opacity: 0, y: 14 },
-            { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }
-          );
         }
-
-        if (headlineRef.current) {
-          headerTl.fromTo(
-            headlineRef.current,
-            { opacity: 0, y: 18 },
-            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-            "-=0.3"
-          );
-        }
-
-        if (descriptionRef.current) {
-          headerTl.fromTo(
-            descriptionRef.current,
-            { opacity: 0, y: 16 },
-            { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" },
-            "-=0.35"
-          );
-        }
-      }
-
-      if (linksRef.current) {
-        const linkRows = linksRef.current.querySelectorAll(".contact-row");
-        gsap.fromTo(
-          linkRows,
-          { opacity: 0, y: 14 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-            stagger: 0.08,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: linksRef.current,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
-              invalidateOnRefresh: true,
-              refreshPriority: -4,
-            },
-          }
-        );
-      }
-
-      if (cvRef.current) {
-        gsap.fromTo(
-          cvRef.current,
-          { opacity: 0, y: 14 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: cvRef.current,
-              start: "top 90%",
-              toggleActions: "play none none reverse",
-              invalidateOnRefresh: true,
-              refreshPriority: -4,
-            },
-          }
-        );
-      }
+      );
 
       ScrollTrigger.sort();
     }, sectionEl);
@@ -177,34 +106,30 @@ export default function ContactContent({
   const channels: ContactChannel[] = [
     {
       id: "email",
-      label: "EMAIL",
+      label: "Email",
       display: email,
       href: `mailto:${email}`,
-      note: "PREFERRED",
       external: false,
     },
     {
       id: "whatsapp",
-      label: "WHATSAPP",
+      label: "WhatsApp",
       display: contact.whatsapp.display,
       href: contact.whatsapp.href,
-      note: "DIRECT MESSAGE",
       external: true,
     },
     {
       id: "github",
-      label: "GITHUB",
+      label: "GitHub",
       display: contact.github.display,
       href: contact.github.href,
-      note: "CODE",
       external: true,
     },
     {
       id: "linkedin",
-      label: "LINKEDIN",
+      label: "LinkedIn",
       display: contact.linkedin.display,
       href: contact.linkedin.href,
-      note: "PROFILE",
       external: true,
     },
   ];
@@ -214,47 +139,63 @@ export default function ContactContent({
       ref={sectionRef}
       id="contact"
       aria-labelledby="contact-heading"
-      className="relative w-full bg-[#08080a] text-zinc-100 px-6 sm:px-8 md:px-12 lg:px-16 py-16 sm:py-20 md:py-24 overflow-hidden border-b border-zinc-800/40"
+      className="relative w-full border-t border-line px-[var(--page-pad)] py-20 sm:py-24 lg:py-32"
     >
-      <div className="mx-auto w-full max-w-5xl">
-        <div ref={headerRef} className="max-w-3xl will-change-transform will-change-opacity">
-          <div
-            ref={chapterRef}
-            className="flex items-center gap-2.5 font-mono text-[11px] sm:text-xs uppercase tracking-[0.24em] text-[#f97316] font-semibold will-change-transform will-change-opacity"
-          >
-            <span
-              className="h-1.5 w-1.5 rounded-full bg-[#f97316]"
-              aria-hidden="true"
-            />
-            <span>{contact.chapter}</span>
-            <span className="h-px w-6 sm:w-8 bg-zinc-800" aria-hidden="true" />
-            <span className="text-[10px] text-zinc-400 uppercase tracking-widest hidden sm:inline-block">
-              CLOSING CHAPTER
-            </span>
-          </div>
+      <div
+        ref={panelRef}
+        className="mx-auto w-full max-w-[80rem] overflow-hidden rounded-[2rem] bg-[#111110] px-6 py-14 text-[#f2f1ed] sm:px-10 sm:py-20 lg:px-16 lg:py-24"
+      >
+        <div className="mx-auto max-w-[46rem] text-center">
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#f2f1ed]/55">
+            {contact.chapter}
+          </p>
 
           <h2
             id="contact-heading"
-            ref={headlineRef}
-            className="mt-6 sm:mt-8 font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-white leading-[1.12] uppercase will-change-transform will-change-opacity"
+            className="mt-5 font-display text-[clamp(2.2rem,5vw,4rem)] font-semibold leading-[1.04] tracking-[-0.04em]"
           >
             {headlineWords.slice(0, 2).join(" ")}
             <br />
             {headlineWords.slice(2).join(" ")}
           </h2>
 
-          <p
-            ref={descriptionRef}
-            className="mt-4 sm:mt-6 font-sans text-base sm:text-lg text-zinc-300 leading-relaxed font-normal max-w-xl will-change-transform will-change-opacity"
-          >
+          <p className="mx-auto mt-5 max-w-[30rem] text-[15px] leading-relaxed text-[#f2f1ed]/65">
             {contact.description}
           </p>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5">
+            <a
+              href={`mailto:${email}`}
+              onClick={() =>
+                trackEvent("contact_click", {
+                  channel: "email",
+                  location: "finale",
+                })
+              }
+              className="btn-pill bg-[#f2f1ed] text-[#111110] transition-colors hover:bg-white"
+            >
+              Let&apos;s talk
+            </a>
+            {cvAvailable && (
+              <button
+                type="button"
+                onClick={() => {
+                  trackEvent("resume_click", {
+                    source: "contact",
+                    action: "preview",
+                  });
+                  setIsCvOpen(true);
+                }}
+                aria-haspopup="dialog"
+                className="btn-pill border border-white/20 text-[#f2f1ed] transition-colors hover:bg-white/10"
+              >
+                Preview CV
+              </button>
+            )}
+          </div>
         </div>
 
-        <div
-          ref={linksRef}
-          className="mt-12 sm:mt-16 border-t border-zinc-800/60 will-change-transform will-change-opacity"
-        >
+        <div className="mx-auto mt-14 max-w-[54rem] border-t border-white/12">
           {channels.map((channel) => (
             <a
               key={channel.label}
@@ -278,20 +219,17 @@ export default function ContactContent({
                   trackEvent("github_click", { location: "contact" });
                 }
               }}
-              className="contact-row group grid grid-cols-12 items-baseline gap-2 sm:gap-4 py-5 sm:py-6 border-b border-zinc-800/40"
+              className="group grid grid-cols-12 items-baseline gap-2 border-b border-white/12 py-4 sm:gap-4 sm:py-5"
             >
-              <span className="col-span-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-zinc-400 group-hover:text-zinc-200 transition-colors">
+              <span className="col-span-4 text-[11px] font-medium uppercase tracking-[0.16em] text-[#f2f1ed]/50 transition-colors group-hover:text-[#f2f1ed]/80 sm:col-span-3">
                 {channel.label}
               </span>
-              <span className="col-span-8 min-w-0 break-all font-sans text-base sm:text-lg text-zinc-100 font-medium tracking-tight">
+              <span className="col-span-7 min-w-0 break-all text-[14px] font-medium text-[#f2f1ed] sm:col-span-8 sm:text-[15px]">
                 {channel.display}
               </span>
-              <span className="col-span-1 flex justify-end items-center gap-2">
-                <span className="hidden md:inline font-mono text-[10px] text-zinc-400 uppercase tracking-widest">
-                  {channel.note}
-                </span>
+              <span className="col-span-1 flex justify-end">
                 <span
-                  className="text-[#f97316] transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-0.5"
+                  className="text-[#f2f1ed]/50 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#f2f1ed]"
                   aria-hidden="true"
                 >
                   ↗
@@ -302,33 +240,7 @@ export default function ContactContent({
         </div>
 
         {cvAvailable && (
-          <div
-            ref={cvRef}
-            className="mt-10 sm:mt-12 flex flex-wrap items-center gap-x-8 gap-y-4 will-change-transform will-change-opacity"
-          >
-            <button
-              type="button"
-              onClick={() => {
-                trackEvent("resume_click", {
-                  source: "contact",
-                  action: "preview",
-                });
-                setIsCvOpen(true);
-              }}
-              aria-haspopup="dialog"
-              className="group inline-flex items-center gap-2.5 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] text-zinc-100 hover:text-white transition-colors"
-            >
-              <span className="border-b border-zinc-700 group-hover:border-white pb-0.5 transition-colors font-medium">
-                PREVIEW CV
-              </span>
-              <span
-                className="text-[#f97316] transition-transform duration-200 group-hover:translate-x-1"
-                aria-hidden="true"
-              >
-                →
-              </span>
-            </button>
-
+          <div className="mx-auto mt-8 flex max-w-[54rem] justify-center">
             <a
               href={contact.cv}
               download
@@ -339,17 +251,9 @@ export default function ContactContent({
                 })
               }
               aria-label="Download Muhar Ferdiansyah CV as PDF"
-              className="group inline-flex items-center gap-2.5 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors"
+              className="text-[12px] font-medium text-[#f2f1ed]/55 underline decoration-white/25 underline-offset-4 transition-colors hover:text-[#f2f1ed] hover:decoration-white/60"
             >
-              <span className="border-b border-transparent group-hover:border-white pb-0.5 transition-colors">
-                DOWNLOAD CV
-              </span>
-              <span
-                className="text-[#f97316] transition-transform duration-200 group-hover:translate-y-0.5"
-                aria-hidden="true"
-              >
-                ↓
-              </span>
+              Download CV
             </a>
           </div>
         )}
@@ -366,17 +270,17 @@ export default function ContactContent({
             type="button"
             aria-label="Close CV preview"
             onClick={() => setIsCvOpen(false)}
-            className="absolute inset-0 h-full w-full cursor-default bg-black/80 backdrop-blur-sm"
+            className="absolute inset-0 h-full w-full cursor-default bg-[#111110]/70 backdrop-blur-sm"
           />
 
-          <div className="relative z-10 flex h-full max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 shadow-2xl shadow-black/70">
-            <div className="flex items-center justify-between gap-4 border-b border-zinc-800 px-4 py-3 sm:px-5">
-              <div className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-zinc-400">
+          <div className="relative z-10 flex h-full max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-line bg-[var(--background)] shadow-2xl shadow-black/30">
+            <div className="flex items-center justify-between gap-4 border-b border-line px-4 py-3 sm:px-5">
+              <div className="flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-muted">
                 <span
-                  className="h-1.5 w-1.5 rounded-full bg-[#f97316]"
+                  className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]"
                   aria-hidden="true"
                 />
-                <span className="text-zinc-200">MUHAR FERDIANSYAH / CV</span>
+                <span className="text-foreground">Muhar Ferdiansyah / CV</span>
               </div>
 
               <div className="flex items-center gap-4">
@@ -389,16 +293,16 @@ export default function ContactContent({
                       action: "download",
                     })
                   }
-                  className="hidden font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-300 transition-colors hover:text-white sm:inline"
+                  className="hidden text-[11px] font-medium uppercase tracking-[0.16em] text-ink-muted transition-colors hover:text-foreground sm:inline"
                 >
-                  DOWNLOAD
+                  Download
                 </a>
                 <button
                   ref={closeButtonRef}
                   type="button"
                   onClick={() => setIsCvOpen(false)}
                   aria-label="Close"
-                  className="flex h-8 w-8 items-center justify-center rounded border border-zinc-800 text-zinc-400 transition-colors hover:border-zinc-600 hover:text-white"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-line text-ink-muted transition-colors hover:border-foreground/40 hover:text-foreground"
                 >
                   <span aria-hidden="true" className="text-sm leading-none">
                     ✕
