@@ -1,3 +1,4 @@
+
 name: Build and Deploy Portfolio
 
 on:
@@ -5,6 +6,13 @@ on:
     branches:
       - main
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portfolio-production-deploy
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
@@ -33,10 +41,22 @@ jobs:
           NEXT_OUTPUT: export
         run: |
           pnpm build
+
           test -d out || {
             echo "ERROR: Folder out/ tidak dihasilkan"
             exit 1
           }
+
+          test -f out/index.html || {
+            echo "ERROR: out/index.html tidak ditemukan"
+            exit 1
+          }
+
+          echo "=== BUILD OUTPUT ==="
+          ls -lah out/
+
+          echo "=== LOCAL HTML HASH ==="
+          sha256sum out/index.html
 
       - name: Setup SSH
         env:
@@ -44,10 +64,57 @@ jobs:
           SSH_HOST: ${{ secrets.HOSTINGER_HOST }}
           SSH_PORT: ${{ secrets.HOSTINGER_PORT }}
         run: |
+          set -eu
+
+          test -n "$SSH_PRIVATE_KEY"
+          test -n "$SSH_HOST"
+          test -n "$SSH_PORT"
+
           mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
           printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p "$SSH_PORT" "$SSH_HOST" >> ~/.ssh/known_hosts
+
+          ssh-keyscan -p "$SSH_PORT" "$SSH_HOST" \
+            >> ~/.ssh/known_hosts
+
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Check production target
+        env:
+          SSH_HOST: ${{ secrets.HOSTINGER_HOST }}
+          SSH_PORT: ${{ secrets.HOSTINGER_PORT }}
+          SSH_USERNAME: ${{ secrets.HOSTINGER_USERNAME }}
+        run: |
+          set -eu
+
+          ssh -i ~/.ssh/deploy_key \
+            -p "$SSH_PORT" \
+            -o BatchMode=yes \
+            "$SSH_USERNAME@$SSH_HOST" '
+              set -eu
+
+              TARGET="$HOME/domains/muharferdiansyah.my.id/public_html"
+
+              echo "=== PRODUCTION TARGET ==="
+              echo "Target: $TARGET"
+
+              if [ ! -d "$TARGET" ]; then
+                echo "ERROR: Target directory tidak ditemukan"
+                exit 1
+              fi
+
+              ls -ld "$TARGET"
+              readlink -f "$TARGET"
+
+              echo "=== EXISTING INDEX ==="
+              if [ -f "$TARGET/index.html" ]; then
+                sha256sum "$TARGET/index.html"
+              else
+                echo "index.html belum ada"
+              fi
+            '
 
       - name: Deploy to Hostinger
         env:
@@ -55,7 +122,71 @@ jobs:
           SSH_PORT: ${{ secrets.HOSTINGER_PORT }}
           SSH_USERNAME: ${{ secrets.HOSTINGER_USERNAME }}
         run: |
-          rsync -avz --delete \
-            -e "ssh -i ~/.ssh/deploy_key -p $SSH_PORT" \
+          set -eu
+
+          rsync -avz \
+            --delete \
+            --itemize-changes \
+            --human-readable \
+            -e "ssh -i ~/.ssh/deploy_key -p $SSH_PORT -o BatchMode=yes" \
             ./out/ \
             "$SSH_USERNAME@$SSH_HOST:/home/$SSH_USERNAME/domains/muharferdiansyah.my.id/public_html/"
+
+      - name: Verify deployed files
+        env:
+          SSH_HOST: ${{ secrets.HOSTINGER_HOST }}
+          SSH_PORT: ${{ secrets.HOSTINGER_PORT }}
+          SSH_USERNAME: ${{ secrets.HOSTINGER_USERNAME }}
+        run: |
+          set -eu
+
+          echo "=== LOCAL BUILD HASH ==="
+          sha256sum out/index.html
+
+          echo "=== REMOTE PRODUCTION ==="
+
+          ssh -i ~/.ssh/deploy_key \
+            -p "$SSH_PORT" \
+            -o BatchMode=yes \
+            "$SSH_USERNAME@$SSH_HOST" '
+              set -eu
+
+              TARGET="$HOME/domains/muharferdiansyah.my.id/public_html"
+
+              test -d "$TARGET"
+              test -f "$TARGET/index.html"
+
+              echo "Target: $TARGET"
+              echo "Resolved path:"
+              readlink -f "$TARGET"
+
+              echo "File details:"
+              stat "$TARGET/index.html"
+
+              echo "Remote HTML hash:"
+              sha256sum "$TARGET/index.html"
+            '
+
+      - name: Verify deployment consistency
+        run: |
+          set -eu
+
+          LOCAL_HASH="$(sha256sum out/index.html | awk '{print $1}')"
+
+          REMOTE_HASH="$(
+            ssh -i ~/.ssh/deploy_key \
+              -p "${{ secrets.HOSTINGER_PORT }}" \
+              -o BatchMode=yes \
+              "${{ secrets.HOSTINGER_USERNAME }}@${{ secrets.HOSTINGER_HOST }}" \
+              'sha256sum "$HOME/domains/muharferdiansyah.my.id/public_html/index.html" | awk "{print \$1}"'
+          )"
+
+          echo "Local hash:  $LOCAL_HASH"
+          echo "Remote hash: $REMOTE_HASH"
+
+          if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
+            echo "ERROR: File production berbeda dari hasil build"
+            exit 1
+          fi
+
+          echo "SUCCESS: File index.html production cocok dengan hasil build"
