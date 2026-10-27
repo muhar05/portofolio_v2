@@ -108,7 +108,7 @@ export default function ContactContent({
       id: "email",
       label: "Email",
       display: email,
-      href: `mailto:${email}`,
+      href: `mailto:${email}?subject=Portfolio%20inquiry`,
       external: false,
     },
     {
@@ -163,35 +163,83 @@ export default function ContactContent({
             {contact.description}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5">
-            <a
-              href={`mailto:${email}`}
-              onClick={() =>
-                trackEvent("contact_click", {
-                  channel: "email",
-                  location: "finale",
-                })
-              }
-              className="btn-pill bg-[#edf0ea] text-[#111c17] transition-colors hover:bg-white"
-            >
-              Let&apos;s talk
-            </a>
-            {cvAvailable && (
-              <button
-                type="button"
-                onClick={() => {
-                  trackEvent("resume_click", {
-                    source: "contact",
-                    action: "preview",
-                  });
-                  setIsCvOpen(true);
-                }}
-                aria-haspopup="dialog"
-                className="btn-pill border border-white/20 text-[#edf0ea] transition-colors hover:bg-white/10"
+          <div className="mt-9 grid gap-3 text-left sm:grid-cols-2">
+            <div className="rounded-2xl border border-white/12 p-5">
+              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#e07a52]">
+                Hiring
+              </p>
+              <p className="mt-2 text-[13px] leading-relaxed text-[#edf0ea]/65">
+                Full-time remote roles and freelance projects.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {cvAvailable ? (
+                  <a
+                    href={contact.cv}
+                    download
+                    onClick={() =>
+                      trackEvent("resume_click", {
+                        source: "contact",
+                        action: "download",
+                      })
+                    }
+                    aria-label="Download Muhar Ferdiansyah CV as PDF"
+                    className="btn-pill bg-[#edf0ea] text-[#111c17] transition-colors hover:bg-white"
+                  >
+                    Download CV
+                  </a>
+                ) : (
+                  <a
+                    href={`mailto:${email}?subject=Full-time%20role`}
+                    onClick={() =>
+                      trackEvent("contact_click", {
+                        channel: "email",
+                        location: "finale_hiring",
+                      })
+                    }
+                    className="btn-pill bg-[#edf0ea] text-[#111c17] transition-colors hover:bg-white"
+                  >
+                    Email about a role
+                  </a>
+                )}
+                {cvAvailable && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      trackEvent("resume_click", {
+                        source: "contact",
+                        action: "preview",
+                      });
+                      setIsCvOpen(true);
+                    }}
+                    aria-haspopup="dialog"
+                    className="btn-pill border border-white/20 text-[#edf0ea] transition-colors hover:bg-white/10"
+                  >
+                    Preview
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-white/12 p-5">
+              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#e07a52]">
+                Project
+              </p>
+              <p className="mt-2 text-[13px] leading-relaxed text-[#edf0ea]/65">
+                An existing system, a new build, or extra hands for your team.
+              </p>
+              <a
+                href={`mailto:${email}?subject=Project%20inquiry`}
+                onClick={() =>
+                  trackEvent("contact_click", {
+                    channel: "email",
+                    location: "finale_project",
+                  })
+                }
+                className="btn-pill mt-4 border border-white/20 text-[#edf0ea] transition-colors hover:bg-white/10"
               >
-                Preview CV
-              </button>
-            )}
+                Describe the project
+              </a>
+            </div>
           </div>
         </div>
 
@@ -238,25 +286,6 @@ export default function ContactContent({
             </a>
           ))}
         </div>
-
-        {cvAvailable && (
-          <div className="mx-auto mt-8 flex max-w-[54rem] justify-center">
-            <a
-              href={contact.cv}
-              download
-              onClick={() =>
-                trackEvent("resume_click", {
-                  source: "contact",
-                  action: "download",
-                })
-              }
-              aria-label="Download Muhar Ferdiansyah CV as PDF"
-              className="text-[12px] font-medium text-[#edf0ea]/55 underline decoration-white/25 underline-offset-4 transition-colors hover:text-[#edf0ea] hover:decoration-white/60"
-            >
-              Download CV
-            </a>
-          </div>
-        )}
       </div>
 
       {isCvOpen && (

@@ -126,7 +126,7 @@ export default function Hero() {
             GitHub
           </a>
           <a
-            href={`mailto:${siteData.email}`}
+            href={`mailto:${siteData.email}?subject=Portfolio%20inquiry`}
             onClick={() =>
               trackEvent("contact_click", {
                 channel: "email",
@@ -180,7 +180,7 @@ export default function Hero() {
           style={{ animationDelay: "580ms" }}
         >
           <a
-            href={`mailto:${siteData.email}`}
+            href={`mailto:${siteData.email}?subject=Portfolio%20inquiry`}
             onClick={() =>
               trackEvent("contact_click", {
                 channel: "email",
@@ -199,9 +199,42 @@ export default function Hero() {
           </a>
         </div>
 
+        <div
+          className="hero-fade mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[12px] font-medium"
+          style={{ animationDelay: "660ms" }}
+        >
+          <a
+            href={siteData.contact.cv}
+            download
+            onClick={() =>
+              trackEvent("resume_click", {
+                source: "hero",
+                action: "download",
+              })
+            }
+            className="text-accent-ink underline decoration-line-strong underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground/40"
+          >
+            Hiring? Download CV
+          </a>
+          <a
+            href={siteData.contact.whatsapp.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() =>
+              trackEvent("contact_click", {
+                channel: "whatsapp",
+                location: "hero",
+              })
+            }
+            className="text-ink-muted transition-colors hover:text-foreground"
+          >
+            WhatsApp
+          </a>
+        </div>
+
         <p
           className="hero-fade mt-6 text-[10px] font-medium uppercase tracking-[0.2em] text-ink-muted"
-          style={{ animationDelay: "660ms" }}
+          style={{ animationDelay: "740ms" }}
         >
           {intro.concept}
         </p>

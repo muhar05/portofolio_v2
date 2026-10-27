@@ -80,7 +80,7 @@ export default function WorkHero({ project }: WorkHeroProps) {
               All work
             </Link>
             <a
-              href={`mailto:${siteData.email}`}
+              href={`mailto:${siteData.email}?subject=Portfolio%20inquiry`}
               onClick={() =>
                 trackEvent("contact_click", {
                   channel: "email",

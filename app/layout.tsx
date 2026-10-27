@@ -22,9 +22,9 @@ const plusJakarta = Plus_Jakarta_Sans({
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://muharferdiansyah.my.id";
 const SITE_TITLE =
-  "Muhar Ferdiansyah | Full Stack Developer (Next.js, Laravel, Flutter)";
+  "Full Stack Developer for Operations Systems | Muhar Ferdiansyah";
 const SITE_DESCRIPTION =
-  "Full stack developer available for remote and freelance work. I build and improve production systems with Next.js, Laravel, and Flutter.";
+  "I build and repair production systems for operations-heavy teams with Next.js, Laravel, and Flutter. Available for remote roles and freelance projects.";
 const GOOGLE_SITE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION;
 
 const PERSON_JSON_LD = {
@@ -32,7 +32,15 @@ const PERSON_JSON_LD = {
   "@type": "Person",
   name: "Muhar Ferdiansyah",
   jobTitle: "Full Stack Developer",
-  url: "https://muharferdiansyah.my.id",
+  description: SITE_DESCRIPTION,
+  url: SITE_URL,
+  image: `${SITE_URL}/opengraph-image`,
+  email: "mailto:ferdiansyahmuh5@gmail.com",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Jakarta",
+    addressCountry: "ID",
+  },
   sameAs: [
     "https://github.com/muhar05",
     "https://www.linkedin.com/in/muhar-ferdiansyah-b44161291/",

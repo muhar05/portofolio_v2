@@ -89,7 +89,7 @@ export default function WorkClosing({ nextProject }: WorkClosingProps) {
 
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <a
-            href={`mailto:${siteData.email}`}
+            href={`mailto:${siteData.email}?subject=Similar%20project`}
             onClick={() =>
               trackEvent("contact_click", {
                 channel: "email",
