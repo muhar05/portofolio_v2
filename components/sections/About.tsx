@@ -136,13 +136,11 @@ export default function About() {
       aria-labelledby="thinking-heading"
       className="relative w-full border-t border-line px-[var(--page-pad)] py-20 sm:py-24 lg:py-32"
     >
-      <div id="about" className="absolute -top-20" aria-hidden="true" />
-
       <div className="mx-auto grid w-full max-w-[80rem] grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
         <div ref={headerRef} className="lg:col-span-5">
           <div className="lg:sticky lg:top-28">
             <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted">
-              Approach
+              {thinking.chapter}
             </p>
             <h2
               id="thinking-heading"

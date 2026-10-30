@@ -2,7 +2,7 @@
   "works": {
     "chapter": "03 / WHAT I WORK ON",
     "headline": "Software that has outgrown its original shape.",
-    "description": "A closer look at production systems and the engineering decisions behind them.",
+    "description": "A closer look at the systems I built and the engineering decisions behind them.",
     "items": [
       {
         "number": "01",
@@ -38,6 +38,14 @@
       "category": "SYSTEM",
       "year": "2026",
       "role": "Full Stack Developer",
+      "facts": {
+        "engagement": "Freelance",
+        "status": "Internal system",
+        "source": "Private repository",
+        "duration": "",
+        "team": "",
+        "demo": []
+      },
       "featured": true,
       "headline": "One order, multiple fulfillment paths.",
       "problemHeadline": "Orders were simple on paper. Fulfillment was fragmented.",
@@ -283,6 +291,14 @@
       "category": "SYSTEM",
       "year": "2026",
       "role": "Full Stack Developer",
+      "facts": {
+        "engagement": "Freelance",
+        "status": "Deployed to production · end-user rollout pending",
+        "source": "Private repository",
+        "duration": "",
+        "team": "",
+        "demo": []
+      },
       "featured": true,
       "headline": "A waste-bank ledger with guarded Excel imports and protected stock.",
       "problemHeadline": "Deposits lived in spreadsheets. The ledger did not.",
@@ -517,6 +533,14 @@
       "category": "SYSTEM",
       "year": "2026",
       "role": "Full Stack Developer",
+      "facts": {
+        "engagement": "Freelance",
+        "status": "Internal mobile app",
+        "source": "Private repository",
+        "duration": "",
+        "team": "",
+        "demo": []
+      },
       "featured": true,
       "headline": "Time-boxed lead dispatch with client-server deadline enforcement.",
       "problemHeadline": "Leads arrived with a deadline. The process had none.",
@@ -753,6 +777,14 @@
       "category": "PLATFORM",
       "year": "2026",
       "role": "Full Stack Developer",
+      "facts": {
+        "engagement": "Freelance",
+        "status": "Internal mobile app",
+        "source": "Private repository",
+        "duration": "",
+        "team": "",
+        "demo": []
+      },
       "featured": true,
       "headline": "A logistics reverse-auction marketplace with a controlled shipment state machine.",
       "problemHeadline": "Rates were negotiated in chat. The shipment had no single owner.",

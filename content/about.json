@@ -7,8 +7,35 @@
     "supporting": "I build and repair production systems for operations-heavy teams with Next.js, Laravel, and Flutter.",
     "concept": "SOFTWARE × BUSINESS × PEOPLE"
   },
+  "about": {
+    "chapter": "04 / ABOUT",
+    "sublabel": "WHO'S BEHIND THE WORK",
+    "headline": "Building operational software, one workflow at a time.",
+    "bio": "I'm a freelance full stack developer working across Next.js, Laravel, and Flutter. Every project on this page started with an operational workflow, from order fulfillment to lead dispatch, and my job was to turn it into software people can rely on. I'm also in my 7th semester of a bachelor's degree at Universitas Pamulang.",
+    "experience": {
+      "label": "Experience",
+      "items": [
+        {
+          "title": "Freelance Full Stack Developer",
+          "description": "Building operational software for web and mobile, from understanding the workflow to shipping the system.",
+          "period": ""
+        }
+      ]
+    },
+    "education": {
+      "label": "Education",
+      "items": [
+        {
+          "institution": "Universitas Pamulang",
+          "degree": "Bachelor's degree (S1)",
+          "status": "In progress · Semester 7",
+          "program": ""
+        }
+      ]
+    }
+  },
   "thinking": {
-    "chapter": "02 / HOW I THINK",
+    "chapter": "05 / ENGINEERING PHILOSOPHY",
     "headline": "I don't start with the stack. I start with the problem.",
     "principles": [
       {

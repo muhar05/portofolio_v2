@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import ProjectMedia from "@/components/sections/works/ProjectMedia";
+import WorkFacts from "@/components/sections/works/WorkFacts";
 import Logo from "@/components/ui/Logo";
 import RollText from "@/components/ui/RollText";
 import siteData from "@/content/site.json";
@@ -162,6 +163,8 @@ export default function WorkHero({ project }: WorkHeroProps) {
               </p>
             </div>
           )}
+
+          <WorkFacts project={project} />
 
           {project.atAGlance && project.atAGlance.length > 0 && (
             <div data-reveal className="mt-8">

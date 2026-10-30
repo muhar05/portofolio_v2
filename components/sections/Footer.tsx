@@ -33,7 +33,7 @@ export default function Footer() {
               Stack
             </a>
             <a
-              href="#thinking"
+              href="#about"
               className="block py-1 text-ink-muted transition-colors hover:text-foreground"
             >
               About

@@ -13,7 +13,7 @@ import RollText from "@/components/ui/RollText";
 const NAV_LINKS = [
   { href: "#selected-work", label: "Work" },
   { href: "#stack", label: "Stack" },
-  { href: "#thinking", label: "About" },
+  { href: "#about", label: "About" },
   { href: "#contact", label: "Contact" },
 ];
 

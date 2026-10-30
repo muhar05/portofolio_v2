@@ -67,6 +67,23 @@ export interface ProjectImpact {
   note?: string;
 }
 
+export type ProjectDemoType = "video" | "apk" | "link";
+
+export interface ProjectDemoLink {
+  label: string;
+  url: string;
+  type: ProjectDemoType;
+}
+
+export interface ProjectFacts {
+  engagement?: string;
+  status?: string;
+  source?: string;
+  duration?: string;
+  team?: string;
+  demo?: ProjectDemoLink[];
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -80,6 +97,7 @@ export interface Project {
   flowHeadline?: string;
   description: string;
   summary?: string;
+  facts?: ProjectFacts;
   atAGlance?: ProjectFact[];
   impact?: ProjectImpact[];
   media?: ProjectMedia;
