@@ -169,7 +169,7 @@ export default function WorkHero({ project }: WorkHeroProps) {
           {project.atAGlance && project.atAGlance.length > 0 && (
             <div data-reveal className="mt-8">
               <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted">
-                At a glance
+                System scope
               </p>
               <dl className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {project.atAGlance.map((fact) => (
@@ -186,6 +186,10 @@ export default function WorkHero({ project }: WorkHeroProps) {
                   </div>
                 ))}
               </dl>
+              <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
+                These counts describe how the system is structured, not how many
+                people use it.
+              </p>
             </div>
           )}
 

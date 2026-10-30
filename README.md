@@ -2,7 +2,7 @@
 
 > Full-stack engineer building reliable systems and making software work better.
 
-A developer-workspace portfolio. Instead of a template gallery, it presents real production systems as case studies: each project page explains the operational problem, the fulfillment or state flow, and the engineering decisions behind it. Content lives in JSON, the hero opens with an interactive 3D scene, and the whole site can ship as a static export.
+A developer-workspace portfolio. Instead of a template gallery, it presents client and freelance systems as case studies: each project page explains the operational problem, the fulfillment or state flow, and the engineering decisions behind it. Content lives in JSON, the hero opens with an interactive 3D scene, and the whole site can ship as a static export.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
@@ -98,11 +98,14 @@ NEXT_PUBLIC_SPLINE_SCENE="https://prod.spline.design/<id>/scene.splinecode"
 
 If the scene fails to load within 9 seconds, or the visitor prefers reduced motion, the site renders the 2D illustration instead.
 
-## SEO
+## SEO and analytics
 
 - `metadataBase`, canonical URLs, Open Graph and Twitter cards are configured in `app/layout.tsx`.
 - The share image is generated at build time by `app/opengraph-image.tsx`.
 - Set the production domain with `NEXT_PUBLIC_SITE_URL` (defaults to `https://muharferdiansyah.my.id`).
+- GA4 loads only when `NEXT_PUBLIC_GA_ID` is set to a valid `G-...` ID. Without it, no analytics script is rendered.
+- Search Console verification is emitted only when `GOOGLE_SITE_VERIFICATION` is set.
+- Copy `.env.example` to `.env.local` and fill the values before deploying.
 
 ## Deployment
 

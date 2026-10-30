@@ -4,21 +4,26 @@
     "name": "MUHAR FERDIANSYAH",
     "headline": "From interface to infrastructure.",
     "availability": "Open to remote roles & freelance projects · Jakarta (UTC+7)",
-    "supporting": "I build and repair production systems for operations-heavy teams with Next.js, Laravel, and Flutter.",
+    "supporting": "I build web and mobile systems for operations-heavy teams. By day I work in administration at a property appraisal firm, and I'm finishing my degree at Universitas Pamulang.",
     "concept": "SOFTWARE × BUSINESS × PEOPLE"
   },
   "about": {
     "chapter": "04 / ABOUT",
     "sublabel": "WHO'S BEHIND THE WORK",
     "headline": "Building operational software, one workflow at a time.",
-    "bio": "I'm a freelance full stack developer working across Next.js, Laravel, and Flutter. Every project on this page started with an operational workflow, from order fulfillment to lead dispatch, and my job was to turn it into software people can rely on. I'm also in my 7th semester of a bachelor's degree at Universitas Pamulang.",
+    "bio": "I currently work as an administration staff at KJPP Ruky Safrudin dan Rekan while finishing a bachelor's degree in Informatics Engineering at Universitas Pamulang. That job is where I saw how much operational work still runs on spreadsheets, chat, and manual checks. The projects on this page came from that kind of work: order fulfillment, waste-bank ledgers, lead dispatch, and logistics auctions. I handle the build end to end, from mapping the workflow to shipping the web or mobile app.",
     "experience": {
       "label": "Experience",
       "items": [
         {
+          "title": "Administration Staff · KJPP Ruky Safrudin dan Rekan",
+          "description": "I manage and validate property valuation records and coordinate reporting data between appraisers. The work is document-heavy and deadline-driven, which is the context behind most of the systems on this page.",
+          "period": "June 2025 – Present"
+        },
+        {
           "title": "Freelance Full Stack Developer",
-          "description": "Building operational software for web and mobile, from understanding the workflow to shipping the system.",
-          "period": ""
+          "description": "I build web and mobile systems for operations-heavy teams, from workflow mapping through deployment.",
+          "period": "2025 – Present"
         }
       ]
     },
@@ -27,9 +32,9 @@
       "items": [
         {
           "institution": "Universitas Pamulang",
-          "degree": "Bachelor's degree (S1)",
-          "status": "In progress · Semester 7",
-          "program": ""
+          "degree": "Bachelor of Informatics Engineering (S1)",
+          "status": "In progress · Expected 2027",
+          "program": "Coursework: software engineering, database systems, web and mobile application development."
         }
       ]
     }

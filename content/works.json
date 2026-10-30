@@ -1,33 +1,33 @@
 {
   "works": {
-    "chapter": "03 / WHAT I WORK ON",
-    "headline": "Software that has outgrown its original shape.",
-    "description": "A closer look at the systems I built and the engineering decisions behind them.",
+    "chapter": "03 / WHAT I BUILD",
+    "headline": "Operational systems, built around how the work actually runs.",
+    "description": "Four case studies from client and freelance work: the workflow, the decisions, and the parts that had to hold.",
     "items": [
       {
         "number": "01",
-        "title": "EXISTING SYSTEMS",
-        "description": "Codebases that people depend on every day, but where technical debt has made every update feel risky."
+        "title": "ORDER FULFILLMENT",
+        "description": "Orders that mix stocked items with special purchases, and the state transitions that keep stock, approvals, and delivery in sync."
       },
       {
         "number": "02",
-        "title": "COMPLEX WORKFLOWS",
-        "description": "Operational tools and multi-step processes where the code no longer matches how people actually work."
+        "title": "FINANCIAL LEDGERS",
+        "description": "Deposits, withdrawals, and sales that must reconcile to one record, including historical imports and backdated entries."
       },
       {
         "number": "03",
-        "title": "TANGLED ARCHITECTURE",
-        "description": "Systems weighted down by unnecessary layers and abstractions, where straightforward features have become painful to build."
+        "title": "MULTI-ROLE HANDOFFS",
+        "description": "Work that crosses sales, warehouse, finance, and admin, where every handoff needs an owner and an audit trail."
       },
       {
         "number": "04",
-        "title": "PERFORMANCE BOTTLENECKS",
-        "description": "Unoptimized queries, slow response times, and resource leaks that quietly drag down stability under everyday load."
+        "title": "FIELD AND MOBILE WORK",
+        "description": "Mobile tools for agents and vendors who work away from a desk, with deadlines and state that survive bad connectivity."
       },
       {
         "number": "05",
-        "title": "ROOM TO GROW",
-        "description": "Software hitting limits as data and usage climb, needing steady evolution rather than an emergency rewrite."
+        "title": "REPORTING AND CONTROL",
+        "description": "Reports, approvals, and health checks that show whether the numbers still agree after the work is done."
       }
     ]
   },
@@ -39,11 +39,11 @@
       "year": "2026",
       "role": "Full Stack Developer",
       "facts": {
-        "engagement": "Freelance",
-        "status": "Internal system",
+        "engagement": "Freelance / client work",
+        "status": "Internal system · client operations",
         "source": "Private repository",
-        "duration": "",
-        "team": "",
+        "duration": "2025–2026",
+        "team": "Solo build",
         "demo": []
       },
       "featured": true,
@@ -51,7 +51,7 @@
       "problemHeadline": "Orders were simple on paper. Fulfillment was fragmented.",
       "problemLead": "A single order rarely follows one path. Some items are in stock, others must be purchased, and fragmented communication loses track of both.",
       "flowHeadline": "One order. Multiple fulfillment paths.",
-      "description": "An order-centric operations platform connecting sales, purchasing, warehouse, inventory, and finance around a single operational lifecycle.",
+      "description": "An order operations platform that connects sales, purchasing, warehouse, inventory, and finance around one order lifecycle.",
       "summary": "One order can mix items already in stock with items that still need purchasing. The system gives each item its own path, then requires warehouse and finance approval before dispatch.",
       "atAGlance": [
         { "value": "5", "label": "departments connected" },
@@ -84,10 +84,10 @@
         "Fragmented departmental handoffs obscure accountability between purchasing lead times and customer delivery promises."
       ],
       "overview": {
-        "problem": "In multi-department operations, a single customer order rarely follows a simple linear path. Some items are already on warehouse shelves, while others must be requested from external suppliers with different lead times. When sales, purchasing, warehouse, inventory, and finance rely on fragmented communication, orders lose tracking. Stock gets double-promised, goods arrive at the dock without clear assignment, and deliveries leave before credit terms are verified. The system needed to model these divergent paths explicitly while keeping inventory and financial approvals strictly synchronized.",
-        "approach": "Instead of treating an order as a static document, the system treats each order as an active state machine with per-item branching. Each line item evaluates independently: available inventory is reserved on the spot, while unavailable items trigger an upstream procurement chain from Purchase Request to Purchase Order. Handoffs between departments are enforced through explicit state transitions, requiring operational verification from the warehouse before finance can issue dispatch authorization. Software boundaries were shaped around real physical workflows rather than abstract data models.",
-        "architecture": "The platform is built on PostgreSQL and Prisma with relational constraints enforcing state integrity across all operational tables. Business logic and status changes are wrapped in database transactions to prevent race conditions during concurrent stock reservations. A role-based access control layer with nine distinct roles restricts actions to authorized personnel across Sales, Purchasing, Warehouse, Finance, and Administration. Input validation is centralized with Zod schemas on both client and server, while file attachments such as physical goods receipts and delivery notes are stored in MinIO object storage.",
-        "workflow": "The lifecycle begins when a Sales Order is confirmed. The system inspects every line item: in-stock goods move to Stock Reservation, while backordered items generate a Purchase Request for the procurement team. Once suppliers deliver, confirming the Goods Receipt immediately updates available inventory. The fulfillment team then files a Delivery Request. To eliminate unverified dispatches, the order passes through a sequential dual gate: the Warehouse confirms physical goods are packed, and Finance approves customer payment or credit standing. Only after both approvals are logged does the system generate the official Delivery Order for dispatch."
+        "problem": "In multi-department operations, one order can contain items already in stock and items that still need purchasing. When sales, purchasing, warehouse, inventory, and finance work from separate records, stock gets double-promised, goods arrive without assignment, and deliveries leave before credit is checked. The system had to model both paths explicitly and keep inventory and approval state in sync.",
+        "approach": "Each order is an active state machine with per-item branching. Stocked items are reserved immediately; unavailable items open a purchase request and vendor purchase order. Warehouse and finance approvals are separate state transitions, so a delivery order cannot be issued until both are recorded. The model follows the physical workflow, not an abstract data diagram.",
+        "architecture": "PostgreSQL and Prisma hold the operational tables, with transactions wrapping every state change so concurrent reservations cannot race. Nine roles limit each action to the right department. Zod validates input on client and server, and MinIO stores goods receipts and delivery notes.",
+        "workflow": "A confirmed sales order checks every line item. In-stock goods go to reservation; backordered items become a purchase request and then a purchase order. A goods receipt updates inventory at the dock. Before dispatch, the warehouse confirms packing and finance confirms payment or credit. Only then does the system issue the delivery order."
       },
       "flowPaths": [
         {
@@ -283,7 +283,7 @@
         "MinIO",
         "Tailwind CSS"
       ],
-      "result": "The system establishes a single, deterministic operational backbone across five departments. Sales teams track fulfillment status per line item, warehouse staff verify inventory against physical goods receipts rather than manual logs, and deliveries require verified sign-offs from both operations and finance before dispatch. By replacing fragmented manual coordination with an explicit state machine, the platform enforces accountability and consistency across the entire order lifecycle."
+      "result": "The system gives five departments one order record. Sales can see fulfillment per line item, warehouse works from goods receipts instead of manual logs, and dispatch waits for both warehouse and finance sign-off. The state machine keeps responsibility visible through the whole lifecycle."
     },
     {
       "id": "ecobank026-bank-sampah",
@@ -292,19 +292,25 @@
       "year": "2026",
       "role": "Full Stack Developer",
       "facts": {
-        "engagement": "Freelance",
-        "status": "Deployed to production · end-user rollout pending",
-        "source": "Private repository",
-        "duration": "",
-        "team": "",
-        "demo": []
+        "engagement": "Freelance / client work",
+        "status": "Deployed · end-user rollout pending",
+        "source": "Public repository",
+        "duration": "2025–2026",
+        "team": "Solo build",
+        "demo": [
+          {
+            "label": "Repository on GitHub",
+            "url": "https://github.com/muhar05/ecobank26-custom",
+            "type": "link"
+          }
+        ]
       },
       "featured": true,
       "headline": "A waste-bank ledger with guarded Excel imports and protected stock.",
       "problemHeadline": "Deposits lived in spreadsheets. The ledger did not.",
       "problemLead": "Dozens of date-separated spreadsheets made every deposit a manual reconciliation. Prices, stock, and audit history had no single source of truth.",
       "flowHeadline": "One ledger. Three guarded paths.",
-      "description": "A Laravel operations system for a community waste bank that unites deposit, withdrawal, and collector-sale records under one ledger of record. It handles dual pricing, bulk Excel import, cumulative stock control, and a multi-role audit trail.",
+      "description": "A Laravel operations system for a community waste bank. Deposits, withdrawals, and collector sales share one ledger, with dual pricing, guarded Excel imports, cumulative stock checks, and a multi-role audit trail.",
       "summary": "Waste-bank records used to live in dozens of spreadsheets, with prices and stock reconciled by hand. The system puts deposits, withdrawals, and collector sales into one ledger, validates bulk imports, and blocks any sale that would make stock negative.",
       "atAGlance": [
         { "value": "3", "label": "record types in one ledger" },
@@ -336,10 +342,10 @@
         "Aggregate sales to collectors could exceed the stock that actually existed, especially when entries were backdated, and there was no audit trail to trace the amounts or the people behind them."
       ],
       "overview": {
-        "problem": "Waste-bank operations ran on dozens of date-separated Excel spreadsheets, so every deposit had to be reconciled by hand and was prone to duplication or mistyping. Field material labels were inconsistent: Paper, Used Paper, and Crumpled Paper referred to the same item, which risked duplicate categories and inconsistent reports. Customer savings balances and the waste bank's cash were tracked separately from the transaction data, leaving no single source of truth when figures diverged. Aggregate sales to collectors could also exceed the stock that actually existed, particularly when entries were backdated. Without a reliable audit trail, investigating a discrepancy or a suspected misappropriation was extremely difficult.",
-        "approach": "The system is a Laravel application built with a service layer, concentrating all financial logic in BankSampahService and material resolution in MaterialMappingService. Every deposit, withdrawal, and sale is treated as a state transition that must pass validation before it reaches the database, rather than a plain CRUD operation. Instead of storing a mutable balance column, customer savings and cash are derived from the ledger as the single source of truth. Dual pricing is kept strictly separate: the customer buy price (member_price) and the collector sell price (collector_price) are stored per transaction as a historical snapshot. This ensures a change to the master price never rewrites financial data that already happened.",
-        "architecture": "At the data layer, deposit, deposit_details, savings_ledgers, and waste_bank_cash_ledgers record every value movement explicitly; all writes are wrapped in DB::transaction, and balances are restored through deterministic recalculation. The business layer enforces validation boundaries: a withdrawal is allowed only after two deposits and never exceeds the balance, while a sale may not exceed cumulative stock up to the transaction date. Concurrency is protected with lockForUpdate on the stock row, while assertCumulativeStockNotNegative scans the whole timeline to prevent negative stock on backdated transactions. The activity log is append-only and immutable, bound with a correlation_id per operation sequence. A Blade UI with Alpine.js and Tailwind presents the result without leaking transactional complexity to operators.",
-        "workflow": "The primary flow starts when an operator selects a customer and a material; the system fills the master price automatically and computes the total before the deposit is saved. For historical data, the operator uploads an Excel file, the system maps customers and materials, shows a validation recap, and commits chronologically only when no row is flagged. A collector sale reads remaining stock, computes the margin, and records only that margin into the waste bank's cash. Every transition writes an audit trail that can be traced by the user and the device involved."
+        "problem": "Waste-bank records lived in date-separated Excel files, so every deposit was reconciled by hand. Item names were inconsistent (Paper, Used Paper, and Crumpled Paper meant the same material), customer savings and cash were tracked outside the transaction data, and collector sales could exceed stock. With no audit trail, a discrepancy was hard to trace.",
+        "approach": "The app is a Laravel service layer built around one ledger. BankSampahService handles financial logic and MaterialMappingService resolves material names. Deposits, withdrawals, and sales are state transitions that must pass validation before they reach the database. Customer savings and cash are derived from ledger entries instead of a mutable balance column. Prices are stored per transaction, so a master price change cannot rewrite history.",
+        "architecture": "Deposit, deposit detail, savings ledger, and cash ledger tables record every value movement. Writes run inside DB::transaction, and balances are recalculated from the ledger. Withdrawals require two prior deposits and cannot exceed the balance. Sales check cumulative stock across the whole timeline, including backdated entries, with lockForUpdate guarding concurrent writes. The activity log is append-only and tied to a correlation_id.",
+        "workflow": "An operator selects a customer and material, the form fills the master price, and the deposit is saved atomically with its ledger entry. Historical Excel files are parsed, mapped, previewed, and only committed when every row passes validation. A collector sale checks remaining stock, records the margin, and writes an audit entry."
       },
       "flowPaths": [
         {
@@ -444,7 +450,7 @@
           "step": "03",
           "name": "LEDGER & CASH",
           "department": "System",
-          "detail": "Every transaction writes a ledger entry; customer savings and the waste bank's cash balance are recomputed deterministically."
+          "detail": "Every transaction writes a ledger entry; customer savings and the waste bank's cash balance are recomputed from the ledger."
         },
         {
           "step": "04",
@@ -496,7 +502,7 @@
           "items": [
             "Service layer: BankSampahService, DepositImportService, MaterialMappingService",
             "State transitions and validation: dual pricing, margin, balance, and cumulative stock",
-            "Authorization: Spatie Laravel Permission + admin device binding",
+            "Authorization: role-based permissions + admin device binding",
             "Logging: append-only ActivityLogService with correlation_id"
           ]
         },
@@ -514,18 +520,18 @@
       "highlights": [
         "A full-timeline stock guard (assertCumulativeStockNotNegative) rejects any sale that would make stock negative on any date, including backdated transactions.",
         "Atomic writes with DB::transaction and lockForUpdate prevent race conditions and double-selling between concurrent sales.",
-        "Multi-role authorization (Spatie) is reinforced with admin device binding using revocable httpOnly tokens, so operational traces stay tied to a device.",
+        "Role-based authorization is reinforced with admin device binding using revocable httpOnly tokens, so operational traces stay tied to a device.",
         "An immutable, append-only audit trail with correlation_id and sanitized payloads; balances can be reconciled automatically through an anomaly-based health score."
       ],
       "stack": [
-        "Laravel 13",
-        "PHP 8.3",
+        "Laravel",
+        "PHP",
         "MySQL",
-        "Blade + Tailwind CSS + Alpine.js",
-        "Spatie Laravel Permission",
-        "Maatwebsite Excel / PhpSpreadsheet"
+        "Blade",
+        "Tailwind CSS",
+        "Alpine.js"
       ],
-      "result": "The system turns manual spreadsheet reconciliation into a deterministic operation: every rupiah that enters or leaves can be traced from the transaction to the ledger entry. Layered validation on balances, cumulative stock, and recap consistency closes the gaps that allowed over-selling and hard-to-detect data discrepancies. Historical price snapshots keep old reports stable even when master prices change. With an append-only audit trail and strict role separation, the system can carry a growing volume of waste-bank transactions without losing accountability."
+      "result": "Every rupiah that enters or leaves the waste bank can be traced from the transaction to a ledger entry. Balance, stock, and import checks close the gaps that allowed over-selling and silent data drift. Price snapshots keep old reports stable when master prices change, and the audit trail keeps each action tied to a user and a device."
     },
     {
       "id": "salestrack-lead-dispatch",
@@ -534,11 +540,11 @@
       "year": "2026",
       "role": "Full Stack Developer",
       "facts": {
-        "engagement": "Freelance",
-        "status": "Internal mobile app",
+        "engagement": "Freelance / client work",
+        "status": "Internal mobile app · client use",
         "source": "Private repository",
-        "duration": "",
-        "team": "",
+        "duration": "2025–2026",
+        "team": "Solo build",
         "demo": []
       },
       "featured": true,
@@ -546,7 +552,7 @@
       "problemHeadline": "Leads arrived with a deadline. The process had none.",
       "problemLead": "Leads arrive from many channels and must be contacted within minutes. Handing them out over chat made ownership and response time impossible to measure.",
       "flowHeadline": "One lead. A deadline enforced on both sides.",
-      "description": "Flutter client for property sales teams that pushes time-boxed leads to agents, enforces an accept-or-expire window, and tracks each lead from assignment to conversion. It replaces manual lead distribution with a deterministic, auditable status lifecycle.",
+      "description": "A Flutter client for property sales teams. It pushes time-boxed leads to agents, enforces an accept-or-expire window, and tracks each lead from assignment to conversion with an auditable status history.",
       "summary": "Property leads arrive from several channels and go cold in minutes. The app gives each agent a countdown to accept, enforces the same deadline on the server, and records every status change so managers can see what happened.",
       "atAGlance": [
         { "value": "3", "label": "lead sources" },
@@ -579,10 +585,10 @@
         "Without a server-committed accept step, client and backend could disagree on who owned a lead once it was reassigned after expiry."
       ],
       "overview": {
-        "problem": "Property sales teams receive leads from many channels such as social ads, WhatsApp, and property portals, and must contact them within minutes before the prospect goes cold. Before a system like this, leads were handed out over chat and spreadsheets, so ownership was ambiguous and response time was unmeasurable. When multiple agents chase or drop the same lead, duplicate calls damage the prospect experience and distort conversion metrics. The hardest constraint is time: a lead not answered inside its accept window must be released and re-dispatched, and that deadline has to hold even when the agent's phone is asleep or the app is backgrounded. Any timer that lives only in the UI will drift, freeze, or disagree with the server, producing leads that are accepted after the backend already reassigned them.",
-        "approach": "The client treats each incoming lead as a time-boxed state machine rather than a screen. When a high-priority assignment arrives, IncomingLeadProvider records the arrival timestamp and the resolved timeout, then exposes a single source of truth for remaining time that both the dashboard badge and the fullscreen alert read. Timeout resolution falls back in a defined order: push payload first, then the agent's profile autoRejectMinutes, then a hard default, so the deadline is correct even before the profile has loaded. The deadline is recomputed from the wall clock instead of being decremented, which keeps it consistent across app suspension and screen re-entry. Acceptance is a server commit via POST /leads/{id}/accept; the client only removes the pending lead after the server confirms ownership, so the UI cannot claim a lead the backend has already given away.",
-        "architecture": "The app is organized into feature modules (auth, dashboard, leads, incoming_lead, notifications, profile) over a shared core of API clients, model adapters, and services. Every HTTP call flows through a single ApiService that attaches the Bearer token, auto-injects the userId for /mobile endpoints, enforces a 30-second timeout, and normalizes errors; a 401 on any non-auth endpoint triggers a global logout that clears all providers. Responses are parsed into typed models at the boundary, with defensive casting for nested and nullable fields such as source, property, assignments, and timestamps, so malformed data degrades to defaults instead of crashing a rebuild. Notifications run through a dual-channel pipeline: one classifier decides whether a payload is an incoming lead, and a dedicated max-importance channel with fullScreenIntent and a custom sound is reserved for those alerts. Session state persists behind one storage accessor and is purged atomically on logout or token expiry.",
-        "workflow": "A lead is created and assigned by the backend, which pushes a data message to the selected agent. The device classifies the message, raises a fullscreen alert with the accept countdown, and registers the lead in the incoming provider. The agent accepts before the deadline, which commits ownership on the server and moves the lead into the active list; otherwise the timer expires and the lead is released for re-dispatch. Once owned, the agent advances the lead through contacted, interested or not_interested, and finally converted or rejected, recording notes that the activity timeline renders in order."
+        "problem": "Property sales teams get leads from social ads, WhatsApp, and property portals, and must contact them within minutes. Leads were handed out over chat and spreadsheets, so ownership was ambiguous and response time could not be measured. When several agents chase or drop the same lead, the prospect gets duplicate calls and conversion data stops making sense. The deadline also has to hold when the agent's phone is asleep or the app is backgrounded, which a UI-only timer cannot do.",
+        "approach": "Each incoming lead is a time-boxed state machine. IncomingLeadProvider records the arrival time and resolved timeout, then derives remaining time from the wall clock instead of decrementing a counter. Timeout resolution checks the push payload, then the agent profile, then a hard default. Acceptance is a server commit via POST /leads/{id}/accept; the client only removes the pending lead after the server confirms ownership.",
+        "architecture": "The app is split into feature modules (auth, dashboard, leads, incoming_lead, notifications, profile) over shared API, model, and service layers. Every request goes through one ApiService that attaches the bearer token, injects the mobile user id, enforces a 30-second timeout, and normalizes errors. A 401 on any non-auth endpoint clears all providers and resets navigation. Notifications use two Android channels: a normal channel, and a max-importance channel reserved for incoming leads with full-screen intent and a custom sound.",
+        "workflow": "The backend assigns a lead and pushes a data message to the agent. The device classifies the message, raises a full-screen alert with the countdown, and registers the lead. If the agent accepts before the deadline, the server commits ownership and the lead moves to the active list. Otherwise the timer expires and the lead is released for re-dispatch. Once owned, the agent moves the lead through contacted, interested or not_interested, and converted or rejected, with notes shown in the activity timeline."
       },
       "flowPaths": [
         {
@@ -747,10 +753,10 @@
           "number": "03",
           "name": "DATA & STORAGE",
           "items": [
-            "REST API at sales-track.net/api via package:http with 30-second timeouts",
+            "REST API with 30-second timeouts",
             "Central ApiService with per-domain clients (leads, dashboard, profile, devices, notifications)",
-            "Firebase Cloud Messaging plus flutter_local_notifications dual-channel pipeline",
-            "shared_preferences session persistence with atomic clear on logout or 401"
+            "Firebase Cloud Messaging with two notification channels",
+            "Session persistence with atomic clear on logout or 401"
           ]
         }
       ],
@@ -765,11 +771,9 @@
         "Dart",
         "Provider",
         "Firebase Cloud Messaging",
-        "flutter_local_notifications",
-        "package:http",
-        "shared_preferences"
+        "REST API"
       ],
-      "result": "The result is a lead pipeline whose deadlines and ownership are enforced the same way on the device and on the server, instead of being inferred from chat threads. Agents see a single, prioritized incoming alert with a countdown they cannot easily ignore, and every accepted lead carries an auditable sequence of assignment and status transitions. Managers get dashboard metrics (assigned, contacted, converted, rejected, and per-channel pipeline) computed from that consistent state. Because the deadline is recomputed rather than decremented and the session is invalidated atomically, the app stays predictable through backgrounding, poor connectivity, and token expiry. This turns lead handling from a manual, unmeasurable process into a deterministic one that can scale with volume."
+      "result": "Deadlines and ownership are enforced the same way on the device and on the server, instead of being inferred from chat threads. Agents see one prioritized incoming alert with a countdown, and every accepted lead carries an auditable sequence of assignment and status changes. Managers get dashboard metrics from that consistent state, and the app stays predictable through backgrounding, poor connectivity, and token expiry."
     },
     {
       "id": "ecarrgo-reverse-auction-logistics",
@@ -778,11 +782,11 @@
       "year": "2026",
       "role": "Full Stack Developer",
       "facts": {
-        "engagement": "Freelance",
-        "status": "Internal mobile app",
+        "engagement": "Freelance / client work",
+        "status": "Internal mobile app · client use",
         "source": "Private repository",
-        "duration": "",
-        "team": "",
+        "duration": "2025–2026",
+        "team": "Solo build",
         "demo": []
       },
       "featured": true,
@@ -790,7 +794,7 @@
       "problemHeadline": "Rates were negotiated in chat. The shipment had no single owner.",
       "problemLead": "Shipping ran through intermediaries with no structured record. Prices were hard to compare, and one order could be held by more than one vendor.",
       "flowHeadline": "One shipment. A controlled auction state machine.",
-      "description": "A two-role mobile app that turns shipping orders into a rate auction: senders post an order, logistics vendors bid, and the system locks the winner, payment, and tracking status into one deterministic flow.",
+      "description": "A two-role mobile app that turns shipping orders into a rate auction. Senders post an order, logistics vendors bid, and the system locks the winner, payment, and tracking into one status flow.",
       "summary": "Senders post a shipment, vendors bid, and the lowest offer wins. The app locks the winner, payment, and tracking into one status flow so an order cannot be claimed twice or lose its owner.",
       "atAGlance": [
         { "value": "3", "label": "parties in one flow" },
@@ -822,10 +826,10 @@
         "Transfer proofs were received without a record tying them to a transaction, so payment verification depended on manual matching by an admin and could not be audited."
       ],
       "overview": {
-        "problem": "Shipping used to run through intermediaries: senders contacted several vendors separately and negotiated prices with no structured record. That pattern breaks at volume because prices cannot be compared, one order risks being held by more than one vendor, and shipment status has no single authority. When the vendor, sender, and admin see different states, an order stalls with no clear owner. Without an explicit state machine and a single data source, every status change can produce two contradicting truths.",
-        "approach": "The system is built as a reverse-auction marketplace with the shipment as the aggregate root. A sender posts an order with a price limit and duration; vendors submit bids; the sender picks a winner; then the system locks the price, creates an invoice, and drives status through fixed transitions. The UI does not invent its own progress: the step shown is recomputed from the server status (waiting_approval, auction_started, shipping, completed), so navigation follows backend authority rather than client cache.",
-        "architecture": "The Flutter client separates data sources, domain, and presentation; Dio handles transport with an automatically injected Bearer token. A single FillDataProvider accumulates all wizard input into one object before it is sent as one auction payload, preventing half-sent orders. On the server, shipment status is the source of truth; the select-winner, payments, and tracking endpoints enforce per-owner authorization. The status transition history (status_history) becomes an audit trail that is rendered back to the user timeline.",
-        "workflow": "The primary flow starts when the sender picks a route on the map and fills in cargo details, followed by auction setup against a rate reference, then the order is sent as an auction and shipment. Vendors bid for the active duration, the sender selects a winner, and an admin confirms the price and starts shipping. After the sender uploads a transfer proof and an admin verifies it, the status moves to shipping and waybill tracking closes the loop until completed."
+        "problem": "Shipping used to run through intermediaries: senders contacted several vendors and negotiated prices with no structured record. At volume that breaks down. Prices cannot be compared, one order can be held by more than one vendor, and shipment status has no single authority. When the vendor, sender, and admin see different states, an order stalls with no clear owner.",
+        "approach": "The system is a reverse-auction marketplace with the shipment as the aggregate root. A sender posts an order with a price limit and duration, vendors bid, and the sender picks a winner. The system then locks the price, creates an invoice, and drives status through fixed transitions. The UI recomputes its step from the server status, so navigation follows backend authority instead of a client cache.",
+        "architecture": "The Flutter client separates data sources, domain, and presentation, with Dio handling transport and bearer tokens. A single FillDataProvider collects the whole wizard before sending one auction payload, so partial orders cannot leave the device. On the server, shipment status is the source of truth, and the select-winner, payment, and tracking endpoints enforce per-owner authorization. Status history is kept as an audit trail.",
+        "workflow": "The sender picks a route on the map, enters cargo details, sets the auction against a rate reference, and submits the order. Vendors bid, the sender selects a winner, and an admin confirms the price and starts shipping. After the sender uploads a transfer proof and an admin verifies it, the status moves to shipping, and waybill tracking closes the loop until completion."
       },
       "flowPaths": [
         {
@@ -972,8 +976,8 @@
           "items": [
             "Flutter (Dart) multi-platform",
             "Provider & Riverpod for state",
-            "flutter_map + geolocator + latlong2",
-            "flutter_secure_storage & shared_preferences"
+            "Maps and geolocation",
+            "Secure token and local session storage"
           ]
         },
         {
@@ -1000,7 +1004,7 @@
       "highlights": [
         "UI steps are recomputed from server status and the local progress cache is reset when unconfirmed, avoiding users stuck on a stale step after a status change.",
         "Layered per-step validation (maximum weight 100 tons and auction duration not exceeding the shipping time) rejects inconsistent auction payloads before they are sent.",
-        "Winner selection through an owner-only endpoint with a deterministic transaction_id derived from the payment proof file name, traceable back to the record.",
+        "Winner selection through an owner-only endpoint with a transaction_id derived from the payment proof file name, traceable back to the record.",
         "Status transitions are recorded as status_history on the waybill tracking and rendered back into a user-side timeline."
       ],
       "stack": [
@@ -1010,10 +1014,9 @@
         "Provider",
         "Riverpod",
         "Firebase Cloud Messaging",
-        "flutter_secure_storage",
-        "flutter_map"
+        "REST API"
       ],
-      "result": "ECARRGO turns shipping that was negotiated manually into a structured auction flow with a single status authority on the server. Every order now has a linked shipment and auction, a selected winner that cannot be duplicated, and payments that can be verified through a traceable transfer proof. Mapping status to flow steps makes the process deterministic and resumable across sessions, while the status audit trail gives operations a clear basis and room to grow shipping volume."
+      "result": "ECARRGO turns manually negotiated shipping into a structured auction flow with one status authority on the server. Every order has a linked shipment and auction, one selected winner, and a payment that can be verified through a traceable transfer proof. Mapping status to flow steps keeps the process resumable across sessions, and the status audit trail gives operations a clear record as volume grows."
     }
   ]
 }

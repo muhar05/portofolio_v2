@@ -141,7 +141,7 @@ export default function SelectedWork() {
 
         <div className="mt-10 flex items-center justify-between gap-4">
           <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-ink-muted">
-            {projects.length} production systems
+            {projects.length} case studies
           </p>
           <div className="flex items-center gap-2">
             <button

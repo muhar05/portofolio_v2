@@ -115,6 +115,9 @@ export default function AboutMe() {
           <p className="mt-5 max-w-[46rem] text-[15px] leading-relaxed text-ink-muted sm:text-base">
             {about.bio}
           </p>
+          <p className="mt-3 text-[12px] leading-relaxed text-ink-muted">
+            Client references can be shared on request.
+          </p>
         </div>
 
         <div

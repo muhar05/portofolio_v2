@@ -90,6 +90,7 @@ export default function WorkClosing({ nextProject }: WorkClosingProps) {
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <a
             href={`mailto:${siteData.email}?subject=Similar%20project`}
+            aria-label={`Email ${siteData.email} about a similar project`}
             onClick={() =>
               trackEvent("contact_click", {
                 channel: "email",
@@ -98,7 +99,7 @@ export default function WorkClosing({ nextProject }: WorkClosingProps) {
             }
             className="btn-pill bg-[#edf0ea] text-[#111c17] transition-colors hover:bg-white"
           >
-            Discuss a similar project
+            Email about a similar project
           </a>
 
           {nextProject && (
@@ -111,6 +112,10 @@ export default function WorkClosing({ nextProject }: WorkClosingProps) {
             </Link>
           )}
         </div>
+
+        <p className="mt-3 text-[11px] leading-relaxed text-[#edf0ea]/50">
+          Opens your mail app. The address is {siteData.email}.
+        </p>
 
         <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-white/12 pt-6 text-[12px] font-medium text-[#edf0ea]/60">
           <Link

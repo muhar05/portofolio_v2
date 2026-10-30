@@ -28,7 +28,7 @@ export default function WorkFacts({ project }: WorkFactsProps) {
   return (
     <div data-reveal className="mt-8">
       <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted">
-        Project facts
+        Project details
       </p>
 
       {items.length > 0 && (
@@ -52,7 +52,7 @@ export default function WorkFacts({ project }: WorkFactsProps) {
       {demo.length > 0 && (
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <span className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-ink-muted">
-            Demo
+            Links
           </span>
           {demo.map((item) => (
             <a
@@ -61,6 +61,7 @@ export default function WorkFacts({ project }: WorkFactsProps) {
               target={item.type === "apk" ? undefined : "_blank"}
               rel={item.type === "apk" ? undefined : "noopener noreferrer"}
               download={item.type === "apk" ? true : undefined}
+              title={item.url}
               className="btn-pill border border-line px-3 py-1.5 text-[11px]"
             >
               {item.label}

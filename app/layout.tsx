@@ -24,7 +24,7 @@ const SITE_URL =
 const SITE_TITLE =
   "Full Stack Developer for Operations Systems | Muhar Ferdiansyah";
 const SITE_DESCRIPTION =
-  "I build and repair production systems for operations-heavy teams with Next.js, Laravel, and Flutter. Available for remote roles and freelance projects.";
+  "I build web and mobile systems for operations-heavy teams with Next.js, Laravel, and Flutter. Currently in administration, open to remote roles and freelance projects.";
 const GOOGLE_SITE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION;
 
 const PERSON_JSON_LD = {

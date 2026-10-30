@@ -413,6 +413,11 @@ export default function Hero() {
                     src={project.cover}
                     alt=""
                     fill
+                    loading={
+                      setIndex === 0 && project.id === projectCovers[0]?.id
+                        ? "eager"
+                        : "lazy"
+                    }
                     sizes="(max-width: 768px) 60vw, 22rem"
                     className="object-cover"
                   />
