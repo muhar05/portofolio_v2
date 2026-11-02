@@ -67,11 +67,11 @@ export default function WorkClosing({ nextProject }: WorkClosingProps) {
     >
       <div
         data-reveal
-        className="mx-auto w-full max-w-[80rem] overflow-hidden rounded-[2rem] bg-[#111c17] px-6 py-14 text-[#edf0ea] sm:px-10 sm:py-20 lg:px-16"
+        className="mx-auto w-full max-w-[80rem] overflow-hidden rounded-[2rem] bg-[var(--panel)] px-6 py-14 text-[var(--panel-foreground)] sm:px-10 sm:py-20 lg:px-16"
       >
-        <div className="flex flex-wrap items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-[#e07a52]">
+        <div className="flex flex-wrap items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--panel-accent)]">
           <span
-            className="h-1.5 w-1.5 rounded-full bg-[#c9552e]"
+            className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]"
             aria-hidden="true"
           />
           <span>Next work</span>
@@ -81,7 +81,7 @@ export default function WorkClosing({ nextProject }: WorkClosingProps) {
           More systems worth exploring.
         </h2>
 
-        <p className="mt-5 max-w-[34rem] text-[15px] leading-relaxed text-[#edf0ea]/65">
+        <p className="mt-5 max-w-[34rem] text-[15px] leading-relaxed text-[var(--panel-muted)]">
           Open another case study to see the problem, the decisions, and what
           changed.
         </p>
@@ -91,7 +91,7 @@ export default function WorkClosing({ nextProject }: WorkClosingProps) {
             subject="Similar project"
             location="case_study"
             ariaLabel="Email about a similar project"
-            className="btn-pill bg-[#edf0ea] text-[#111c17] transition-colors hover:bg-white"
+            className="btn-pill bg-[var(--panel-foreground)] text-[var(--panel)] transition-colors hover:bg-white"
           >
             Email about a similar project
           </EmailAction>
@@ -99,7 +99,7 @@ export default function WorkClosing({ nextProject }: WorkClosingProps) {
           {nextProject && (
             <Link
               href={`/works/${nextProject.id}`}
-              className="btn-pill border border-white/20 text-[#edf0ea] transition-colors hover:bg-white/10"
+              className="btn-pill border border-[var(--panel-line-strong)] text-[var(--panel-foreground)] transition-colors hover:bg-white/10"
             >
               Next: {nextProject.title}
               <span aria-hidden="true">→</span>
@@ -107,21 +107,21 @@ export default function WorkClosing({ nextProject }: WorkClosingProps) {
           )}
         </div>
 
-        <p className="mt-3 text-[11px] leading-relaxed text-[#edf0ea]/60">
+        <p className="mt-3 text-[11px] leading-relaxed text-[var(--panel-muted)]">
           Opens your mail app. No address is printed on this page.
         </p>
 
-        <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-white/12 pt-6 text-[12px] font-medium text-[#edf0ea]/60">
+        <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-[var(--panel-line)] pt-6 text-[12px] font-medium text-[var(--panel-muted)]">
           <Link
             href="/#selected-work"
-            className="transition-colors hover:text-[#edf0ea]"
+            className="transition-colors hover:text-[var(--panel-foreground)]"
           >
             Back to works
           </Link>
           <button
             type="button"
             onClick={handleBackToTop}
-            className="transition-colors hover:text-[#edf0ea]"
+            className="transition-colors hover:text-[var(--panel-foreground)]"
           >
             Back to top ↑
           </button>

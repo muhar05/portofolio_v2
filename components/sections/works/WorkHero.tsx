@@ -7,6 +7,7 @@ import ProjectMedia from "@/components/sections/works/ProjectMedia";
 import WorkFacts from "@/components/sections/works/WorkFacts";
 import Logo from "@/components/ui/Logo";
 import RollText from "@/components/ui/RollText";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import { EmailAction } from "@/components/ui/ContactActions";
 import type { Project, ProjectMedia as ProjectMediaType } from "@/types/works";
 
@@ -79,6 +80,7 @@ export default function WorkHero({ project }: WorkHeroProps) {
             >
               All work
             </Link>
+            <ThemeToggle />
             <EmailAction
               subject="Portfolio inquiry"
               location="case_study_nav"
@@ -191,9 +193,9 @@ export default function WorkHero({ project }: WorkHeroProps) {
           {project.impact && project.impact.length > 0 && (
             <div
               data-reveal
-              className="mt-8 rounded-3xl bg-[#111c17] p-6 text-[#edf0ea] sm:p-8"
+              className="mt-8 rounded-3xl bg-[var(--panel)] p-6 text-[var(--panel-foreground)] sm:p-8"
             >
-              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#e07a52]">
+              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--panel-accent)]">
                 Impact
               </p>
               <dl className="mt-4 grid grid-cols-2 gap-6 sm:grid-cols-4">
@@ -202,11 +204,11 @@ export default function WorkHero({ project }: WorkHeroProps) {
                     <dd className="font-display text-3xl font-semibold tracking-[-0.02em]">
                       {item.value}
                     </dd>
-                    <dt className="mt-1 text-[11px] leading-snug text-[#edf0ea]/60">
+                    <dt className="mt-1 text-[11px] leading-snug text-[var(--panel-muted)]">
                       {item.label}
                     </dt>
                     {item.note && (
-                      <p className="mt-1 text-[10px] leading-snug text-[#edf0ea]/60">
+                      <p className="mt-1 text-[10px] leading-snug text-[var(--panel-muted)]">
                         {item.note}
                       </p>
                     )}

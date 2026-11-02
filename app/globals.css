@@ -14,9 +14,41 @@
   --panel: #111c17;
   --panel-foreground: #edf0ea;
   --panel-muted: rgba(237, 240, 234, 0.65);
+  --panel-soft: rgba(237, 240, 234, 0.8);
+  --panel-faint: rgba(237, 240, 234, 0.5);
+  --panel-line: rgba(237, 240, 234, 0.12);
+  --panel-line-strong: rgba(237, 240, 234, 0.2);
   --panel-accent: #e07a52;
+  --nav-bg: rgba(249, 251, 247, 0.82);
+  --btn-ink-hover: #22332b;
+  --wordmark-stroke: rgba(21, 32, 27, 0.28);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --page-pad: clamp(1.25rem, 4vw, 4.5rem);
+}
+
+[data-theme="dark"] {
+  --background: #0c1210;
+  --foreground: #edf0ea;
+  --surface: #141f19;
+  --surface-strong: #1d2a23;
+  --ink-muted: #aeb8b1;
+  --line: rgba(237, 240, 234, 0.12);
+  --line-strong: rgba(237, 240, 234, 0.24);
+  --accent: #e07a52;
+  --accent-ink: #f0a080;
+  --accent-soft: #2a1a14;
+  --panel: #16221c;
+  --panel-foreground: #edf0ea;
+  --panel-muted: rgba(237, 240, 234, 0.72);
+  --panel-soft: rgba(237, 240, 234, 0.86);
+  --panel-faint: rgba(237, 240, 234, 0.64);
+  --panel-line: rgba(237, 240, 234, 0.14);
+  --panel-line-strong: rgba(237, 240, 234, 0.24);
+  --panel-accent: #f0a080;
+  --nav-bg: rgba(12, 18, 16, 0.82);
+  --btn-ink-hover: #ffffff;
+  --wordmark-stroke: rgba(237, 240, 234, 0.28);
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -37,6 +69,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 6.5rem;
+  color-scheme: light;
 }
 
 body {
@@ -162,7 +195,7 @@ button:focus-visible .roll-text__glyph {
   padding: 0.28rem 0.4rem;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: rgba(249, 251, 247, 0.82);
+  background: var(--nav-bg);
   box-shadow: 0 2px 10px rgba(17, 17, 16, 0.06);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -227,7 +260,7 @@ button:focus-visible .roll-text__glyph {
 }
 
 .btn-ink:hover {
-  background: #22332b;
+  background: var(--btn-ink-hover);
 }
 
 .btn-soft {
@@ -248,6 +281,19 @@ button:focus-visible .roll-text__glyph {
 
 .btn-outline:hover {
   background: var(--surface);
+}
+
+/* Theme toggle icons */
+.theme-toggle__moon {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle__sun {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle__moon {
+  display: block;
 }
 
 /* Sheen sweep on primary actions */
@@ -390,7 +436,7 @@ button:focus-visible .roll-text__glyph {
 /* Footer signature */
 .footer-wordmark {
   color: transparent;
-  -webkit-text-stroke: 1px rgba(21, 32, 27, 0.28);
+  -webkit-text-stroke: 1px var(--wordmark-stroke);
 }
 
 .footer-wordmark__dot {

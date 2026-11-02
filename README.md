@@ -19,6 +19,7 @@ A developer-workspace portfolio. Instead of a template gallery, it presents clie
 - **Derived tech stack.** The "Technical Expertise" section builds itself from the stack arrays of every project, grouped by layer.
 - **Recruiter-ready SEO.** Generated Open Graph image, per-project OG metadata, canonical URLs, CreativeWork JSON-LD, `sitemap.xml`, and `robots.txt`.
 - **Contact obfuscation.** Email and WhatsApp destinations are assembled in the browser at click time, not printed in the HTML.
+- **Light and dark themes.** The toggle follows the system preference first, then stores the visitor's choice.
 - **Static-export ready.** `NEXT_OUTPUT=export` produces a fully static `out/` folder, deployable to shared hosting.
 
 ## Tech Stack

@@ -10,6 +10,7 @@ import { trackEvent } from "@/lib/analytics";
 import Logo from "@/components/ui/Logo";
 import ProjectPlaceholder from "@/components/ui/ProjectPlaceholder";
 import RollText from "@/components/ui/RollText";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import {
   EmailAction,
   WhatsAppAction,
@@ -189,6 +190,7 @@ export default function Hero() {
           >
             GitHub
           </a>
+          <ThemeToggle className="hidden sm:flex" />
           <EmailAction
             subject="Portfolio inquiry"
             location="navbar"
@@ -262,6 +264,10 @@ export default function Hero() {
               >
                 Email
               </EmailAction>
+              <ThemeToggle
+                showLabel
+                className="mt-1 w-full justify-start rounded-2xl px-4 py-3.5"
+              />
             </div>
 
             <button

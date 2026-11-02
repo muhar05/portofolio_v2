@@ -186,10 +186,10 @@ export default function ContactContent({
         ref={panelRef}
         inert={isCvOpen}
         aria-hidden={isCvOpen ? true : undefined}
-        className="mx-auto w-full max-w-[80rem] overflow-hidden rounded-[2rem] bg-[#111c17] px-6 py-14 text-[#edf0ea] sm:px-10 sm:py-20 lg:px-16 lg:py-24"
+        className="mx-auto w-full max-w-[80rem] overflow-hidden rounded-[2rem] bg-[var(--panel)] px-6 py-14 text-[var(--panel-foreground)] sm:px-10 sm:py-20 lg:px-16 lg:py-24"
       >
         <div className="mx-auto max-w-[46rem] text-center">
-          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#edf0ea]/55">
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--panel-muted)]">
             {contact.chapter}
           </p>
 
@@ -203,16 +203,16 @@ export default function ContactContent({
             {headlineWords.slice(2).join(" ")}
           </h2>
 
-          <p className="mx-auto mt-5 max-w-[30rem] text-[15px] leading-relaxed text-[#edf0ea]/65">
+          <p className="mx-auto mt-5 max-w-[30rem] text-[15px] leading-relaxed text-[var(--panel-muted)]">
             {contact.description}
           </p>
 
           <div className="mt-9 grid gap-3 text-left sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/12 p-5">
-              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#e07a52]">
+            <div className="rounded-2xl border border-[var(--panel-line)] p-5">
+              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--panel-accent)]">
                 Hiring
               </p>
-              <p className="mt-2 text-[13px] leading-relaxed text-[#edf0ea]/65">
+              <p className="mt-2 text-[13px] leading-relaxed text-[var(--panel-muted)]">
                 Full-time remote roles and freelance projects.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
@@ -227,7 +227,7 @@ export default function ContactContent({
                       })
                     }
                     aria-label="Download Muhar Ferdiansyah CV as PDF"
-                    className="btn-pill bg-[#edf0ea] text-[#111c17] transition-colors hover:bg-white"
+                    className="btn-pill bg-[var(--panel-foreground)] text-[var(--panel)] transition-colors hover:bg-white"
                   >
                     Download CV
                   </a>
@@ -236,7 +236,7 @@ export default function ContactContent({
                     subject="Full-time role"
                     location="finale_hiring"
                     ariaLabel="Email about a role"
-                    className="btn-pill bg-[#edf0ea] text-[#111c17] transition-colors hover:bg-white"
+                    className="btn-pill bg-[var(--panel-foreground)] text-[var(--panel)] transition-colors hover:bg-white"
                   >
                     Email about a role
                   </EmailAction>
@@ -252,7 +252,7 @@ export default function ContactContent({
                       setIsCvOpen(true);
                     }}
                     aria-haspopup="dialog"
-                    className="btn-pill border border-white/20 text-[#edf0ea] transition-colors hover:bg-white/10"
+                    className="btn-pill border border-[var(--panel-line-strong)] text-[var(--panel-foreground)] transition-colors hover:bg-white/10"
                   >
                     Preview
                   </button>
@@ -260,18 +260,18 @@ export default function ContactContent({
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/12 p-5">
-              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#e07a52]">
+            <div className="rounded-2xl border border-[var(--panel-line)] p-5">
+              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--panel-accent)]">
                 Project
               </p>
-              <p className="mt-2 text-[13px] leading-relaxed text-[#edf0ea]/65">
+              <p className="mt-2 text-[13px] leading-relaxed text-[var(--panel-muted)]">
                 An existing system, a new build, or extra hands for your team.
               </p>
               <EmailAction
                 subject="Project inquiry"
                 location="finale_project"
                 ariaLabel="Describe the project by email"
-                className="btn-pill mt-4 border border-white/20 text-[#edf0ea] transition-colors hover:bg-white/10"
+                className="btn-pill mt-4 border border-[var(--panel-line-strong)] text-[var(--panel-foreground)] transition-colors hover:bg-white/10"
               >
                 Describe the project
               </EmailAction>
@@ -279,21 +279,21 @@ export default function ContactContent({
           </div>
         </div>
 
-        <div className="mx-auto mt-14 max-w-[54rem] border-t border-white/12">
+        <div className="mx-auto mt-14 max-w-[54rem] border-t border-[var(--panel-line)]">
           {channels.map((channel) => {
             const rowClassName =
-              "group grid w-full grid-cols-12 items-baseline gap-2 border-b border-white/12 py-4 text-left sm:gap-4 sm:py-5";
+              "group grid w-full grid-cols-12 items-baseline gap-2 border-b border-[var(--panel-line)] py-4 text-left sm:gap-4 sm:py-5";
             const content = (
               <>
-                <span className="col-span-4 text-[11px] font-medium uppercase tracking-[0.16em] text-[#edf0ea]/50 transition-colors group-hover:text-[#edf0ea]/80 sm:col-span-3">
+                <span className="col-span-4 text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--panel-faint)] transition-colors group-hover:text-[var(--panel-soft)] sm:col-span-3">
                   {channel.label}
                 </span>
-                <span className="col-span-7 min-w-0 break-words text-[14px] font-medium text-[#edf0ea] sm:col-span-8 sm:text-[15px]">
+                <span className="col-span-7 min-w-0 break-words text-[14px] font-medium text-[var(--panel-foreground)] sm:col-span-8 sm:text-[15px]">
                   {channel.display}
                 </span>
                 <span className="col-span-1 flex justify-end">
                   <span
-                    className={`text-[#edf0ea]/50 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-[#edf0ea] ${
+                    className={`text-[var(--panel-faint)] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-[var(--panel-foreground)] ${
                       channel.external ? "group-hover:-translate-y-0.5" : ""
                     }`}
                     aria-hidden="true"
@@ -370,7 +370,7 @@ export default function ContactContent({
             tabIndex={-1}
             aria-label="Close CV preview"
             onClick={() => setIsCvOpen(false)}
-            className="absolute inset-0 h-full w-full cursor-default bg-[#111c17]/70 backdrop-blur-sm"
+            className="absolute inset-0 h-full w-full cursor-default bg-black/70 backdrop-blur-sm"
           />
 
           <div
