@@ -4,6 +4,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { trackEvent } from "@/lib/analytics";
+import {
+  EmailAction,
+  WhatsAppAction,
+} from "@/components/ui/ContactActions";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -12,7 +16,8 @@ interface ContactChannel {
   id: "email" | "whatsapp" | "github" | "linkedin";
   label: string;
   display: string;
-  href: string;
+  action: "email" | "whatsapp" | "link";
+  href?: string;
   external: boolean;
 }
 
@@ -20,7 +25,6 @@ interface ContactData {
   chapter: string;
   headline: string;
   description: string;
-  whatsapp: { display: string; href: string };
   github: { display: string; href: string };
   linkedin: { display: string; href: string };
   cv: string;
@@ -28,13 +32,11 @@ interface ContactData {
 
 interface ContactContentProps {
   contact: ContactData;
-  email: string;
   cvAvailable: boolean;
 }
 
 export default function ContactContent({
   contact,
-  email,
   cvAvailable,
 }: ContactContentProps) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -144,15 +146,15 @@ export default function ContactContent({
     {
       id: "email",
       label: "Email",
-      display: email,
-      href: `mailto:${email}?subject=Portfolio%20inquiry`,
+      display: "Send a message",
+      action: "email",
       external: false,
     },
     {
       id: "whatsapp",
       label: "WhatsApp",
-      display: contact.whatsapp.display,
-      href: contact.whatsapp.href,
+      display: "Message on WhatsApp",
+      action: "whatsapp",
       external: true,
     },
     {
@@ -160,6 +162,7 @@ export default function ContactContent({
       label: "GitHub",
       display: contact.github.display,
       href: contact.github.href,
+      action: "link",
       external: true,
     },
     {
@@ -167,6 +170,7 @@ export default function ContactContent({
       label: "LinkedIn",
       display: contact.linkedin.display,
       href: contact.linkedin.href,
+      action: "link",
       external: true,
     },
   ];
@@ -225,18 +229,14 @@ export default function ContactContent({
                     Download CV
                   </a>
                 ) : (
-                  <a
-                    href={`mailto:${email}?subject=Full-time%20role`}
-                    onClick={() =>
-                      trackEvent("contact_click", {
-                        channel: "email",
-                        location: "finale_hiring",
-                      })
-                    }
+                  <EmailAction
+                    subject="Full-time role"
+                    location="finale_hiring"
+                    ariaLabel="Email about a role"
                     className="btn-pill bg-[#edf0ea] text-[#111c17] transition-colors hover:bg-white"
                   >
                     Email about a role
-                  </a>
+                  </EmailAction>
                 )}
                 {cvAvailable && (
                   <button
@@ -264,64 +264,94 @@ export default function ContactContent({
               <p className="mt-2 text-[13px] leading-relaxed text-[#edf0ea]/65">
                 An existing system, a new build, or extra hands for your team.
               </p>
-              <a
-                href={`mailto:${email}?subject=Project%20inquiry`}
-                onClick={() =>
-                  trackEvent("contact_click", {
-                    channel: "email",
-                    location: "finale_project",
-                  })
-                }
+              <EmailAction
+                subject="Project inquiry"
+                location="finale_project"
+                ariaLabel="Describe the project by email"
                 className="btn-pill mt-4 border border-white/20 text-[#edf0ea] transition-colors hover:bg-white/10"
               >
                 Describe the project
-              </a>
+              </EmailAction>
             </div>
           </div>
         </div>
 
         <div className="mx-auto mt-14 max-w-[54rem] border-t border-white/12">
-          {channels.map((channel) => (
-            <a
-              key={channel.label}
-              href={channel.href}
-              target={channel.external ? "_blank" : undefined}
-              rel={channel.external ? "noopener noreferrer" : undefined}
-              aria-label={
-                channel.external
-                  ? `${channel.label}: ${channel.display} (opens in a new tab)`
-                  : `${channel.label}: ${channel.display}`
-              }
-              onClick={() => {
-                if (channel.id === "email" || channel.id === "whatsapp") {
-                  trackEvent("contact_click", {
-                    channel: channel.id,
-                    location: "contact",
-                  });
-                }
-
-                if (channel.id === "github") {
-                  trackEvent("github_click", { location: "contact" });
-                }
-              }}
-              className="group grid grid-cols-12 items-baseline gap-2 border-b border-white/12 py-4 sm:gap-4 sm:py-5"
-            >
-              <span className="col-span-4 text-[11px] font-medium uppercase tracking-[0.16em] text-[#edf0ea]/50 transition-colors group-hover:text-[#edf0ea]/80 sm:col-span-3">
-                {channel.label}
-              </span>
-              <span className="col-span-7 min-w-0 break-all text-[14px] font-medium text-[#edf0ea] sm:col-span-8 sm:text-[15px]">
-                {channel.display}
-              </span>
-              <span className="col-span-1 flex justify-end">
-                <span
-                  className="text-[#edf0ea]/50 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#edf0ea]"
-                  aria-hidden="true"
-                >
-                  ↗
+          {channels.map((channel) => {
+            const rowClassName =
+              "group grid w-full grid-cols-12 items-baseline gap-2 border-b border-white/12 py-4 text-left sm:gap-4 sm:py-5";
+            const content = (
+              <>
+                <span className="col-span-4 text-[11px] font-medium uppercase tracking-[0.16em] text-[#edf0ea]/50 transition-colors group-hover:text-[#edf0ea]/80 sm:col-span-3">
+                  {channel.label}
                 </span>
-              </span>
-            </a>
-          ))}
+                <span className="col-span-7 min-w-0 break-words text-[14px] font-medium text-[#edf0ea] sm:col-span-8 sm:text-[15px]">
+                  {channel.display}
+                </span>
+                <span className="col-span-1 flex justify-end">
+                  <span
+                    className={`text-[#edf0ea]/50 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-[#edf0ea] ${
+                      channel.external ? "group-hover:-translate-y-0.5" : ""
+                    }`}
+                    aria-hidden="true"
+                  >
+                    {channel.external ? "↗" : "→"}
+                  </span>
+                </span>
+              </>
+            );
+
+            if (channel.action === "email") {
+              return (
+                <EmailAction
+                  key={channel.id}
+                  subject="Portfolio inquiry"
+                  location="contact"
+                  ariaLabel="Email: send a message to Muhar Ferdiansyah"
+                  className={rowClassName}
+                >
+                  {content}
+                </EmailAction>
+              );
+            }
+
+            if (channel.action === "whatsapp") {
+              return (
+                <WhatsAppAction
+                  key={channel.id}
+                  location="contact"
+                  ariaLabel="WhatsApp: message Muhar Ferdiansyah on WhatsApp"
+                  className={rowClassName}
+                >
+                  {content}
+                </WhatsAppAction>
+              );
+            }
+
+            if (!channel.href) return null;
+
+            return (
+              <a
+                key={channel.id}
+                href={channel.href}
+                target={channel.external ? "_blank" : undefined}
+                rel={channel.external ? "noopener noreferrer" : undefined}
+                aria-label={
+                  channel.external
+                    ? `${channel.label}: ${channel.display} (opens in a new tab)`
+                    : `${channel.label}: ${channel.display}`
+                }
+                onClick={() => {
+                  if (channel.id === "github") {
+                    trackEvent("github_click", { location: "contact" });
+                  }
+                }}
+                className={rowClassName}
+              >
+                {content}
+              </a>
+            );
+          })}
         </div>
       </div>
 

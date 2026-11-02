@@ -1,5 +1,6 @@
 import siteData from "@/content/site.json";
 import Logo from "@/components/ui/Logo";
+import { EmailAction } from "@/components/ui/ContactActions";
 
 export default function Footer() {
   return (
@@ -52,12 +53,13 @@ export default function Footer() {
             >
               GitHub
             </a>
-            <a
-              href={`mailto:${siteData.email}`}
-              className="block py-1 text-ink-muted transition-colors hover:text-foreground"
+            <EmailAction
+              location="footer"
+              ariaLabel="Email Muhar Ferdiansyah"
+              className="flex min-h-11 items-center py-2 text-left text-ink-muted transition-colors hover:text-foreground"
             >
               Email
-            </a>
+            </EmailAction>
             <a
               href="#hero"
               className="col-span-2 mt-1 block py-1 text-ink-muted transition-colors hover:text-foreground"

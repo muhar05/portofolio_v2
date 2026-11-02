@@ -10,6 +10,10 @@ import { trackEvent } from "@/lib/analytics";
 import Logo from "@/components/ui/Logo";
 import ProjectPlaceholder from "@/components/ui/ProjectPlaceholder";
 import RollText from "@/components/ui/RollText";
+import {
+  EmailAction,
+  WhatsAppAction,
+} from "@/components/ui/ContactActions";
 
 const NAV_LINKS = [
   { href: "#selected-work", label: "Work" },
@@ -185,18 +189,14 @@ export default function Hero() {
           >
             GitHub
           </a>
-          <a
-            href={`mailto:${siteData.email}?subject=Portfolio%20inquiry`}
-            onClick={() =>
-              trackEvent("contact_click", {
-                channel: "email",
-                location: "navbar",
-              })
-            }
+          <EmailAction
+            subject="Portfolio inquiry"
+            location="navbar"
+            ariaLabel="Let's talk by email"
             className="btn-pill btn-ink btn-sheen px-4 text-[13px]"
           >
             <RollText text="Let's talk" gap="0.04em" />
-          </a>
+          </EmailAction>
 
           <button
             ref={menuButtonRef}
@@ -253,19 +253,15 @@ export default function Hero() {
               >
                 GitHub
               </a>
-              <a
-                href={`mailto:${siteData.email}?subject=Portfolio%20inquiry`}
-                onClick={() => {
-                  setMenuOpen(false);
-                  trackEvent("contact_click", {
-                    channel: "email",
-                    location: "mobile_menu",
-                  });
-                }}
-                className="rounded-2xl px-4 py-3.5 text-[14px] font-medium text-foreground transition-colors hover:bg-surface"
+              <EmailAction
+                subject="Portfolio inquiry"
+                location="mobile_menu"
+                ariaLabel="Email Muhar Ferdiansyah"
+                onBeforeNavigate={() => setMenuOpen(false)}
+                className="rounded-2xl px-4 py-3.5 text-left text-[14px] font-medium text-foreground transition-colors hover:bg-surface"
               >
                 Email
-              </a>
+              </EmailAction>
             </div>
 
             <button
@@ -321,18 +317,14 @@ export default function Hero() {
           className="hero-fade mt-8 flex flex-wrap items-center justify-center gap-2.5"
           style={{ animationDelay: "580ms" }}
         >
-          <a
-            href={`mailto:${siteData.email}?subject=Portfolio%20inquiry`}
-            onClick={() =>
-              trackEvent("contact_click", {
-                channel: "email",
-                location: "hero",
-              })
-            }
+          <EmailAction
+            subject="Portfolio inquiry"
+            location="hero"
+            ariaLabel="Let's talk by email"
             className="btn-pill btn-ink btn-sheen"
           >
             <RollText text="Let's talk" gap="0.04em" />
-          </a>
+          </EmailAction>
           <a href="#selected-work" className="btn-pill btn-soft">
             View selected work
             <span aria-hidden="true" className="text-[0.85em]">
@@ -358,20 +350,13 @@ export default function Hero() {
           >
             Hiring? Download CV
           </a>
-          <a
-            href={siteData.contact.whatsapp.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() =>
-              trackEvent("contact_click", {
-                channel: "whatsapp",
-                location: "hero",
-              })
-            }
+          <WhatsAppAction
+            location="hero"
+            ariaLabel="Message Muhar Ferdiansyah on WhatsApp"
             className="text-ink-muted transition-colors hover:text-foreground"
           >
             WhatsApp
-          </a>
+          </WhatsAppAction>
         </div>
 
         <p

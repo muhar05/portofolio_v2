@@ -10,10 +10,6 @@ export default function Contact() {
   );
 
   return (
-    <ContactContent
-      contact={siteData.contact}
-      email={siteData.email}
-      cvAvailable={cvAvailable}
-    />
+    <ContactContent contact={siteData.contact} cvAvailable={cvAvailable} />
   );
 }

@@ -7,8 +7,7 @@ import ProjectMedia from "@/components/sections/works/ProjectMedia";
 import WorkFacts from "@/components/sections/works/WorkFacts";
 import Logo from "@/components/ui/Logo";
 import RollText from "@/components/ui/RollText";
-import siteData from "@/content/site.json";
-import { trackEvent } from "@/lib/analytics";
+import { EmailAction } from "@/components/ui/ContactActions";
 import type { Project, ProjectMedia as ProjectMediaType } from "@/types/works";
 
 const useIsomorphicLayoutEffect =
@@ -80,18 +79,14 @@ export default function WorkHero({ project }: WorkHeroProps) {
             >
               All work
             </Link>
-            <a
-              href={`mailto:${siteData.email}?subject=Portfolio%20inquiry`}
-              onClick={() =>
-                trackEvent("contact_click", {
-                  channel: "email",
-                  location: "case_study_nav",
-                })
-              }
+            <EmailAction
+              subject="Portfolio inquiry"
+              location="case_study_nav"
+              ariaLabel="Let's talk by email"
               className="btn-pill btn-ink btn-sheen px-4 text-[13px]"
             >
               <RollText text="Let's talk" gap="0.04em" />
-            </a>
+            </EmailAction>
           </div>
         </div>
 

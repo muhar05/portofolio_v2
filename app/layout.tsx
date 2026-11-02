@@ -35,7 +35,6 @@ const PERSON_JSON_LD = {
   description: SITE_DESCRIPTION,
   url: SITE_URL,
   image: `${SITE_URL}/opengraph-image`,
-  email: "mailto:ferdiansyahmuh5@gmail.com",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Jakarta",

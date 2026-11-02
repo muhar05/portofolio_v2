@@ -3,8 +3,7 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import gsap from "gsap";
-import siteData from "@/content/site.json";
-import { trackEvent } from "@/lib/analytics";
+import { EmailAction } from "@/components/ui/ContactActions";
 import type { Project } from "@/types/works";
 
 const useIsomorphicLayoutEffect =
@@ -88,19 +87,14 @@ export default function WorkClosing({ nextProject }: WorkClosingProps) {
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-3">
-          <a
-            href={`mailto:${siteData.email}?subject=Similar%20project`}
-            aria-label={`Email ${siteData.email} about a similar project`}
-            onClick={() =>
-              trackEvent("contact_click", {
-                channel: "email",
-                location: "case_study",
-              })
-            }
+          <EmailAction
+            subject="Similar project"
+            location="case_study"
+            ariaLabel="Email about a similar project"
             className="btn-pill bg-[#edf0ea] text-[#111c17] transition-colors hover:bg-white"
           >
             Email about a similar project
-          </a>
+          </EmailAction>
 
           {nextProject && (
             <Link
@@ -113,8 +107,8 @@ export default function WorkClosing({ nextProject }: WorkClosingProps) {
           )}
         </div>
 
-        <p className="mt-3 text-[11px] leading-relaxed text-[#edf0ea]/50">
-          Opens your mail app. The address is {siteData.email}.
+        <p className="mt-3 text-[11px] leading-relaxed text-[#edf0ea]/60">
+          Opens your mail app. No address is printed on this page.
         </p>
 
         <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-white/12 pt-6 text-[12px] font-medium text-[#edf0ea]/60">
