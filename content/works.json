@@ -62,9 +62,9 @@
       "impact": [],
       "media": {
         "images": {
-          "cover": "/images/works/order-operations-system/cover.webp",
-          "overview": "/images/works/order-operations-system/overview-placeholder.jpg",
-          "architecture": "/images/works/order-operations-system/architecture-placeholder.jpg"
+          "cover": "",
+          "overview": "",
+          "architecture": ""
         },
         "video": {
           "type": "youtube",
@@ -321,9 +321,9 @@
       "impact": [],
       "media": {
         "images": {
-          "cover": "/images/works/ecobank026-bank-sampah/cover.webp",
-          "overview": "/images/works/ecobank026-bank-sampah/overview.png",
-          "architecture": "/images/works/ecobank026-bank-sampah/architecture.png"
+          "cover": "",
+          "overview": "",
+          "architecture": ""
         },
         "video": {
           "type": "youtube",
@@ -563,10 +563,10 @@
       "impact": [],
       "media": {
         "images": {
-          "cover": "/images/works/salestrack-lead-dispatch/cover.webp",
+          "cover": "",
           "portrait": true,
-          "overview": "/images/works/salestrack-lead-dispatch/overview.png",
-          "architecture": "/images/works/salestrack-lead-dispatch/architecture.png"
+          "overview": "",
+          "architecture": ""
         },
         "video": {
           "type": "youtube",
@@ -805,9 +805,9 @@
       "impact": [],
       "media": {
         "images": {
-          "cover": "/images/works/ecarrgo-reverse-auction-logistics/cover.webp",
-          "overview": "/images/works/ecarrgo-reverse-auction-logistics/overview.png",
-          "architecture": "/images/works/ecarrgo-reverse-auction-logistics/architecture.png"
+          "cover": "",
+          "overview": "",
+          "architecture": ""
         },
         "video": {
           "type": "youtube",

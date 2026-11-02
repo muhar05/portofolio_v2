@@ -6,6 +6,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import worksData from "@/content/works.json";
+import ProjectPlaceholder from "@/components/ui/ProjectPlaceholder";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -174,6 +175,7 @@ export default function SelectedWork() {
         >
           {projects.map((project) => {
             const cover = project.media?.images?.cover;
+            const portrait = project.media?.images?.portrait === true;
             return (
               <article
                 key={project.id}
@@ -182,15 +184,24 @@ export default function SelectedWork() {
                 <Link
                   href={`/works/${project.id}`}
                   aria-label={`View ${project.title} case study`}
-                  className="project-card__media relative block aspect-[4/3] overflow-hidden rounded-xl bg-surface-strong"
+                  className={`project-card__media relative block overflow-hidden rounded-xl bg-surface-strong ${
+                    portrait ? "aspect-[4/5]" : "aspect-[4/3]"
+                  }`}
                 >
-                  {cover && (
+                  {cover ? (
                     <Image
                       src={cover}
                       alt=""
                       fill
                       sizes="(max-width: 640px) 92vw, (max-width: 1023px) 82vw, 30vw"
                       className="object-cover"
+                    />
+                  ) : (
+                    <ProjectPlaceholder
+                      title={project.title}
+                      category={project.category}
+                      compact
+                      decorative
                     />
                   )}
                 </Link>

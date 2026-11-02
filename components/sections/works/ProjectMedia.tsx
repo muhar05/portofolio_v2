@@ -1,11 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import ProjectPlaceholder from "@/components/ui/ProjectPlaceholder";
 import type { ProjectMedia as ProjectMediaType } from "@/types/works";
 
 export interface ProjectMediaProps {
   media: ProjectMediaType;
   title: string;
+  category?: string;
   variant?: "cover" | "overview" | "architecture";
   mode?: "image" | "video";
   display?: "card" | "hero";
@@ -16,6 +18,7 @@ export interface ProjectMediaProps {
 export default function ProjectMedia({
   media,
   title,
+  category,
   variant = "cover",
   mode = "image",
   display = "hero",
@@ -96,14 +99,18 @@ export default function ProjectMedia({
     <div
       className={`relative ${frameClassName} w-full overflow-hidden rounded-xl border border-line bg-surface ${className}`}
     >
-      <Image
-        src={imageSrc}
-        alt={`${title} - ${variant} visual`}
-        fill
-        priority={priority}
-        sizes={sizes}
-        className={`h-full w-full ${imageClassName}`}
-      />
+      {imageSrc ? (
+        <Image
+          src={imageSrc}
+          alt={`${title} - ${variant} visual`}
+          fill
+          priority={priority}
+          sizes={sizes}
+          className={`h-full w-full ${imageClassName}`}
+        />
+      ) : (
+        <ProjectPlaceholder title={title} category={category} />
+      )}
     </div>
   );
 }

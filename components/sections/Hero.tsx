@@ -8,6 +8,7 @@ import siteData from "@/content/site.json";
 import worksData from "@/content/works.json";
 import { trackEvent } from "@/lib/analytics";
 import Logo from "@/components/ui/Logo";
+import ProjectPlaceholder from "@/components/ui/ProjectPlaceholder";
 import RollText from "@/components/ui/RollText";
 
 const NAV_LINKS = [
@@ -82,18 +83,13 @@ export default function Hero() {
     };
   }, [menuOpen]);
 
-  const projectCovers = worksData.projects.flatMap((project) => {
-    const cover = project.media?.images?.cover;
-    if (!cover) return [];
-    return [
-      {
-        id: project.id,
-        title: project.title,
-        category: project.category,
-        cover,
-      },
-    ];
-  });
+  const projectPreviews = worksData.projects.map((project) => ({
+    id: project.id,
+    title: project.title,
+    category: project.category,
+    cover: project.media?.images?.cover ?? "",
+    portrait: project.media?.images?.portrait === true,
+  }));
 
   const moveIndicator = (target: HTMLAnchorElement) => {
     const parent = navRef.current;
@@ -397,43 +393,55 @@ export default function Hero() {
               className="flex"
               aria-hidden={setIndex === 1 ? "true" : undefined}
             >
-              {projectCovers.map((project) => (
-                <Link
-                  key={`${setIndex}-${project.id}`}
-                  href={`/works/${project.id}`}
-                  tabIndex={setIndex === 1 ? -1 : undefined}
-                  aria-label={
-                    setIndex === 0
-                      ? `View ${project.title} case study`
-                      : undefined
-                  }
-                  className="ticker__card group aspect-[4/3]"
-                >
-                  <Image
-                    src={project.cover}
-                    alt=""
-                    fill
-                    loading={
-                      setIndex === 0 && project.id === projectCovers[0]?.id
-                        ? "eager"
-                        : "lazy"
+              {projectPreviews.map((project) => {
+                const isFirst = setIndex === 0 && project.id === projectPreviews[0]?.id;
+
+                return (
+                  <Link
+                    key={`${setIndex}-${project.id}`}
+                    href={`/works/${project.id}`}
+                    tabIndex={setIndex === 1 ? -1 : undefined}
+                    aria-label={
+                      setIndex === 0
+                        ? `View ${project.title} case study, ${project.category}`
+                        : undefined
                     }
-                    sizes="(max-width: 768px) 60vw, 22rem"
-                    className="object-cover"
-                  />
-                  <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-[#0b140f]/85 via-[#0b140f]/25 to-transparent p-3 text-left">
-                    <span className="text-[11px] font-medium text-white">
-                      {project.title}
+                    className={`ticker__card group ${
+                      project.portrait ? "aspect-[4/5]" : "aspect-[4/3]"
+                    }`}
+                  >
+                    {project.cover ? (
+                      <Image
+                        src={project.cover}
+                        alt=""
+                        fill
+                        priority={isFirst}
+                        loading={isFirst ? undefined : "lazy"}
+                        sizes="(max-width: 768px) 60vw, 22rem"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <ProjectPlaceholder
+                        title={project.title}
+                        category={project.category}
+                        compact
+                        decorative
+                      />
+                    )}
+                    <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-[#0b140f]/85 via-[#0b140f]/25 to-transparent p-3 text-left">
+                      <span className="text-[11px] font-medium text-white">
+                        {project.title}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className="text-[9px] font-medium uppercase tracking-[0.16em] text-white/85"
+                      >
+                        {project.category}
+                      </span>
                     </span>
-                    <span
-                      aria-hidden="true"
-                      className="text-[9px] font-medium uppercase tracking-[0.16em] text-white/85"
-                    >
-                      {project.category}
-                    </span>
-                  </span>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           ))}
         </div>

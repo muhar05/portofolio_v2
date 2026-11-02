@@ -227,6 +227,7 @@ export default function WorkHero({ project }: WorkHeroProps) {
             <ProjectMedia
               media={project.media as ProjectMediaType}
               title={project.title}
+              category={project.category}
               variant="cover"
               mode="image"
               priority
