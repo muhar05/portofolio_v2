@@ -63,7 +63,7 @@ export default function WorkHero({ project }: WorkHeroProps) {
         <div className="flex items-center justify-between gap-4 py-4">
           <Link
             href="/"
-            className="flex items-center gap-2 text-foreground"
+            className="flex min-h-11 items-center gap-2 text-foreground"
             aria-label="Muhar Ferdiansyah, back to homepage"
           >
             <Logo className="h-6 w-6" />
@@ -206,7 +206,7 @@ export default function WorkHero({ project }: WorkHeroProps) {
                       {item.label}
                     </dt>
                     {item.note && (
-                      <p className="mt-1 text-[10px] leading-snug text-[#edf0ea]/45">
+                      <p className="mt-1 text-[10px] leading-snug text-[#edf0ea]/60">
                         {item.note}
                       </p>
                     )}

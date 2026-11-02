@@ -290,7 +290,10 @@ export default function Hero() {
           {intro.availability}
         </div>
 
-        <h1 className="mt-6 font-display text-[clamp(2.5rem,5.4vw,4.25rem)] font-semibold leading-[1.06] tracking-[-0.04em] text-foreground">
+        <h1
+          aria-label="From interface to infrastructure."
+          className="mt-6 font-display text-[clamp(2.5rem,5.4vw,4.25rem)] font-semibold leading-[1.06] tracking-[-0.04em] text-foreground"
+        >
           {HEADLINE_LINES.map((line, index) => (
             <span className="mask-line" key={line}>
               <span

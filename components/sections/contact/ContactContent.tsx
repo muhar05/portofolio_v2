@@ -184,6 +184,8 @@ export default function ContactContent({
     >
       <div
         ref={panelRef}
+        inert={isCvOpen}
+        aria-hidden={isCvOpen ? true : undefined}
         className="mx-auto w-full max-w-[80rem] overflow-hidden rounded-[2rem] bg-[#111c17] px-6 py-14 text-[#edf0ea] sm:px-10 sm:py-20 lg:px-16 lg:py-24"
       >
         <div className="mx-auto max-w-[46rem] text-center">
@@ -193,6 +195,7 @@ export default function ContactContent({
 
           <h2
             id="contact-heading"
+            aria-label={contact.headline}
             className="mt-5 font-display text-[clamp(2.2rem,5vw,4rem)] font-semibold leading-[1.04] tracking-[-0.04em]"
           >
             {headlineWords.slice(0, 2).join(" ")}

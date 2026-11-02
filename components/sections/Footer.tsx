@@ -23,25 +23,25 @@ export default function Footer() {
           >
             <a
               href="#selected-work"
-              className="block py-1 text-ink-muted transition-colors hover:text-foreground"
+              className="flex min-h-11 items-center py-2 text-ink-muted transition-colors hover:text-foreground"
             >
               Work
             </a>
             <a
               href="#stack"
-              className="block py-1 text-ink-muted transition-colors hover:text-foreground"
+              className="flex min-h-11 items-center py-2 text-ink-muted transition-colors hover:text-foreground"
             >
               Stack
             </a>
             <a
               href="#about"
-              className="block py-1 text-ink-muted transition-colors hover:text-foreground"
+              className="flex min-h-11 items-center py-2 text-ink-muted transition-colors hover:text-foreground"
             >
               About
             </a>
             <a
               href="#contact"
-              className="block py-1 text-ink-muted transition-colors hover:text-foreground"
+              className="flex min-h-11 items-center py-2 text-ink-muted transition-colors hover:text-foreground"
             >
               Contact
             </a>
@@ -49,7 +49,7 @@ export default function Footer() {
               href={siteData.contact.github.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="block py-1 text-ink-muted transition-colors hover:text-foreground"
+              className="flex min-h-11 items-center py-2 text-ink-muted transition-colors hover:text-foreground"
             >
               GitHub
             </a>
@@ -62,7 +62,7 @@ export default function Footer() {
             </EmailAction>
             <a
               href="#hero"
-              className="col-span-2 mt-1 block py-1 text-ink-muted transition-colors hover:text-foreground"
+              className="col-span-2 mt-1 flex min-h-11 items-center py-2 text-ink-muted transition-colors hover:text-foreground"
             >
               Back to top ↑
             </a>
