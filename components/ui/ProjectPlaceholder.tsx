@@ -20,6 +20,8 @@ export default function ProjectPlaceholder({
       aria-label={
         decorative
           ? undefined
+          : compact
+          ? "Preview pending"
           : `${title} preview pending. A dummy preview will replace this placeholder.`
       }
       className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-surface px-4 text-center ${className}`}

@@ -21,10 +21,7 @@ export default function RollText({ text, gap = "0em" }: RollTextProps) {
               className="roll-text__cell"
               style={{ "--roll-index": index } as CSSProperties}
             >
-              <span className="roll-text__glyph">{char}</span>
-              <span className="roll-text__glyph select-none" aria-hidden="true">
-                {char}
-              </span>
+              <span className="roll-text__glyph" data-char={char} />
             </span>
           )
         )}

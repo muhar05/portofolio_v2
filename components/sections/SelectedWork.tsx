@@ -183,11 +183,13 @@ export default function SelectedWork() {
               >
                 <Link
                   href={`/works/${project.id}`}
-                  aria-label={`View ${project.title} case study`}
                   className={`project-card__media relative block overflow-hidden rounded-xl bg-surface-strong ${
                     portrait ? "aspect-[4/5]" : "aspect-[4/3]"
                   }`}
                 >
+                  <span className="sr-only">
+                    View {project.title} case study.
+                  </span>
                   {cover ? (
                     <Image
                       src={cover}
@@ -201,7 +203,6 @@ export default function SelectedWork() {
                       title={project.title}
                       category={project.category}
                       compact
-                      decorative
                     />
                   )}
                 </Link>

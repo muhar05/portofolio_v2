@@ -180,6 +180,14 @@ button:focus-visible,
   transition-delay: calc(var(--roll-index) * 18ms);
 }
 
+.roll-text__glyph::before,
+.roll-text__glyph::after {
+  content: attr(data-char);
+  display: block;
+  height: 1.2em;
+  line-height: 1.2em;
+}
+
 a:hover .roll-text__glyph,
 a:focus-visible .roll-text__glyph,
 button:hover .roll-text__glyph,

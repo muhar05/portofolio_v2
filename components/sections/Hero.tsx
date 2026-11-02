@@ -395,11 +395,6 @@ export default function Hero() {
                     key={`${setIndex}-${project.id}`}
                     href={`/works/${project.id}`}
                     tabIndex={setIndex === 1 ? -1 : undefined}
-                    aria-label={
-                      setIndex === 0
-                        ? `View ${project.title} case study, ${project.category}`
-                        : undefined
-                    }
                     className={`ticker__card group ${
                       project.portrait ? "aspect-[4/5]" : "aspect-[4/3]"
                     }`}
@@ -419,7 +414,6 @@ export default function Hero() {
                         title={project.title}
                         category={project.category}
                         compact
-                        decorative
                       />
                     )}
                     <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-[#0b140f]/85 via-[#0b140f]/25 to-transparent p-3 text-left">
