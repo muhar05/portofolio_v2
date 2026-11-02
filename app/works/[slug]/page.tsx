@@ -4,7 +4,10 @@ import worksData from "@/content/works.json";
 import WorkHero from "@/components/sections/works/WorkHero";
 import WorkProblem from "@/components/sections/works/WorkProblem";
 import WorkFulfillmentFlow from "@/components/sections/works/WorkFulfillmentFlow";
+import WorkChallenge from "@/components/sections/works/WorkChallenge";
 import WorkArchitecture from "@/components/sections/works/WorkArchitecture";
+import WorkEngineering from "@/components/sections/works/WorkEngineering";
+import WorkOutcome from "@/components/sections/works/WorkOutcome";
 import WorkClosing from "@/components/sections/works/WorkClosing";
 import ProjectViewTracker from "@/components/analytics/ProjectViewTracker";
 import type { Project } from "@/types/works";
@@ -78,7 +81,10 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <WorkHero project={project as Project} />
       <WorkProblem project={project as Project} />
       <WorkFulfillmentFlow project={project as Project} />
+      <WorkChallenge project={project as Project} />
       <WorkArchitecture project={project as Project} />
+      <WorkEngineering project={project as Project} />
+      <WorkOutcome project={project as Project} />
       <WorkClosing nextProject={nextProject as Project | undefined} />
     </main>
   );

@@ -207,9 +207,14 @@ export default function SelectedWork() {
                 </Link>
 
                 <div className="flex flex-1 flex-col px-2 pb-1 pt-4">
-                  <div className="flex items-center justify-between gap-3 text-[10px] font-medium uppercase tracking-[0.16em] text-ink-muted">
+                  <div className="flex flex-wrap items-center gap-2 text-[10px] font-medium uppercase tracking-[0.16em] text-ink-muted">
                     <span>{project.category}</span>
-                    <span>{project.year}</span>
+                    {project.facts?.status && (
+                      <span className="rounded-full border border-line px-2 py-0.5 text-[9px] tracking-[0.12em]">
+                        {project.facts.status}
+                      </span>
+                    )}
+                    <span className="ml-auto">{project.year}</span>
                   </div>
 
                   <h3 className="mt-3 font-display text-[22px] font-semibold leading-[1.15] tracking-[-0.02em] text-foreground">

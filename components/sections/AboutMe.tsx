@@ -116,7 +116,8 @@ export default function AboutMe() {
             {about.bio}
           </p>
           <p className="mt-3 text-[12px] leading-relaxed text-ink-muted">
-            Client references can be shared on request.
+            Client projects are kept anonymous. Public links appear where
+            available.
           </p>
         </div>
 

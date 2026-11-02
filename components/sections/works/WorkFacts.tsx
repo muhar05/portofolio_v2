@@ -13,6 +13,7 @@ export default function WorkFacts({ project }: WorkFactsProps) {
     { label: "Role", value: project.role },
     { label: "Engagement", value: facts.engagement },
     { label: "Status", value: facts.status },
+    { label: "Deployment", value: facts.deployment },
     { label: "Source", value: facts.source },
     { label: "Duration", value: facts.duration },
     { label: "Team", value: facts.team },
@@ -68,6 +69,12 @@ export default function WorkFacts({ project }: WorkFactsProps) {
             </a>
           ))}
         </div>
+      )}
+
+      {facts.demoNote && (
+        <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
+          {facts.demoNote}
+        </p>
       )}
     </div>
   );

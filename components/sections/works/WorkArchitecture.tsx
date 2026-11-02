@@ -2,7 +2,8 @@
 
 import { useEffect, useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
-import type { Project, ArchitectureLayer } from "@/types/works";
+import ProjectMedia from "@/components/sections/works/ProjectMedia";
+import type { Project, ArchitectureLayer, ProjectMedia as ProjectMediaType } from "@/types/works";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -83,7 +84,7 @@ export default function WorkArchitecture({ project }: WorkArchitectureProps) {
             className="h-1.5 w-1.5 rounded-full bg-accent"
             aria-hidden="true"
           />
-          <span className="text-accent-ink">04 / What it runs on</span>
+          <span className="text-accent-ink">05 / What it runs on</span>
           <span className="text-line-strong" aria-hidden="true">
             /
           </span>
@@ -106,6 +107,22 @@ export default function WorkArchitecture({ project }: WorkArchitectureProps) {
             {project.overview.architecture}
           </p>
         </details>
+
+        {project.media && (
+          <figure data-reveal className="mt-10 max-w-[64rem] sm:mt-12">
+            <ProjectMedia
+              media={project.media as ProjectMediaType}
+              title={`${project.title} architecture`}
+              category="Architecture diagram"
+              variant="architecture"
+              mode="image"
+              display="card"
+            />
+            <figcaption className="mt-2.5 text-[10px] font-medium uppercase tracking-[0.16em] text-ink-muted">
+              Architecture diagram. Labels with dummy data pending.
+            </figcaption>
+          </figure>
+        )}
 
         <div className="mt-12 space-y-4 sm:mt-14">
           <div
@@ -167,30 +184,6 @@ export default function WorkArchitecture({ project }: WorkArchitectureProps) {
           </div>
         </div>
 
-        <div
-          data-reveal
-          className="mt-12 rounded-3xl bg-[#111c17] p-6 text-[#edf0ea] sm:p-8"
-        >
-          <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-[#e07a52]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#c9552e]" />
-            <span>What changed</span>
-          </div>
-
-          <p className="mt-4 max-w-[52rem] text-[15px] leading-relaxed text-[#edf0ea]/80 sm:text-base">
-            {project.result}
-          </p>
-
-          {project.highlights && project.highlights.length > 0 && (
-            <div className="mt-6 grid grid-cols-1 gap-3 border-t border-white/12 pt-6 text-[13px] text-[#edf0ea]/75 sm:grid-cols-2 sm:text-sm">
-              {project.highlights.map((highlight) => (
-                <div key={highlight} className="flex items-start gap-2">
-                  <span className="font-bold text-[#e07a52]">✓</span>
-                  <span>{highlight}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
     </section>
   );

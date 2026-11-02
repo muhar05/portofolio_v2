@@ -79,9 +79,25 @@ export interface ProjectFacts {
   engagement?: string;
   status?: string;
   source?: string;
+  deployment?: string;
   duration?: string;
   team?: string;
+  demoNote?: string;
   demo?: ProjectDemoLink[];
+}
+
+export interface ProjectChallenge {
+  title: string;
+  problem: string;
+  solution: string;
+}
+
+export interface ProjectEngineering {
+  deployment: string;
+  database: string;
+  auth: string;
+  testing: string;
+  ci: string;
 }
 
 export interface Project {
@@ -100,6 +116,9 @@ export interface Project {
   facts?: ProjectFacts;
   atAGlance?: ProjectFact[];
   impact?: ProjectImpact[];
+  hardestChallenge?: ProjectChallenge;
+  engineering?: ProjectEngineering;
+  nextSteps?: string[];
   media?: ProjectMedia;
   domains?: string[];
   problemPoints?: string[];

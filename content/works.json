@@ -2,7 +2,7 @@
   "works": {
     "chapter": "03 / WHAT I BUILD",
     "headline": "Operational systems, built around how the work actually runs.",
-    "description": "Four case studies from client and freelance work: the workflow, the decisions, and the parts that had to hold.",
+    "description": "Four client projects, with client names withheld: the workflow, the decisions, and the parts that had to hold.",
     "items": [
       {
         "number": "01",
@@ -39,11 +39,13 @@
       "year": "2026",
       "role": "Full Stack Developer",
       "facts": {
-        "engagement": "Freelance / client work",
-        "status": "Internal system · client operations",
+        "engagement": "Client project",
+        "status": "Delivered MVP",
         "source": "Private repository",
-        "duration": "2025–2026",
+        "deployment": "Not deployed; requires a server setup",
+        "duration": "2025-2026",
         "team": "Solo build",
+        "demoNote": "No public demo. The system requires a server setup.",
         "demo": []
       },
       "featured": true,
@@ -89,6 +91,19 @@
         "architecture": "PostgreSQL and Prisma hold the operational tables, with transactions wrapping every state change so concurrent reservations cannot race. Nine roles limit each action to the right department. Zod validates input on client and server, and MinIO stores goods receipts and delivery notes.",
         "workflow": "A confirmed sales order checks every line item. In-stock goods go to reservation; backordered items become a purchase request and then a purchase order. A goods receipt updates inventory at the dock. Before dispatch, the warehouse confirms packing and finance confirms payment or credit. Only then does the system issue the delivery order."
       },
+      "hardestChallenge": {
+        "title": "Keeping one order consistent across nine roles",
+        "problem": "The order, stock, procurement, warehouse, and finance states had to stay in sync while each role saw only the actions it was allowed to take. A single missed transition could double-promise stock or release a delivery before approval.",
+        "solution": "Each order is modeled as a transactional state machine with per-item branching. Every state change runs inside a database transaction and is gated by role permissions, so the physical workflow and the audit trail cannot diverge."
+      },
+      "engineering": {
+        "deployment": "Not deployed; requires a server setup.",
+        "database": "PostgreSQL with Prisma.",
+        "auth": "NextAuth with role-based permissions across nine operational roles.",
+        "testing": "Unit tests are partially in place; coverage is not tracked.",
+        "ci": "No CI pipeline yet."
+      },
+      "nextSteps": [],
       "flowPaths": [
         {
           "id": "in-stock",
@@ -283,7 +298,7 @@
         "MinIO",
         "Tailwind CSS"
       ],
-      "result": "The system gives five departments one order record. Sales can see fulfillment per line item, warehouse works from goods receipts instead of manual logs, and dispatch waits for both warehouse and finance sign-off. The state machine keeps responsibility visible through the whole lifecycle."
+      "result": "The system models five departments around one order record. Sales can see fulfillment per line item, warehouse works from goods receipts instead of manual logs, and dispatch is gated by warehouse and finance sign-off. The state machine keeps responsibility visible through the whole lifecycle."
     },
     {
       "id": "ecobank026-bank-sampah",
@@ -292,11 +307,13 @@
       "year": "2026",
       "role": "Full Stack Developer",
       "facts": {
-        "engagement": "Freelance / client work",
-        "status": "Deployed · end-user rollout pending",
+        "engagement": "Client project",
+        "status": "Delivered MVP",
         "source": "Public repository",
-        "duration": "2025–2026",
+        "deployment": "Deployed; end-user rollout pending.",
+        "duration": "2025-2026",
         "team": "Solo build",
+        "demoNote": "Public repository is available. A live demo URL is still to be added.",
         "demo": [
           {
             "label": "Repository on GitHub",
@@ -347,6 +364,19 @@
         "architecture": "Deposit, deposit detail, savings ledger, and cash ledger tables record every value movement. Writes run inside DB::transaction, and balances are recalculated from the ledger. Withdrawals require two prior deposits and cannot exceed the balance. Sales check cumulative stock across the whole timeline, including backdated entries, with lockForUpdate guarding concurrent writes. The activity log is append-only and tied to a correlation_id.",
         "workflow": "An operator selects a customer and material, the form fills the master price, and the deposit is saved atomically with its ledger entry. Historical Excel files are parsed, mapped, previewed, and only committed when every row passes validation. A collector sale checks remaining stock, records the margin, and writes an audit entry."
       },
+      "hardestChallenge": {
+        "title": "Normalizing years of inconsistent spreadsheets",
+        "problem": "Material names, customer records, prices, and totals arrived in different formats across date-based sheets. Importing them directly would have duplicated categories and polluted the ledger.",
+        "solution": "The import runs in stages: parse, resolve aliases, recompute totals, cross-check a recap, then commit atomically with a fingerprint that rejects duplicate imports."
+      },
+      "engineering": {
+        "deployment": "Deployed; end-user rollout pending.",
+        "database": "MySQL with Eloquent.",
+        "auth": "Role-based permissions plus admin device binding.",
+        "testing": "Unit tests are partially in place; production validation completed.",
+        "ci": "No CI pipeline yet."
+      },
+      "nextSteps": [],
       "flowPaths": [
         {
           "id": "path-utama",
@@ -531,7 +561,7 @@
         "Tailwind CSS",
         "Alpine.js"
       ],
-      "result": "Every rupiah that enters or leaves the waste bank can be traced from the transaction to a ledger entry. Balance, stock, and import checks close the gaps that allowed over-selling and silent data drift. Price snapshots keep old reports stable when master prices change, and the audit trail keeps each action tied to a user and a device."
+      "result": "Every rupiah that enters or leaves the waste bank has a ledger path from the transaction to an entry. Balance, stock, and import checks close the gaps that allowed over-selling and silent data drift. Price snapshots keep old reports stable when master prices change, and the audit trail keeps each action tied to a user and a device."
     },
     {
       "id": "salestrack-lead-dispatch",
@@ -540,11 +570,13 @@
       "year": "2026",
       "role": "Full Stack Developer",
       "facts": {
-        "engagement": "Freelance / client work",
-        "status": "Internal mobile app · client use",
+        "engagement": "Client project",
+        "status": "Delivered MVP",
         "source": "Private repository",
-        "duration": "2025–2026",
+        "deployment": "Not deployed.",
+        "duration": "2025-2026",
         "team": "Solo build",
+        "demoNote": "Private client project; no public demo.",
         "demo": []
       },
       "featured": true,
@@ -590,6 +622,19 @@
         "architecture": "The app is split into feature modules (auth, dashboard, leads, incoming_lead, notifications, profile) over shared API, model, and service layers. Every request goes through one ApiService that attaches the bearer token, injects the mobile user id, enforces a 30-second timeout, and normalizes errors. A 401 on any non-auth endpoint clears all providers and resets navigation. Notifications use two Android channels: a normal channel, and a max-importance channel reserved for incoming leads with full-screen intent and a custom sound.",
         "workflow": "The backend assigns a lead and pushes a data message to the agent. The device classifies the message, raises a full-screen alert with the countdown, and registers the lead. If the agent accepts before the deadline, the server commits ownership and the lead moves to the active list. Otherwise the timer expires and the lead is released for re-dispatch. Once owned, the agent moves the lead through contacted, interested or not_interested, and converted or rejected, with notes shown in the activity timeline."
       },
+      "hardestChallenge": {
+        "title": "Round-robin dispatch without double ownership",
+        "problem": "Leads had to reach eligible agents in a fair rotation while the device and the server agreed on who owned the lead and when the deadline expired.",
+        "solution": "The server owns acceptance and reassignment. The client derives the countdown from the wall clock, and a single 401 boundary clears stale session state before the next request."
+      },
+      "engineering": {
+        "deployment": "Not deployed.",
+        "database": "REST API; session state persisted on the device.",
+        "auth": "Bearer token with centralized 401 invalidation.",
+        "testing": "Unit tests are partially in place; coverage is not tracked.",
+        "ci": "No CI pipeline yet."
+      },
+      "nextSteps": [],
       "flowPaths": [
         {
           "id": "path-utama",
@@ -773,7 +818,7 @@
         "Firebase Cloud Messaging",
         "REST API"
       ],
-      "result": "Deadlines and ownership are enforced the same way on the device and on the server, instead of being inferred from chat threads. Agents see one prioritized incoming alert with a countdown, and every accepted lead carries an auditable sequence of assignment and status changes. Managers get dashboard metrics from that consistent state, and the app stays predictable through backgrounding, poor connectivity, and token expiry."
+      "result": "The app enforces deadlines and ownership the same way on the device and on the server, instead of having them inferred from chat threads. Agents see one prioritized incoming alert with a countdown, and every accepted lead carries an auditable sequence of assignment and status changes. The app exposes dashboard metrics from that consistent state, and it stays predictable through backgrounding, poor connectivity, and token expiry."
     },
     {
       "id": "ecarrgo-reverse-auction-logistics",
@@ -782,11 +827,13 @@
       "year": "2026",
       "role": "Full Stack Developer",
       "facts": {
-        "engagement": "Freelance / client work",
-        "status": "Internal mobile app · client use",
+        "engagement": "Client project",
+        "status": "Delivered MVP",
         "source": "Private repository",
-        "duration": "2025–2026",
+        "deployment": "Not deployed.",
+        "duration": "2025-2026",
         "team": "Solo build",
+        "demoNote": "Private client project; no public demo.",
         "demo": []
       },
       "featured": true,
@@ -831,6 +878,19 @@
         "architecture": "The Flutter client separates data sources, domain, and presentation, with Dio handling transport and bearer tokens. A single FillDataProvider collects the whole wizard before sending one auction payload, so partial orders cannot leave the device. On the server, shipment status is the source of truth, and the select-winner, payment, and tracking endpoints enforce per-owner authorization. Status history is kept as an audit trail.",
         "workflow": "The sender picks a route on the map, enters cargo details, sets the auction against a rate reference, and submits the order. Vendors bid, the sender selects a winner, and an admin confirms the price and starts shipping. After the sender uploads a transfer proof and an admin verifies it, the status moves to shipping, and waybill tracking closes the loop until completion."
       },
+      "hardestChallenge": {
+        "title": "Keeping the auction, map, and payment state in agreement",
+        "problem": "Bids, winner selection, payment verification, and live map updates could race. A stale client step or a second winner would break the shipment record.",
+        "solution": "Shipment status is the server authority. Winner selection is locked in a transaction, the client recomputes its step from the server status, and the map and tracking views read the same status history."
+      },
+      "engineering": {
+        "deployment": "Not deployed.",
+        "database": "REST API with object storage for transfer proofs.",
+        "auth": "Bearer token stored in secure storage.",
+        "testing": "Unit tests are partially in place; coverage is not tracked.",
+        "ci": "No CI pipeline yet."
+      },
+      "nextSteps": [],
       "flowPaths": [
         {
           "id": "path-order-creation",
@@ -1016,7 +1076,7 @@
         "Firebase Cloud Messaging",
         "REST API"
       ],
-      "result": "ECARRGO turns manually negotiated shipping into a structured auction flow with one status authority on the server. Every order has a linked shipment and auction, one selected winner, and a payment that can be verified through a traceable transfer proof. Mapping status to flow steps keeps the process resumable across sessions, and the status audit trail gives operations a clear record as volume grows."
+      "result": "ECARRGO models manually negotiated shipping as a structured auction flow with one status authority on the server. Every order has a linked shipment and auction, one selected winner, and a payment that can be verified through a traceable transfer proof. Mapping status to flow steps keeps the process resumable across sessions, and the status audit trail gives operations a clear record as volume grows."
     }
   ]
 }
