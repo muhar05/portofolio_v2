@@ -8,164 +8,44 @@ import worksData from "@/content/works.json";
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-interface Discipline {
-  number: string;
-  category: string;
-  description: string;
-  keywords: string[];
-}
-
-const DISCIPLINES: Discipline[] = [
-  {
-    number: "01",
-    category: "Languages & runtimes",
-    description:
-      "Core languages behind the work, from typed web apps to PHP services and cross-platform mobile.",
-    keywords: [
-      "typescript",
-      "javascript",
-      "php",
-      "dart",
-      "python",
-      "node",
-      "bun",
-      "go",
-      "rust",
-      "kotlin",
-      "swift",
-      "java",
-    ],
-  },
-  {
-    number: "02",
-    category: "Frameworks & interfaces",
-    description:
-      "Application frameworks and interface layers, spanning server-rendered Laravel, React and Next.js, and Flutter.",
-    keywords: [
-      "next",
-      "react",
-      "vue",
-      "svelte",
-      "astro",
-      "laravel",
-      "django",
-      "flutter",
-      "blade",
-      "alpine",
-      "tailwind",
-      "tanstack",
-      "provider",
-      "riverpod",
-      "zod",
-      "express",
-      "nest",
-    ],
-  },
-  {
-    number: "03",
-    category: "Data & storage",
-    description:
-      "Relational databases, ORMs, object storage, and on-device persistence.",
-    keywords: [
-      "postgres",
-      "mysql",
-      "mariadb",
-      "sqlite",
-      "mongodb",
-      "redis",
-      "prisma",
-      "eloquent",
-      "minio",
-      "s3",
-      "shared_preferences",
-      "storage",
-    ],
-  },
-  {
-    number: "04",
-    category: "Auth, platforms & tooling",
-    description:
-      "Identity and permissions, notifications, data import, and the tooling around each system.",
-    keywords: [
-      "nextauth",
-      "auth",
-      "spatie",
-      "permission",
-      "firebase",
-      "fcm",
-      "messaging",
-      "notification",
-      "http",
-      "dio",
-      "excel",
-      "spreadsheet",
-      "docker",
-      "kubernetes",
-      "aws",
-      "vps",
-    ],
-  },
-];
-
-const FALLBACK: Discipline = {
-  number: "",
-  category: "Tools & libraries",
-  description: "Additional libraries pulled in by the projects above.",
-  keywords: [],
-};
-
-function classify(item: string): Discipline {
-  const lower = item.toLowerCase();
-  let best: Discipline | null = null;
-  let bestLength = 0;
-
-  for (const discipline of DISCIPLINES) {
-    for (const keyword of discipline.keywords) {
-      if (lower.includes(keyword) && keyword.length > bestLength) {
-        best = discipline;
-        bestLength = keyword.length;
-      }
-    }
-  }
-
-  return best ?? FALLBACK;
-}
+const DAILY_STACK = ["TypeScript", "PHP", "Laravel"];
+const DAILY_STACK_KEYS = new Set(DAILY_STACK.map((item) => item.toLowerCase()));
 
 function buildStackGroups() {
   const seen = new Set<string>();
-  const buckets = new Map<string, string[]>();
-  DISCIPLINES.forEach((discipline) => buckets.set(discipline.number, []));
-
-  const fallbackItems: string[] = [];
+  const daily: string[] = [];
+  const working: string[] = [];
 
   for (const project of worksData.projects) {
     for (const tech of project.stack ?? []) {
-      if (seen.has(tech)) continue;
-      seen.add(tech);
+      const key = tech.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
 
-      const discipline = classify(tech);
-      if (discipline === FALLBACK) {
-        fallbackItems.push(tech);
+      if (DAILY_STACK_KEYS.has(key)) {
+        daily.push(tech);
       } else {
-        buckets.get(discipline.number)?.push(tech);
+        working.push(tech);
       }
     }
   }
 
-  const groups = DISCIPLINES.map((discipline) => ({
-    ...discipline,
-    items: buckets.get(discipline.number) ?? [],
-  })).filter((group) => group.items.length > 0);
-
-  if (fallbackItems.length > 0) {
-    groups.push({
-      ...FALLBACK,
-      number: String(DISCIPLINES.length + 1).padStart(2, "0"),
-      items: fallbackItems,
-    });
-  }
-
-  return groups;
+  return [
+    {
+      number: "01",
+      category: "Daily use",
+      description:
+        "The tools I reach for first: TypeScript for typed web work, PHP and Laravel for server-rendered operations systems.",
+      items: daily,
+    },
+    {
+      number: "02",
+      category: "Working knowledge",
+      description:
+        "Tools I have used in the case studies above. Depth varies by project.",
+      items: working,
+    },
+  ].filter((group) => group.items.length > 0);
 }
 
 const STACK_GROUPS = buildStackGroups();
@@ -264,7 +144,9 @@ export default function TechStack() {
             The stack behind the work.
           </h2>
           <p className="mx-auto mt-4 max-w-[34rem] text-[15px] leading-relaxed text-ink-muted">
-            I grouped the technologies from the systems above by layer.
+            I grouped the stack by how often I use it, not by logo count.
+            Daily use means the tools I reach for first. Working knowledge
+            means I have used them in the case studies above.
           </p>
         </div>
 
