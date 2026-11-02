@@ -95,6 +95,13 @@ Adding a project to the `projects` array is enough to register a new static rout
 
 Real client screenshots were removed from `public/` because they contained client names and live figures. The site renders labelled placeholders until dummy-data screenshots are supplied. To publish a preview, add the image path to `media.images.cover` in `content/works.json`.
 
+## Client privacy
+
+The current tree no longer references client screenshots, and the old files were moved to `private/` (gitignored). Two cleanup steps are outside the code:
+
+- The old image blobs still exist in the public Git history. Make the repository private or rewrite history before treating the client name as private.
+- After deploy, purge the Hostinger CDN cache for the removed image paths so cached copies stop being served.
+
 ## Contact privacy
 
 Email and WhatsApp destinations are assembled in the browser at click time. They are not printed in the server-rendered HTML or the Person JSON-LD. This is obfuscation, not a server-side rate limit. A real contact form would need an endpoint and provider-side rate limiting.
