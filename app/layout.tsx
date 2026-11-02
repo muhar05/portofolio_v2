@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,8 +20,6 @@ const plusJakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://muharferdiansyah.my.id";
 const SITE_TITLE =
   "Full Stack Developer for Operations Systems | Muhar Ferdiansyah";
 const SITE_DESCRIPTION =
