@@ -11,7 +11,7 @@
     "chapter": "04 / ABOUT",
     "sublabel": "WHO'S BEHIND THE WORK",
     "headline": "Building operational software, one workflow at a time.",
-    "bio": "I currently work as an administration staff at KJPP Ruky Safrudin dan Rekan while finishing a bachelor's degree in Informatics Engineering at Universitas Pamulang. That job is where I saw how much operational work still runs on spreadsheets, chat, and manual checks. The projects on this page came from that kind of work: order fulfillment, waste-bank ledgers, lead dispatch, and logistics auctions. I handle the build end to end, from mapping the workflow to shipping the web or mobile app.",
+    "bio": "I currently work as an administration staff at KJPP Ruky Safrudin dan Rekan while finishing a bachelor's degree in Informatics Engineering at Universitas Pamulang. That job is where I saw how much operational work still runs on spreadsheets, chat, and manual checks. The projects on this page came from that kind of work: order fulfillment, waste-bank ledgers, lead dispatch, and logistics auctions. I handle the build end to end, from mapping the workflow to building the web or mobile app.",
     "experience": {
       "label": "Experience",
       "items": [
@@ -22,7 +22,7 @@
         },
         {
           "title": "Freelance Full Stack Developer",
-          "description": "I build web and mobile systems for operations-heavy teams, from workflow mapping through deployment.",
+          "description": "I build web and mobile systems for operations-heavy teams, from workflow mapping through the build and handover.",
           "period": "2025 – Present"
         }
       ]
