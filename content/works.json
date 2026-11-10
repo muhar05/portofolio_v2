@@ -596,9 +596,9 @@
       "media": {
         "images": {
           "cover": "/images/works/salestrack-lead-dispatch/cover.webp",
-          "portrait": true,
+          "portrait": false,
           "overview": "/images/works/salestrack-lead-dispatch/overview.png",
-          "architecture": "/images/works/salestrack-lead-dispatch/architecture.png"
+          "architecture": ""
         },
         "video": {
           "type": "youtube",
